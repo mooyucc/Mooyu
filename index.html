@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooYu - 墨鱼</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 首页 -->
+    <div id="page-home" class="page">
+        <div class="home-header">
+            <img src="images/logo.png" alt="MooYu Logo" class="home-logo">
+        </div>
+        <div class="home-title"><img src="images/MooyuB.png" alt="MooYu" class="home-title-img"></div>
+        <div class="home-desc">[墨鱼]系列App专注于帮助管理者更好的进行</div>
+        <div class="home-highlight">全景式"多项目"管理</div>
+        <div class="home-mooflow" id="goto-mooflow">
+            <img src="images/iconWooFlow.png" alt="MooFlow" class="mooflow-icon">
+            <div class="mooflow-title">项目里程碑管理<br><b>MooFlow</b></div>
+        </div>
+        <div class="home-download-btn-wrapper" style="flex-direction:column;align-items:center;">
+            <a href="#" id="home-download-link" class="home-download-btn" onclick="showPage('page-login')">登录</a>
+            <div style="font-size:10px;color:#888;margin-top:4px;text-align:center;width:100%;">登录后下载正式版</div>
+        </div>
+        <div class="home-footer">"让工作游刃有余，让生活自在有余。"</div>
+    </div>
+
+    <!-- MooFlow介绍页 -->
+    <div id="page-mooflow" class="page" style="display:none;">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home">
+                    <img src="images/logo.png" alt="MooYu Logo">
+                    <span>墨鱼</span>
+                    <img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;">
+                </div>
+                <nav>
+                    <a href="#" class="download-btn" id="goto-download" onclick="showPage('page-download')">Download Moo...</a>
+                    <a href="#" class="login-btn" onclick="showPage('page-login')">登录</a>
+                </nav>
+            </div>
+        </header>
+        <main class="mooflow-main">
+            <!-- 主展示区 -->
+            <section class="hero-section">
+                <img src="images/iconWooFlow.png" alt="MooFlow Icon" class="hero-icon">
+                <h1>MooFlow</h1>
+                <h2>多维度项目管理应用</h2>
+                <p>多维度项目管理中枢，专为macOS打造的智能里程碑管理解决方案</p>
+                <div class="hero-image">
+                    <img src="images/core-features.png" alt="MooFlow主界面">
+                </div>
+            </section>
+
+            <!-- 下载按钮区域 -->
+            <div class="download-buttons">
+                <a href="download/MooFlow.dmg" class="app-download-btn" id="DownloadWFApple" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Download</span>
+                    <img src="images/apple-logo2.png" alt="Apple Store" style="height: 25px;">
+                </a>
+                <a href="download/MooFlow_free.dmg" class="app-download-btn" id="DownloadWFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Download</span>
+                    <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                </a>
+            </div>
+
+            <!-- 功能卡片区 -->
+            <section class="features-grid">
+                <!-- 核心功能 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>核心功能</h3>
+                        <ul>
+                            <li>可视化项目管理面板</li>
+                            <li>分组卡片式布局，支持拖拽式跨组管理</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/core-features.png" alt="核心功能展示">
+                    </div>
+                </div>
+
+                <!-- 沉浸式工作台 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>沉浸式工作台</h3>
+                        <ul>
+                            <li>动态工具栏集成视图切换/任务创建</li>
+                            <li>四维时间轴（年/季/月/日）无缝衔接</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/workspace.png" alt="沉浸式工作台展示">
+                    </div>
+                </div>
+
+                <!-- 视觉设计美学 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>视觉设计美学</h3>
+                        <ul>
+                            <li>遵循macOS HIG设计规范</li>
+                            <li>响应深色/浅色模式自适应</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image carousel-container">
+                        <div class="carousel-slides">
+                            <img src="images/design.png" alt="视觉设计展示" class="carousel-slide active">
+                            <img src="images/design-dark.png" alt="深色模式展示" class="carousel-slide">
+                        </div>
+                        <div class="carousel-controls">
+                            <button class="carousel-prev">&lt;</button>
+                            <button class="carousel-next">&gt;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 个性化体验 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>个性化体验</h3>
+                        <ul>
+                            <li>自定义工作区布局与主题设置</li>
+                            <li>快捷键自定义与智能提醒系统</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/personalization.png" alt="个性化体验展示">
+                    </div>
+                </div>
+
+                <!-- 多项目管理矩阵 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>多项目管理矩阵</h3>
+                        <ul>
+                            <li>项目依赖关系可视化与资源分配</li>
+                            <li>跨项目进度追踪与团队协作管理</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/matrix.png" alt="多项目管理矩阵展示">
+                    </div>
+                </div>
+
+                <!-- 多维度视图系统 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>多维度视图系统</h3>
+                        <ul>
+                            <li>甘特图与看板视图自由切换</li>
+                            <li>日历视图与列表视图智能联动</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/views.png" alt="多维度视图展示">
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <p>www.wooyu.cc</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- App Family下载页 -->
+    <div id="page-download" class="page" style="display:none;">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home2">
+                    <img src="images/logo.png" alt="MooYu Logo">
+                    <span>墨鱼</span>
+                    <img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;">
+                </div>
+                <nav>
+                    <a href="#" class="download-btn" id="goto-download" onclick="showPage('page-download')">Download Moo...</a>
+                    <a href="#" class="login-btn" onclick="showPage('page-login')">登录</a>
+                </nav>
+            </div>
+        </header>
+        <main class="download-main">
+            <h2 class="download-title download-title-center">
+                <span>下载所有</span><br>
+                <span>MooYu App Family</span>
+            </h2>
+            <div class="app-family-grid">
+                <div class="app-card center">
+                    <img src="images/iconWooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-download">
+                    <div class="app-title">项目里程碑管理<br>MooFlow</div>
+                    <a href="download/MooFlow.dmg" class="app-download-btn" id="DownloadWFApple" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>Download</span>
+                        <img src="images/apple-logo2.png" alt="Apple Store" style="height: 25px;">
+                    </a>
+                    <a href="download/MooFlow_free.dmg" class="app-download-btn" id="DownloadWFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>Download</span>
+                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                    </a>
+                </div>
+                <div class="app-card center coming-soon">
+                    <div class="app-icon app-icon-empty"></div>
+                    <div class="app-title">项目数据管理<br>MooData</div>
+                    <div class="coming-soon-text">Coming Soon...</div>
+                </div>
+                <!-- 其余空格 -->
+                <div class="app-card empty"></div>
+                <div class="app-card empty"></div>
+                <div class="app-card empty"></div>
+                <div class="app-card empty"></div>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <p>www.mooyu.cc</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 登录页面 -->
+    <div id="page-login" class="page" style="display:none;">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home3">
+                    <img src="images/logo.png" alt="MooYu Logo">
+                    <span>墨鱼</span>
+                    <img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;">
+                </div>
+            </div>
+        </header>
+        <main class="login-main">
+            <div class="login-container">
+                <div class="login-box">
+                    <h2>欢迎回来</h2>
+                    <p class="login-subtitle">登录您的墨鱼账号</p>
+                    <form class="login-form">
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" name="password" placeholder="请输入您的密码" required>
+                        </div>
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox" name="remember">
+                                <span>记住我</span>
+                            </label>
+                            <a href="#" class="forgot-password">忘记密码？</a>
+                        </div>
+                        <button type="submit" class="login-submit-btn">登录</button>
+                        <div class="login-divider">
+                            <span>或</span>
+                        </div>
+                        <div class="social-login">
+                            <button type="button" class="social-btn apple">
+                                <img src="images/apple-logo.png" alt="Apple">
+                                <span>使用 Apple 登录</span>
+                            </button>
+                            <button type="button" class="social-btn google">
+                                <img src="images/google-logo.png" alt="Google">
+                                <span>使用 Google 登录</span>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="signup-link">还没有账号？<a href="#" id="goto-register">立即注册</a></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 注册页面 -->
+    <div id="page-register" class="page" style="display:none;">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home4">
+                    <img src="images/logo.png" alt="MooYu Logo">
+                    <span>墨鱼</span>
+                    <img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;">
+                </div>
+            </div>
+        </header>
+        <main class="login-main">
+            <div class="login-container">
+                <div class="login-box">
+                    <h2>创建账号</h2>
+                    <p class="login-subtitle">加入墨鱼社区</p>
+                    <form class="login-form" id="register-form">
+                        <div class="form-group">
+                            <label for="register-name">姓名</label>
+                            <input type="text" id="register-name" name="name" placeholder="请输入您的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">邮箱</label>
+                            <input type="email" id="register-email" name="email" placeholder="请输入您的邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">密码</label>
+                            <input type="password" id="register-password" name="password" placeholder="请输入密码（至少6位）" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-confirm-password">确认密码</label>
+                            <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="请再次输入密码" required>
+                        </div>
+                        <button type="submit" class="login-submit-btn">注册</button>
+                        <div class="login-divider">
+                            <span>或</span>
+                        </div>
+                        <div class="social-login">
+                            <button type="button" class="social-btn apple">
+                                <img src="images/apple-logo.png" alt="Apple">
+                                <span>使用 Apple 注册</span>
+                            </button>
+                            <button type="button" class="social-btn google">
+                                <img src="images/google-logo.png" alt="Google">
+                                <span>使用 Google 注册</span>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="signup-link">已有账号？<a href="#" onclick="showPage('page-login')">立即登录</a></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 管理员后台页面 -->
+    <div id="page-admin" class="page" style="display:none;">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home5">
+                    <img src="images/logo.png" alt="MooYu Logo">
+                    <span>墨鱼</span>
+                    <img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;">
+                </div>
+                <nav>
+                    <a href="#" class="logout-btn" id="admin-logout">退出</a>
+                </nav>
+            </div>
+        </header>
+        <main class="admin-main">
+            <div class="admin-container">
+                <h2>用户管理</h2>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">总用户数</span>
+                        <span class="stat-value" id="total-users">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">管理员数</span>
+                        <span class="stat-value" id="admin-count">0</span>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button id="export-users" class="admin-btn">导出用户数据</button>
+                    <button id="refresh-users" class="admin-btn">刷新列表</button>
+                </div>
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>邮箱</th>
+                                <th>角色</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list">
+                            <!-- 用户列表将通过JavaScript动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="image-modal" class="modal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html> 

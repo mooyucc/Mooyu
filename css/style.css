@@ -1,0 +1,1722 @@
+/* 全局样式 */
+:root {
+    --primary-color: #007AFF;
+    --text-color: #1D1D1F;
+    --light-text: #606060;
+    --background-color: #FFFFFF;
+    --header-bg: rgba(255, 255, 255, 0.2);
+    --gradient-bg: linear-gradient(135deg, #BE6599, #8746A8, #2E2A88);
+    --feature-bg: #F1F1F2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background-color: var(--background-color);
+}
+
+/* 头部样式 */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--header-bg);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 64px;
+}
+
+.logo img:first-child {
+    height: 48px;
+    width: 48px;
+    display: block;
+    transition: transform 1s ease;
+}
+
+.logo:hover img:first-child {
+    transform: rotateY(360deg);
+}
+
+.logo span {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+.logo.clickable {
+    cursor: pointer;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 64px;
+}
+
+.download-btn, .login-btn {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    font-size: 14px;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    line-height: 1;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
+}
+
+.download-btn {
+    background: #111;
+    color: #fff;
+}
+
+.login-btn {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    font-size: 14px;
+    border-radius: 20px;
+    font-weight: 500;
+    background: #fff;
+    color: #222;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    line-height: 1;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.login-btn:hover {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.login-btn:active {
+    background: #f5f5f5;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 欢迎区域样式 */
+.welcome-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-bg);
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    position: relative;
+}
+
+.welcome-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.welcome-content h1 {
+    font-size: 40px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.welcome-content h2 {
+    font-size: 20px;
+    font-weight: 300;
+    margin-bottom: 40px;
+    color: var(--light-text);
+}
+
+/* 下载按钮样式 */
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.download-buttons .app-download-btn {
+    width: auto;
+    min-width: 200px;
+    padding: 12px 24px !important;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .download-buttons .app-download-btn {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* MooFlow部分样式 */
+.mooflow-section {
+    padding: 100px 20px;
+    text-align: center;
+    background-color: var(--feature-bg);
+}
+
+.mooflow-section h2 {
+    font-size: 100px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.mooflow-section h3 {
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.mooflow-section p {
+    font-size: 20px;
+    max-width: 800px;
+    margin: 0 auto 40px;
+    line-height: 2;
+}
+
+/* 功能区域样式 */
+.features-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.feature {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+.feature h3 {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.feature ul {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.feature li {
+    margin-bottom: 10px;
+    font-size: 20px;
+    line-height: 1.6;
+}
+
+.learn-more-btn {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.learn-more-btn:hover {
+    background-color: #0062cc;
+}
+
+/* 页脚样式 */
+footer {
+    color: var(--text-color);
+    padding: 15px 20px;
+    text-align: center;
+    height: 60px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    margin-bottom: 40px;
+}
+
+/* 动画效果 */
+.feature {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.feature.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .mooflow-section h2 {
+        font-size: 60px;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+    }
+    
+    .feature {
+        padding: 20px;
+    }
+    
+    .welcome-content h1 {
+        font-size: 30px;
+    }
+    
+    .welcome-content h2 {
+        font-size: 16px;
+    }
+    
+    .feature-card {
+        min-height: 400px; /* 移动端适当减小最小高度 */
+    }
+    
+    .feature-content h3 {
+        font-size: 24px; /* 移动端标题字体大小 */
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-content h3 {
+        font-size: 20px; /* 小屏幕设备标题字体大小 */
+    }
+}
+
+/* 首页专属样式 */
+#page-home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: #fff;
+    padding-top: 60px;
+}
+
+.home-header {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.home-logo {
+    width: 120px;
+    height: 120px;
+    display: block;
+    margin: 0 auto;
+}
+
+.home-title {
+    font-family: 'Indie Flower', cursive, 'Inter', sans-serif;
+    font-size: 72px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-top: 10px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.home-desc {
+    font-size: 24px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+    font-weight: 400;
+}
+
+.home-highlight {
+    font-size: 28px;
+    color: #6C4DC2;
+    font-weight: 700;
+    margin-bottom: 36px;
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.home-mooflow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f3f3f3;
+    border-radius: 16px;
+    padding: 24px 40px 16px 40px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.home-mooflow:hover {
+    box-shadow: 0 4px 16px rgba(108,77,194,0.12);
+    transform: translateY(-2px);
+}
+
+.home-mooflow:hover .mooflow-icon {
+    transform: scale(1.05);
+}
+
+.home-mooflow:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.home-mooflow:active .mooflow-icon {
+    transform: scale(0.98);
+}
+
+.mooflow-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.mooflow-title {
+    font-size: 22px;
+    color: #222;
+    text-align: center;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.home-download-btn-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.home-download-btn {
+    margin: 32px 0 0 0;
+    padding: 10px 28px;
+    font-size: 18px;
+    border-radius: 32px;
+    background: #111;
+    color: #fff;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.home-download-btn:hover {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.home-download-btn:active {
+    background: #333;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.home-footer {
+    margin-top: 60px;
+    color: #888;
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+}
+
+/* 适配移动端 */
+@media (max-width: 600px) {
+    .home-logo {
+        width: 80px;
+        height: 80px;
+    }
+    .home-title {
+        font-size: 40px;
+    }
+    .home-desc {
+        font-size: 16px;
+    }
+    .home-highlight {
+        font-size: 18px;
+    }
+    .mooflow-icon {
+        width: 48px;
+        height: 48px;
+    }
+    .mooflow-title {
+        font-size: 16px;
+    }
+    .home-download-btn {
+        font-size: 16px;
+        padding: 10px 24px;
+    }
+    .home-footer {
+        font-size: 14px;
+    }
+    .home-mooflow {
+        padding: 16px 10px 10px 10px;
+    }
+}
+
+.home-title-img {
+    width: 260px;   /* 或你希望的宽度 */
+    height: auto;   /* 保持宽高比 */
+    display: inline-block;
+}
+
+/* ========== App Family下载页专属样式 ========== */
+
+/* 删除下载页专属导航栏样式，保持所有非首页页面导航栏一致 */
+
+.download-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin: 60px 0 40px 0;
+    letter-spacing: 0.02em;
+    color: #222;
+    line-height: 1.2;
+}
+
+.app-family-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto 60px auto;
+    min-height: 480px;
+}
+
+.app-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 16px 32px 16px;
+    min-height: 220px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.app-card.center {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.app-card.empty {
+    background: #ededed;
+    box-shadow: none;
+    border-radius: 24px;
+}
+
+.app-card.coming-soon {
+    background: #f3f3f3;
+    color: #aaa;
+    box-shadow: none;
+}
+
+.app-card:hover {
+    box-shadow: 0 8px 32px rgba(108,77,194,0.15);
+    transform: translateY(-2px);
+}
+
+.app-card:hover .app-icon {
+    transform: scale(1.05);
+}
+
+.app-card:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.app-card:active .app-icon {
+    transform: scale(0.98);
+}
+
+.app-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    background: #f3f3f3;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.app-icon-empty {
+    background: #f3f3f3;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+}
+
+.app-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #222;
+    text-align: center;
+    margin-bottom: 18px;
+    line-height: 1.3;
+}
+
+.app-download-btn {
+    display: block;
+    width: 200px;
+    margin: 8px auto 0 auto;
+    padding: 12px 0;
+    background: #111;
+    color: #fff;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.app-download-btn.black {
+    background: #111;
+    color: #fff;
+}
+
+.app-download-btn:active {
+    background: #333;
+}
+
+.coming-soon-text {
+    color: #888;
+    font-size: 22px;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+.download-footer {
+    background: var(--gradient-bg);
+    color: #fff;
+    padding: 32px 0 16px 0;
+    border-radius: 0 0 24px 24px;
+    margin-top: 0;
+}
+
+.download-footer .footer-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    margin: 0;
+    letter-spacing: 0.08em;
+}
+
+@media (max-width: 900px) {
+    .app-family-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .download-header {
+        max-width: 98vw;
+        margin: 12px auto 16px auto;
+        border-radius: 12px;
+        padding: 0 6px;
+    }
+    .download-title {
+        font-size: 22px;
+        margin: 30px 0 20px 0;
+    }
+    .app-family-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, 1fr);
+        gap: 12px;
+        min-height: 0;
+    }
+    .app-card, .app-card.empty {
+        min-height: 120px;
+        border-radius: 12px;
+        padding: 18px 4px 14px 4px;
+    }
+    .app-icon, .app-icon-empty {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    .app-title {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    .app-download-btn,
+    .app-download-btn.black {
+        width: 90%;
+        font-size: 12px !important;
+        padding: 8px 0 !important;
+        border-radius: 16px !important;
+    }
+    .coming-soon-text {
+        font-size: 14px;
+        margin-top: 6px;
+    }
+    .download-footer {
+        border-radius: 0 0 12px 12px;
+        padding: 18px 0 8px 0;
+    }
+    .download-footer .footer-content p {
+        font-size: 14px;
+    }
+}
+
+/* 让下载页标题在导航栏下方居中显示 */
+.download-title-center {
+    display: block;
+    margin-top: 72px !important; /* 根据导航栏高度调整 */
+    margin-bottom: 40px;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+
+@media (max-width: 600px) {
+    .download-title-center {
+        margin-top: 56px !important;
+        margin-bottom: 20px;
+    }
+}
+
+/* 统一Download Moo...按钮样式 */
+.download-btn,
+.home-download-btn,
+.app-download-btn,
+.app-download-btn.black {
+    background: #111 !important;
+    color: #fff !important;
+    border-radius: 24px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 0 28px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    height: 40px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    transition: all 0.3s ease !important;
+}
+
+.app-download-btn,
+.app-download-btn.black {
+    width: 200px;
+    margin: 8px auto 0 auto;
+    display: block;
+    padding: 10px 0 !important;
+}
+
+/* 统一的悬停效果 */
+.download-btn:hover,
+.home-download-btn:hover,
+.app-download-btn:hover {
+    background: #111 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* 统一的点击效果 */
+.download-btn:active,
+.home-download-btn:active,
+.app-download-btn:active {
+    background: #333 !important;
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 600px) {
+    .app-download-btn,
+    .app-download-btn.black {
+        width: 90%;
+        font-size: 12px !important;
+        padding: 8px 0 !important;
+        border-radius: 16px !important;
+    }
+    .download-btn,
+    .home-download-btn {
+        font-size: 12px !important;
+        padding: 8px 20px !important;
+        border-radius: 16px !important;
+    }
+}
+
+/* 下载页面样式 */
+.download-main {
+    padding-top: 80px; /* 为固定导航栏留出空间 */
+}
+
+.mooflow-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 100px; /* 顶部留白，避免被导航栏遮挡 */
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .mooflow-main {
+        padding-top: 70px; /* 移动端适当减少 */
+    }
+}
+
+@media (max-width: 600px) {
+    .header-content {
+        padding: 0 8px;
+        height: 48px;
+    }
+    .logo img:first-child {
+        height: 36px;
+        width: 36px;
+    }
+    .logo span {
+        font-size: 16px;
+    }
+    nav {
+        gap: 8px;
+        height: 48px;
+    }
+    .download-btn, .login-btn {
+        height: 32px;
+        font-size: 12px;
+        padding: 0 12px;
+        border-radius: 14px;
+    }
+}
+
+#goto-mooflow-from-download {
+    cursor: pointer;
+}
+
+/* 第二页导航栏按钮字体大小 */
+#page-mooflow .download-btn {
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    #page-mooflow .download-btn {
+        font-size: 11px;
+    }
+}
+
+/* MooFlow介绍页样式 */
+.mooflow-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 主展示区样式 */
+.hero-section {
+    padding: 120px 20px 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+}
+
+.hero-section h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.hero-section h2 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 18px;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto 20px;
+}
+
+.hero-image {
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 下载按钮区域样式 */
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 0 0 40px 0;
+    padding: 0 20px;
+}
+
+.download-buttons .app-download-btn {
+    width: auto;
+    min-width: 200px;
+    padding: 12px 24px !important;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .download-buttons .app-download-btn {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* 功能卡片区样式 */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 40px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #F5F5F7;
+    width: 100%;
+    min-height: 450px;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.feature-content {
+    padding: 20px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-content h3 {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.feature-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-content li {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #666;
+    margin-bottom: 8px;
+    padding-left: 0;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+}
+
+.feature-image {
+    flex: 1;
+    position: relative;
+    padding: 0 10px 10px 10px;
+    box-sizing: border-box;
+}
+
+.feature-image::before {
+    content: "";
+    display: block;
+    padding-bottom: 56.25%;
+}
+
+.feature-image img {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 10px);
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.feature-card:hover .feature-image img {
+    transform: scale(1.2);
+}
+
+/* 轮播相关样式 */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    box-sizing: border-box;
+}
+
+.carousel-container::before {
+    content: "";
+    display: block;
+    padding-bottom: 56.25%;
+}
+
+.carousel-slides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    box-sizing: border-box;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 10px);
+    opacity: 0;
+    transform: scale(0.98);
+    transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+    object-fit: contain;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.carousel-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.carousel-prev,
+.carousel-next {
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    font-size: 8px;
+    color: rgba(51, 51, 51, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        max-width: 600px;
+        padding: 20px 0;
+    }
+    
+    .feature-card {
+        min-height: 400px;
+    }
+    
+    .feature-content h3 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-content h3 {
+        font-size: 20px;
+    }
+}
+
+/* 图片预览模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: #bbb;
+}
+
+/* 为图片添加可点击的样式 */
+.feature-image {
+    cursor: pointer;
+}
+
+/* MooFlow页面背景 */
+#page-mooflow {
+    background: linear-gradient(180deg, #1D1624 0%, #432B59 50%, #6B3B8C 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* 调整MooFlow页面的文字颜色 */
+#page-mooflow .hero-section h1,
+#page-mooflow .hero-section h2,
+#page-mooflow .hero-section p {
+    color: #fff;
+}
+
+/* 调整卡片样式以适应深色背景 */
+#page-mooflow .feature-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-mooflow .feature-card .feature-content h3,
+#page-mooflow .feature-card .feature-content li {
+    color: #fff;
+}
+
+/* 调整导航栏样式以适应深色背景 */
+#page-mooflow .header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-mooflow .header.scrolled {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#page-mooflow .logo span {
+    color: #fff;
+}
+
+#page-mooflow .login-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+#page-mooflow .login-btn:hover {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+#page-mooflow .login-btn:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#page-mooflow .footer {
+    padding: 10px 0;
+    text-align: center;
+    background: var(--feature-bg);
+}
+
+#page-mooflow .footer-content p {
+    font-size: 20px;
+    color: var(--light-text);
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+    #page-mooflow .footer-content p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #page-mooflow .footer-content p {
+        font-size: 14px;
+    }
+}
+
+#page-mooflow .download-buttons .app-download-btn {
+    background: #111 !important;
+    color: #fff !important;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#page-mooflow .download-buttons .app-download-btn:hover {
+    background: #111 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+#page-mooflow .download-buttons .app-download-btn:active {
+    background: #333 !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 登录页面样式 */
+.login-main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 20px 60px;
+    background: var(--gradient-bg);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: var(--light-text);
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input {
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.login-submit-btn {
+    height: 48px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-submit-btn:hover {
+    background: #0066cc;
+}
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.login-divider span {
+    padding: 0 16px;
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-btn {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.social-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.social-btn:hover {
+    background: #f5f5f5;
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.signup-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .login-box {
+        padding: 32px 24px;
+    }
+    
+    .login-box h2 {
+        font-size: 24px;
+    }
+    
+    .login-subtitle {
+        font-size: 14px;
+    }
+    
+    .form-group label {
+        font-size: 13px;
+    }
+    
+    .form-group input {
+        height: 44px;
+        font-size: 14px;
+    }
+    
+    .form-options {
+        font-size: 13px;
+    }
+    
+    .login-submit-btn,
+    .social-btn {
+        height: 44px;
+        font-size: 14px;
+    }
+    
+    .login-divider span {
+        font-size: 13px;
+    }
+    
+    .signup-link {
+        font-size: 13px;
+    }
+}
+
+/* 登录页面导航栏样式 */
+#page-login .header-content {
+    justify-content: center;
+}
+
+#page-login .logo {
+    margin: 0 auto;
+}
+
+/* 删除以下样式
+#page-login .logo span {
+    color: #fff;
+}
+
+#page-login .logo img:first-child {
+    filter: brightness(0) invert(1);
+}
+
+#page-login .logo img:last-child {
+    filter: brightness(0) invert(1);
+}
+*/
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 管理员后台样式 */
+.admin-main {
+    padding: 2rem;
+    min-height: calc(100vh - 60px);
+    background-color: #f5f5f5;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.admin-actions {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.admin-btn {
+    padding: 0.5rem 1rem;
+    background-color: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.admin-btn:hover {
+    background-color: #0056b3;
+}
+
+.users-table-container {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.users-table th,
+.users-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.users-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.users-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.delete-user-btn {
+    padding: 0.25rem 0.5rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.delete-user-btn:hover {
+    background-color: #c82333;
+}
+
+.logout-btn {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    text-decoration: underline;
+}
+
+/* 管理员统计卡片样式 */
+.admin-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #007AFF;
+}
+
+/* 导出按钮样式 */
+#export-users {
+    background-color: #28a745;
+}
+
+#export-users:hover {
+    background-color: #218838;
+} 
