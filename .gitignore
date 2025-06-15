@@ -1,0 +1,3 @@
+# 忽略 download 文件夹下的 .dmg 和 .exe 文件，但保留文件夹结构
+/download/*.dmg
+/download/*.exe 

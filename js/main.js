@@ -1,11 +1,14 @@
 // 滚动时改变头部样式
-window.addEventListener('scroll', () => {
-    const header = document.querySelector('.header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.header');
+        if (!header) return;
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
 });
 
 // 平滑滚动
@@ -62,15 +65,6 @@ if (homeDownloadLink) {
     });
 }
 
-// MooFlow页 -> 下载页
-const gotoDownload = document.getElementById('goto-download');
-if (gotoDownload) {
-    gotoDownload.addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage('page-download');
-    });
-}
-
 // MooFlow页logo -> 首页
 const logoToHome = document.getElementById('logo-to-home');
 if (logoToHome) {
@@ -81,12 +75,6 @@ if (logoToHome) {
 const logoToHome2 = document.getElementById('logo-to-home2');
 if (logoToHome2) {
     logoToHome2.addEventListener('click', () => showPage('page-home'));
-}
-
-// 下载页iconWooFlow.png -> MooFlow介绍页
-const gotoMooflowFromDownload = document.getElementById('goto-mooflow-from-download');
-if (gotoMooflowFromDownload) {
-    gotoMooflowFromDownload.addEventListener('click', () => showPage('page-mooflow'));
 }
 
 // 登录页logo -> 首页
@@ -111,7 +99,9 @@ if (gotoRegister) {
 }
 
 // 默认显示首页
-showPage('page-home');
+if (document.getElementById('page-home')) {
+    showPage('page-home');
+}
 
 // 图片预览功能
 document.addEventListener('DOMContentLoaded', function() {
@@ -124,37 +114,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const featureImages = document.querySelectorAll('.feature-image img');
 
     // 为每个图片添加点击事件
-    featureImages.forEach(img => {
-        img.addEventListener('click', function() {
-            modal.style.display = 'block';
-            modalImg.src = this.src;
-            // 禁用滚动
-            document.body.style.overflow = 'hidden';
+    if (featureImages && featureImages.length > 0 && modal && modalImg && closeBtn) {
+        featureImages.forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = 'block';
+                modalImg.src = this.src;
+                // 禁用滚动
+                document.body.style.overflow = 'hidden';
+            });
         });
-    });
 
-    // 点击关闭按钮关闭模态框
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-        // 恢复滚动
-        document.body.style.overflow = 'auto';
-    });
-
-    // 点击模态框背景关闭
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
+        // 点击关闭按钮关闭模态框
+        closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
+            // 恢复滚动
             document.body.style.overflow = 'auto';
-        }
-    });
+        });
 
-    // 按ESC键关闭模态框
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.style.display === 'block') {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
+        // 点击模态框背景关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // 按ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
 });
 
 // 轮播功能
@@ -263,7 +255,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 page.style.display = 'none';
             });
             // 显示登录页面
-            document.getElementById('page-login').style.display = 'block';
+            const pageLogin = document.getElementById('page-login');
+            if (pageLogin) {
+                pageLogin.style.display = 'block';
+            }
         });
     });
 
