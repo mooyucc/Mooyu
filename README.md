@@ -95,5 +95,35 @@ MooYu Website 是一个多项目管理工具及其相关产品的官方网站，
 - MooFlow 应用安装包适用于 macOS
 
 ---
+## Github 推送
+1、查看当前远程仓库地址
+```bash
+git remote -v
+```
+2、切换仓库
+先移除原有的远程仓库，再添加正确的仓库地址：
+```bash
+git remote remove origin
+git remote add origin https://github.com/mooyucc/Mooyu.git
+```
+### 将本地代码推送到 GitHub Mooyu仓库
+1. 打开终端，进入项目目录：
+```bash
+cd "/Users/kevinx/Documents/Website/Mooyu/mooyu-website"
+```
+2. 初始化 Git（如未初始化）：
+```bash
+git init
+```
+3. 添加远程仓库（如未添加）：
+```bash
+git remote add origin https://github.com/mooyucc/Mooyu.git
+```
+4. 推送到 GitHub：
+```bash
+git add .
+git commit -m "YYMMDD代码更新"
+git push origin main
+```
 
 如需详细开发文档或有任何问题，欢迎联系开发者或提交 issue。 
