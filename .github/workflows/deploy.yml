@@ -23,6 +23,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@122.51.133.41 "
             cd /root/Mooyu &&
             git pull origin main &&
-            npm install &&
-            pm2 restart mooyu
+            /usr/local/lighthouse/softwares/nodejs/node/bin/npm install &&
+            /usr/local/lighthouse/softwares/nodejs/node/bin/pm2 restart mooyu
           " 
