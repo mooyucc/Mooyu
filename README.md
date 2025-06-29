@@ -126,4 +126,107 @@ git commit -m "YYMMDD代码更新"
 git push origin main
 ```
 
-如需详细开发文档或有任何问题，欢迎联系开发者或提交 issue。 
+
+---
+
+## 腾讯云服务器部署 Node.js + MongoDB 网站（Docker 版 MongoDB 和安全组设置）全流程
+
+### 1. 通过 SSH 连接服务器
+```bash
+ssh root@122.51.133.41
+```
+输入密码，连接成功。
+
+### 2. 创建项目目录
+```bash
+mkdir -p /root/Mooyu
+```
+
+### 3. 上传项目文件到服务器
+在本地终端（不是 SSH 里）输入：
+```bash
+scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/root/Mooyu
+```
+输入服务器密码，等待上传完成。
+
+### 4. 安装 Node.js（如未安装）
+可用 nvm 或 yum/apt 安装，推荐 nvm 管理多版本。
+
+### 5. 安装 Docker（用于 MongoDB）
+```bash
+yum install -y docker
+systemctl start docker
+systemctl enable docker
+```
+
+### 6. 配置 Docker 国内镜像加速器（推荐）
+内容如下（以腾讯云为例）：
+```bash
+mkdir -p /etc/docker
+```
+```bash
+cat > /etc/docker/daemon.json <<EOF
+{
+  "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
+}
+EOF
+```
+```bash
+systemctl restart docker
+```
+
+### 7. 启动 MongoDB 容器
+```bash
+docker run -d --name mongo -p 27017:27017 -v /data/mongo:/data/db mongo:6.0
+```
+
+### 8. 安装 Node.js 项目依赖
+```bash
+cd /root/Mooyu
+npm install
+```
+
+### 9. 启动 Node.js 服务
+```bash
+npm start
+```
+
+### 10. 配置腾讯云安全组，开放 3000 端口
+1. 登录腾讯云控制台
+2. 进入云服务器实例详情
+3. 点击“防火墙”，
+4. “添加规则”→
+   - 应用类型：自定义
+   - 来源：全部IPv4地址
+   - 协议端口：TCP:3000
+   - 策略：允许
+   - 描述：Node.js 3000端口
+5. 保存，等待生效
+
+### 11. 浏览器访问测试
+在浏览器输入：
+```
+http://你的服务器IP:3000
+```
+即可访问你的 Node.js 网站。
+
+---
+
+如需后续绑定域名、配置 HTTPS、Nginx 反代等，欢迎随时提问！
+
+##服务器文件更新流程，以及重新启动Node.js服务
+1、先停止Node.js服务
+```bash
+ssh root@122.51.133.41
+cd /root/Mooyu
+pm2 stop mooyu
+```
+2、上传替换代码文件
+```bash
+scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/root/Mooyu
+```
+3、重新启动Node.js服务
+```bash
+pm2 restart mooyu
+```
+备注：如果你只是更新静态文件（如图片、前端 html/js/css），通常不需要重启服务，除非你改动了后端代码。

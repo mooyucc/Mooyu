@@ -196,8 +196,12 @@ app.post('/api/login', [
     }
 });
 
+
 // 启动服务器
-app.listen(PORT, () => {
-    console.log(`服务器运行在 http://localhost:${PORT}`);
+const isProduction = process.env.NODE_ENV === 'production';
+const HOST = isProduction ? '0.0.0.0' : 'localhost';
+
+app.listen(PORT, HOST, () => {
+    console.log(`服务器运行在 http://${HOST}:${PORT}`);
     console.log('静态文件目录:', path.join(__dirname));
-}); 
+});
