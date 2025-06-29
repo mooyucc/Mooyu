@@ -21,8 +21,9 @@ jobs:
       - name: Deploy to Server via SSH
         run: |
           ssh -o StrictHostKeyChecking=no root@122.51.133.41 "
+            export PATH=/usr/local/lighthouse/softwares/nodejs/node/bin:$PATH &&
             cd /root/Mooyu &&
             git pull origin main &&
-            /usr/local/lighthouse/softwares/nodejs/node/bin/npm install &&
-            /usr/local/lighthouse/softwares/nodejs/node/bin/pm2 restart mooyu
+            npm install &&
+            pm2 restart mooyu
           " 
