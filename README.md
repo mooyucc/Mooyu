@@ -261,3 +261,76 @@ pm2 restart mooyu
 备注：如果你只是更新静态文件（如图片、前端 html/js/css），通常不需要重启服务，除非你改动了后端代码。
 
 ##已经建立Github自动部署到腾讯云的Workflow，只要更新GitHub仓库即可
+
+---
+
+## 域名配置
+
+### 域名解析设置
+在域名注册商的DNS管理面板中添加A记录：
+```
+记录类型: A
+主机记录: @ (或留空)
+记录值: 122.51.133.41
+TTL: 600
+```
+
+### 快速部署域名访问
+1. 上传部署脚本到服务器：
+```bash
+scp deploy-domain.sh root@122.51.133.41:/root/Mooyu/
+```
+
+2. 在服务器上执行部署脚本：
+```bash
+ssh root@122.51.133.41
+cd /root/Mooyu
+chmod +x deploy-domain.sh
+bash deploy-domain.sh
+```
+
+### 手动配置步骤
+如果自动脚本失败，可以按照以下步骤手动配置：
+
+1. **安装 Nginx**：
+```bash
+yum install -y nginx
+systemctl start nginx
+systemctl enable nginx
+```
+
+2. **创建 Nginx 配置文件**：
+```bash
+nano /etc/nginx/conf.d/mooyu.conf
+```
+参考 `nginx-config.md` 文件中的配置内容。
+
+3. **配置 SSL 证书**：
+```bash
+yum install -y epel-release certbot python3-certbot-nginx
+certbot --nginx -d mooyu.cc -d www.mooyu.cc
+```
+
+4. **配置防火墙**：
+```bash
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --reload
+```
+
+5. **腾讯云安全组设置**：
+在腾讯云控制台的安全组中添加规则：
+- 协议端口：TCP:80 (HTTP)
+- 协议端口：TCP:443 (HTTPS)
+
+### 访问地址
+配置完成后，可以通过以下地址访问：
+- HTTP: http://mooyu.cc
+- HTTPS: https://mooyu.cc
+- HTTPS: https://www.mooyu.cc
+
+### SSL 证书自动续期
+证书会自动续期，如需手动检查：
+```bash
+certbot renew --dry-run
+```
