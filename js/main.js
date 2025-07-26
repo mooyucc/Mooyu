@@ -50,6 +50,12 @@ function showPage(pageId) {
     document.getElementById(pageId).dispatchEvent(event);
 }
 
+// 首页 -> MooPlan页
+const gotoMooplan = document.getElementById('goto-mooplan');
+if (gotoMooplan) {
+    gotoMooplan.addEventListener('click', () => showPage('page-mooplan'));
+}
+
 // 首页 -> MooFlow页
 const gotoMooflow = document.getElementById('goto-mooflow');
 if (gotoMooflow) {
@@ -65,7 +71,7 @@ if (homeDownloadLink) {
     });
 }
 
-// MooFlow页logo -> 首页
+// MooPlan页logo -> 首页
 const logoToHome = document.getElementById('logo-to-home');
 if (logoToHome) {
     logoToHome.addEventListener('click', () => showPage('page-home'));
@@ -568,6 +574,43 @@ document.getElementById('admin-logout')?.addEventListener('click', () => {
 document.getElementById('users-list')?.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-user-btn')) {
         deleteUser(e.target.dataset.id);
+    }
+});
+
+// 赞赏支持弹窗功能
+document.addEventListener('DOMContentLoaded', function() {
+    const supportBtn = document.getElementById('support-btn');
+    const supportModal = document.getElementById('support-modal');
+    const supportModalClose = document.querySelector('#support-modal .modal-close');
+
+    if (supportBtn && supportModal && supportModalClose) {
+        // 点击赞赏支持按钮显示弹窗
+        supportBtn.addEventListener('click', function() {
+            supportModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // 禁用滚动
+        });
+
+        // 点击关闭按钮关闭弹窗
+        supportModalClose.addEventListener('click', function() {
+            supportModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复滚动
+        });
+
+        // 点击弹窗背景关闭弹窗
+        supportModal.addEventListener('click', function(e) {
+            if (e.target === supportModal) {
+                supportModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // 按ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && supportModal.style.display === 'flex') {
+                supportModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
     }
 });
 

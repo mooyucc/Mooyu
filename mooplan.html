@@ -3,72 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MooPlan - MooYu</title>
+    <title>MooPlan - 墨鱼</title>
+    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
     <meta name="theme-color" content="#ffffff">
+    <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- MooPlan介绍页 -->
     <div id="page-mooplan" class="page">
         <header class="header">
             <div class="header-content">
-                <div class="logo clickable" id="logo-to-home2">
-                    <a href="index.html"><img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;"></a>
+                <div class="logo clickable" id="logo-to-home">
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;" alt="MooYu Logo"></a>
                 </div>
                 <nav>
-                    <a href="download.html" class="download-btn">Download Moo...</a>
+                    <a href="download.html" class="download-btn" id="goto-download">Download Moo...</a>
+                    <!-- <a href="#" class="login-btn">登录</a> -->    <!--登录按钮暂时隐藏-->
                 </nav>
             </div>
         </header>
-        <main class="mooflow-main">
+        <main class="mooplan-main">
             <!-- 主展示区 -->
             <section class="hero-section">
                 <h1>MooPlan</h1>
-                <h2>全平台可视化计划编制工具</h2>
+                <h2>多维度项目管理应用</h2>
                 <img src="images/iconMooPlan.png" alt="MooPlan Icon" class="hero-icon">
-                <p>颠覆传统Project软件使用习惯，结合Xmind思维导图方式</p>
-                <p>实线现计划的可视化编制</p>
+                <p>多维度项目管理中枢，智能里程碑管理解决方案</p>
                 <div class="hero-image">
-                    <img src="images/Plan_core-features.png" alt="MooPlan核心功能展示">
+                    <img src="images/Plan_core-features.png" alt="MooPlan主界面">
                 </div>
             </section>
-            <div style="text-align:center;margin:32px 0;">
-                <!--<div style="font-size:1.1em;font-weight:500;margin-bottom:12px;">桌面端程序下载</div>
-                <div class="download-buttons" style="margin-bottom: 16px;">
-                    <a href="download/MooPlan_free-arm64.dmg" class="app-download-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>Download Mac (Apple芯片)</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
-                    <a href="download/MooPlan_free-intel.dmg" class="app-download-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>Download Mac (Intel芯片)</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
-                    <a href="download/MooPlan_free-win.exe" class="app-download-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>Download Windows</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
-                </div>-->
-                <div style="margin-bottom: 32px; margin-top: 32px;">
-                    <a href="https://mooyucc.github.io/MooPlanPages/" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
-                        <span>Web端程序链接</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
-                </div>
-                <div style="margin-top:16px;font-size:1.2em;">更多功能开发中，敬请期待...</div>
+            <!-- 下载按钮区域 -->
+            <div class="download-buttons">
+                <a href="download/MooFlow_free.dmg" class="app-download-btn" id="DownloadWFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Download Mac</span>
+                    <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                </a>
             </div>
+            <!-- 功能卡片区 -->
+            <section class="features-grid">
+                <!-- 核心功能 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>多项目展示和管理平台</h3>
+                        <ul>
+                            <li>可视化项目管理面板</li>
+                            <li>分组卡片式布局，支持拖拽式跨组管理</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/Plan_core-features.png" alt="核心功能展示">
+                    </div>
+                </div>
+                <!-- 沉浸式工作台 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>多维度工作台</h3>
+                        <ul>
+                            <li>动态工具栏集成视图切换/任务创建</li>
+                            <li>四维时间轴（年/季/月/日）无缝衔接</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/Plan_workspace.png" alt="沉浸式工作台展示">
+                    </div>
+                </div>
+                <!-- 视觉设计美学 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>视觉设计美学</h3>
+                        <ul>
+                            <li>遵循macOS设计规范</li>
+                            <li>深色/浅色模式自定义</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image carousel-container">
+                        <div class="carousel-slides">
+                            <img src="images/Plan_design.png" alt="视觉设计展示" class="carousel-slide active">
+                            <img src="images/Plan_design-dark.png" alt="深色模式展示" class="carousel-slide">
+                        </div>
+                        <div class="carousel-controls">
+                            <button class="carousel-prev">&lt;</button>
+                            <button class="carousel-next">&gt;</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 个性化体验 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>个性化体验</h3>
+                        <ul>
+                            <li>自定义项目主题颜色</li>
+                            <li>自定义项目排序规则</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/Plan_personalization.png" alt="个性化体验展示">
+                    </div>
+                </div>
+                <!-- 多项目管理矩阵 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>自定义多项目管理矩阵</h3>
+                        <ul>
+                            <li>项目依赖关系可视化分配</li>
+                            <li>跨项目进度追踪管理</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/Plan_matrix.png" alt="多项目管理矩阵展示">
+                    </div>
+                </div>
+                <!-- 多维度视图系统 -->
+                <div class="feature-card">
+                    <div class="feature-content">
+                        <h3>多维度视图系统</h3>
+                        <ul>
+                            <li>甘特图与看板视图自由切换</li>
+                            <li>日历视图与列表视图智能联动</li>
+                        </ul>
+                    </div>
+                    <div class="feature-image">
+                        <img src="images/Plan_views.png" alt="多维度视图展示">
+                    </div>
+                </div>
+            </section>
         </main>
         <footer class="footer">
             <div class="footer-content">
-                <p>© MooYu</p>
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <img src="images/MooyuB.png" alt="MooYu" style="width:32px;height:32px;opacity:1;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu platforms 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                    </div>
+                </div>
             </div>
         </footer>
+    </div>
+    <!-- 图片预览模态框 -->
+    <div id="image-modal" class="modal" style="display:none;">
+      <span class="modal-close">&times;</span>
+      <img class="modal-content" id="modal-image" src="" alt="预览大图">
     </div>
     <script src="js/main.js"></script>
 </body>

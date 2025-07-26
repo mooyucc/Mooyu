@@ -35,12 +35,12 @@
         <main class="download-main">
             <h2 class="download-title download-title-center">
                 <span>下载所有</span><br>
-                <span>MooYu App Family</span>
+                <span>MooApp Family</span>
             </h2>
             <div class="app-family-grid">
                 <div class="app-card center">
-                    <a href="mooflow.html"><img src="images/iconMooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-download"></a>
-                    <div class="app-title">MooFlow</div>
+                    <a href="mooplan.html"><img src="images/iconMooPlan.png" alt="MooPlan" class="app-icon" id="goto-mooplan-from-download"></a>
+                    <div class="app-title">MooPlan</div>
                     <div class="app-description">
                         <div class="app-description-cn">多项目里程碑管理工具</div>
                         <div class="app-description-en">Multi-project Milestone Management Tool</div>
@@ -63,41 +63,64 @@
                     </a>
                 </div>
                 <div class="app-card center">
-                    <a href="mooplan.html"><img src="images/iconMooPlan.png" alt="MooPlan" class="app-icon" id="goto-mooplan-from-download"></a>
-                    <div class="app-title">MooPlan</div>
+                    <a href="mooflow.html"><img src="images/iconMooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-download"></a>
+                    <div class="app-title">MooFlow</div>
                     <div class="app-description">
                         <div class="app-description-cn">项目计划可视化编制工具</div>
                         <div class="app-description-en">Project Planning Visualization Compilation Tool</div>
                     </div>
-                    <a href="https://mooyucc.github.io/MooPlanPages/" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                    <a href="https://mooyucc.github.io/MooFlowPages/" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
                         <span>Web端程序链接</span>
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>
                     
-                    <!--<a href="download/MooPlan_free-arm64.dmg" class="app-download-btn" id="DownloadMPArm64" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                    <!--<a href="download/MooFlow_free-arm64.dmg" class="app-download-btn" id="DownloadMPArm64" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
                         <span>Mac (Apple芯片)</span>
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>
-                    <a href="download/MooPlan_free-intel.dmg" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                    <a href="download/MooFlow_free-intel.dmg" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
                         <span>Mac (Intel芯片)</span>
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>
-                    <a href="download/MooPlan_free-win.exe" class="app-download-btn" id="DownloadMPWin" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <a href="download/MooFlow_free-win.exe" class="app-download-btn" id="DownloadMPWin" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <span>Windows</span>
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>-->
                 </div>
-            </div>
-            <div style="width:100%;display:flex;justify-content:center;margin-top:24px;">
-                <img src="images/thanks.png" alt="赞赏" style="max-width:220px;width:100%;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div class="app-card center">
+                    <a href="#" style="text-decoration: none; color: inherit;"><img src="images/iconsGood.gif" alt="赞赏" class="app-icon"></a>
+                    <div class="app-title">请支持我们</div>
+                    <div class="app-description">
+                        <div class="app-description-cn">如果我们的工具对您有帮助</div>
+                        <div class="app-description-en">If our tools help you</div>
+                    </div>
+                    <div class="app-download-btn" id="support-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer;">
+                        <span>赞赏支持</span>
+                    </div>
+                </div>
             </div>
         </main>
         <footer class="footer">
             <div class="footer-content">
-                <p>© MooYu</p>
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <img src="images/MooyuB.png" alt="MooYu" style="width:32px;height:32px;opacity:1;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu platforms 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                    </div>
+                </div>
             </div>
         </footer>
     </div>
+    
+    <!-- 赞赏图片弹窗 -->
+    <div id="support-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="position: relative; max-width: 90%; max-height: 90%; text-align: center;">
+            <span class="modal-close" style="position: absolute; top: -40px; right: 0; color: white; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 1001;">&times;</span>
+            <img id="support-modal-image" src="images/thanks.png" alt="赞赏" style="max-width: 100%; max-height: 100%; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        </div>
+    </div>
+    
     <script src="js/main.js"></script>
 </body>
 </html> 

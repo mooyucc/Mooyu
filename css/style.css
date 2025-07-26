@@ -212,27 +212,27 @@ nav {
     }
 }
 
-/* MooFlow部分样式 */
-.mooflow-section {
+/* MooPlan部分样式 */
+.mooplan-section {
     padding: 100px 20px;
     text-align: center;
     background-color: var(--feature-bg);
 }
 
-.mooflow-section h2 {
+.mooplan-section h2 {
     font-size: 100px;
     font-weight: 700;
     margin-bottom: 20px;
     line-height: 1;
 }
 
-.mooflow-section h3 {
+.mooplan-section h3 {
     font-size: 30px;
     font-weight: 400;
     margin-bottom: 20px;
 }
 
-.mooflow-section p {
+.mooplan-section p {
     font-size: 20px;
     max-width: 800px;
     margin: 0 auto 40px;
@@ -299,7 +299,6 @@ footer {
     color: var(--text-color);
     padding: 15px 20px;
     text-align: center;
-    height: 60px;
 }
 
 .footer-content {
@@ -310,7 +309,7 @@ footer {
 .footer-content p {
     font-family: 'Inter', sans-serif;
     font-size: 20px;
-    margin-bottom: 40px;
+    margin: 0;
 }
 
 /* 动画效果 */
@@ -327,7 +326,7 @@ footer {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .mooflow-section h2 {
+    .mooplan-section h2 {
         font-size: 60px;
     }
     
@@ -364,7 +363,6 @@ footer {
 
 /* 首页专属样式 */
 #page-home {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -412,7 +410,7 @@ footer {
     letter-spacing: 0.02em;
 }
 
-.home-mooflow {
+.home-mooplan {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -425,32 +423,32 @@ footer {
     transition: all 0.3s ease;
 }
 
-.home-mooflow:hover {
+.home-mooplan:hover {
     box-shadow: 0 4px 16px rgba(108,77,194,0.12);
     transform: translateY(-2px);
 }
 
-.home-mooflow:hover .mooflow-icon {
+.home-mooplan:hover .mooplan-icon {
     transform: scale(1.05);
 }
 
-.home-mooflow:active {
+.home-mooplan:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-.home-mooflow:active .mooflow-icon {
+.home-mooplan:active .mooplan-icon {
     transform: scale(0.98);
 }
 
-.mooflow-icon {
+.mooplan-icon {
     width: 72px;
     height: 72px;
     margin-bottom: 8px;
     transition: all 0.3s ease;
 }
 
-.mooflow-title {
+.mooplan-title {
     font-size: 22px;
     color: #222;
     text-align: center;
@@ -523,11 +521,11 @@ footer {
     .home-highlight {
         font-size: 18px;
     }
-    .mooflow-icon {
+    .mooplan-icon {
         width: 48px;
         height: 48px;
     }
-    .mooflow-title {
+    .mooplan-title {
         font-size: 16px;
     }
     .home-download-btn {
@@ -537,7 +535,7 @@ footer {
     .home-footer {
         font-size: 14px;
     }
-    .home-mooflow {
+    .home-mooplan {
         padding: 16px 10px 10px 10px;
     }
 }
@@ -566,8 +564,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
-    max-width: 1100px;
-    margin: 0 auto 60px auto;
+    margin-bottom: 60px;
 }
 
 .app-card {
@@ -731,6 +728,11 @@ footer {
 }
 
 @media (max-width: 600px) {
+    .download-main {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
     .download-header {
         max-width: 98vw;
         margin: 12px auto 16px auto;
@@ -871,9 +873,13 @@ footer {
 /* 下载页面样式 */
 .download-main {
     padding-top: 80px; /* 为固定导航栏留出空间 */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.mooflow-main {
+.mooplan-main {
     max-width: 800px;
     margin: 0 auto;
     padding-top: 100px; /* 顶部留白，避免被导航栏遮挡 */
@@ -881,7 +887,7 @@ footer {
 }
 
 @media (max-width: 600px) {
-    .mooflow-main {
+    .mooplan-main {
         padding-top: 70px; /* 移动端适当减少 */
     }
 }
@@ -910,19 +916,26 @@ footer {
     }
 }
 
-#goto-mooflow-from-download {
+#goto-mooplan-from-download {
     cursor: pointer;
 }
 
 /* 第二页导航栏按钮字体大小 */
-#page-mooflow .download-btn {
+#page-mooplan .download-btn {
     font-size: 12px;
 }
 
 @media (max-width: 600px) {
-    #page-mooflow .download-btn {
+    #page-mooplan .download-btn {
         font-size: 11px;
     }
+}
+
+/* MooPlan介绍页样式 */
+.mooplan-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* MooFlow介绍页样式 */
@@ -1239,9 +1252,236 @@ footer {
     cursor: pointer;
 }
 
+/* MooPlan页面背景 */
+#page-mooplan {
+    background: linear-gradient(180deg, #0F061F 0%, #1A0F3A 50%, #2D1B69 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* 调整MooPlan页面的文字颜色 */
+#page-mooplan .hero-section h1,
+#page-mooplan .hero-section h2,
+#page-mooplan .hero-section p {
+    color: #fff;
+}
+
+/* 调整卡片样式以适应深色背景 */
+#page-mooplan .feature-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-mooplan .feature-card .feature-content h3,
+#page-mooplan .feature-card .feature-content li {
+    color: #fff;
+}
+
+/* 调整导航栏样式以适应深色背景 */
+#page-mooplan .header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-mooplan .header.scrolled {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#page-mooplan .logo span {
+    color: #fff;
+}
+
+#page-mooplan .login-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+#page-mooplan .login-btn:hover {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+#page-mooplan .login-btn:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#page-mooplan .footer {
+    padding: 6px 0;
+    text-align: center;
+    background: var(--header-bg);
+    backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#page-mooplan .footer-content p {
+    font-size: 16px;
+    color: white;
+    line-height: 1.2;
+    margin: 0;
+}
+
+#page-mooplan .footer-content span {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#page-mooplan .footer-content a {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none;
+}
+
+#page-mooplan .footer-content a:hover {
+    color: rgba(255, 255, 255, 1) !important;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    #page-mooplan .footer-content p {
+        font-size: 14px;
+        color: white;
+    }
+    
+    #page-mooplan .footer-content span {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #page-mooplan .footer-content p {
+        font-size: 12px;
+        color: white;
+    }
+    
+    #page-mooplan .footer-content span {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+}
+
+#page-mooplan .download-buttons .app-download-btn {
+    background: #111 !important;
+    color: #fff !important;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#page-mooplan .download-buttons .app-download-btn:hover {
+    background: #111 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+#page-mooplan .download-buttons .app-download-btn:active {
+    background: #333 !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* MooData页面背景 */
+#page-moodata {
+    background: linear-gradient(180deg, #0A1F3A 0%, #1E3A5F 50%, #2E5A8C 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* 调整MooData页面的文字颜色 */
+#page-moodata .hero-section h1,
+#page-moodata .hero-section h2,
+#page-moodata .hero-section p {
+    color: #fff;
+}
+
+/* 调整卡片样式以适应深色背景 */
+#page-moodata .feature-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-moodata .feature-card .feature-content h3,
+#page-moodata .feature-card .feature-content li {
+    color: #fff;
+}
+
+/* 调整导航栏样式以适应深色背景 */
+#page-moodata .header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#page-moodata .header.scrolled {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#page-moodata .logo span {
+    color: #fff;
+}
+
+#page-moodata .login-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+#page-moodata .login-btn:hover {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+#page-moodata .login-btn:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#page-moodata .footer {
+    padding: 6px 0;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#page-moodata .footer-content p {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.2;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    #page-moodata .footer-content p {
+        font-size: 14px;
+        color: #333;
+    }
+}
+
+@media (max-width: 480px) {
+    #page-moodata .footer-content p {
+        font-size: 12px;
+        color: #333;
+    }
+}
+
 /* MooFlow页面背景 */
 #page-mooflow {
-    background: linear-gradient(180deg, #1D1624 0%, #432B59 50%, #6B3B8C 100%);
+    background: linear-gradient(180deg, #0A2E1F 0%, #0F4C3A 50%, #1A5F47 100%);
     min-height: 100vh;
     color: #fff;
 }
@@ -1302,27 +1542,52 @@ footer {
 }
 
 #page-mooflow .footer {
-    padding: 10px 0;
+    padding: 6px 0;
     text-align: center;
-    background: var(--feature-bg);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 #page-mooflow .footer-content p {
-    font-size: 20px;
-    color: var(--light-text);
+    font-size: 16px;
+    color: #333;
     line-height: 1.2;
+    margin: 0;
 }
 
 @media (max-width: 768px) {
     #page-mooflow .footer-content p {
-        font-size: 16px;
+        font-size: 14px;
+        color: #333;
     }
 }
 
 @media (max-width: 480px) {
     #page-mooflow .footer-content p {
-        font-size: 14px;
+        font-size: 12px;
+        color: #333;
     }
+}
+
+#page-moodata .download-buttons .app-download-btn {
+    background: #111 !important;
+    color: #fff !important;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#page-moodata .download-buttons .app-download-btn:hover {
+    background: #111 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+#page-moodata .download-buttons .app-download-btn:active {
+    background: #333 !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #page-mooflow .download-buttons .app-download-btn {
@@ -1763,4 +2028,463 @@ footer {
     line-height: 1.25;
     letter-spacing: 0.06em;
     margin-bottom: 0;
+} 
+
+/* MooFlow页面新增样式 */
+.hero-tags {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.hero-cta {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.primary-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.primary-cta-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.value-section {
+    padding: 80px 20px;
+    background: transparent;
+}
+
+.value-section h2 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.pain-points {
+    text-align: center;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 48px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.value-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.value-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    color: white;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon svg {
+    width: 48px;
+    height: 48px;
+    stroke: currentColor;
+    stroke-width: 1.0;
+    fill: none;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.value-card:hover .card-icon svg {
+    opacity: 1;
+}
+
+.value-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.value-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.value-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+}
+
+.advantage-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.advantage-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.fusion-section {
+    padding: 80px 20px;
+    background: transparent;
+    text-align: center;
+}
+
+.fusion-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: white;
+}
+
+.fusion-section p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 800px;
+    margin: 0 auto 40px;
+}
+
+.fusion-demo {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.fusion-demo img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.platform-section {
+    padding: 80px 20px;
+    background: transparent;
+    text-align: center;
+}
+
+.platform-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: white;
+}
+
+.platform-section p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 800px;
+    margin: 0 auto 40px;
+}
+
+.platform-icons {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+.platform-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.platform-item:hover {
+    transform: translateY(-2px);
+}
+
+.platform-icon {
+    font-size: 48px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    color: white;
+    filter: brightness(0) invert(1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.platform-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: currentColor;
+    stroke-width: 1.0;
+    fill: none;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.platform-icon:hover svg {
+    opacity: 1;
+}
+
+.platform-name {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.platform-item:hover .platform-name {
+    color: rgba(255, 255, 255, 1);
+}
+
+.testimonials-section {
+    padding: 80px 20px;
+    background: transparent;
+    text-align: center;
+}
+
+.testimonials-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 48px;
+    color: white;
+}
+
+.testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.testimonial {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 32px;
+    border-radius: 16px;
+    border-left: 4px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.testimonial:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.testimonial p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: white;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+.testimonial-author {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.final-cta-section {
+    padding: 80px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.final-cta-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.final-cta-section p {
+    font-size: 18px;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.final-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.secondary-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 16px 32px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.secondary-cta-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .hero-tags {
+        gap: 8px;
+    }
+    
+    .tag {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    .value-cards {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .value-card {
+        padding: 24px;
+    }
+    
+    .testimonials {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .final-cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .platform-icons {
+        gap: 24px;
+    }
+    
+    .platform-icon {
+        font-size: 36px;
+    }
+    
+    .platform-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .platform-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .value-section h2,
+    .fusion-section h2,
+    .platform-section h2,
+    .testimonials-section h2,
+    .final-cta-section h2 {
+        font-size: 24px;
+    }
+    
+    .pain-points,
+    .fusion-section p,
+    .platform-section p,
+    .final-cta-section p {
+        font-size: 16px;
+    }
+    
+    .value-card h3 {
+        font-size: 18px;
+    }
+    
+    .value-card h4 {
+        font-size: 14px;
+    }
+    
+    .value-card p {
+        font-size: 14px;
+    }
+    
+    .testimonial p {
+        font-size: 16px;
+    }
 } 
