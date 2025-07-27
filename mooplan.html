@@ -3,138 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MooPlan - 墨鱼</title>
-    <!-- Favicon -->
+    <title>MooPlan：多项目里程碑管理，专为Mac而生 | MooYu</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
     <meta name="theme-color" content="#ffffff">
-    <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- MooPlan介绍页 -->
     <div id="page-mooplan" class="page">
         <header class="header">
             <div class="header-content">
                 <div class="logo clickable" id="logo-to-home">
-                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;" alt="MooYu Logo"></a>
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;"></a>
                 </div>
                 <nav>
-                    <a href="download.html" class="download-btn" id="goto-download">Download Moo...</a>
-                    <!-- <a href="#" class="login-btn">登录</a> -->    <!--登录按钮暂时隐藏-->
+                    <a href="download.html" class="download-btn">MooApp Family</a>
                 </nav>
             </div>
         </header>
         <main class="mooplan-main">
-            <!-- 主展示区 -->
+            <!-- Hero Section -->
             <section class="hero-section">
-                <h1>MooPlan</h1>
-                <h2>多维度项目管理应用</h2>
+                <h1>MooPlan：多项目里程碑管理，专为Mac而生</h1>
+                <h2>在Mac上优雅掌控多项目进度，关键节点一目了然</h2>
+                <div class="hero-tags">
+                    <span class="tag">多项目管理中枢</span>
+                    <span class="tag">里程碑驱动</span>
+                    <span class="tag">中英双语环境</span>
+                    <span class="tag">色彩标签管理</span>
+                </div>
                 <img src="images/iconMooPlan.png" alt="MooPlan Icon" class="hero-icon">
-                <p>多维度项目管理中枢，智能里程碑管理解决方案</p>
                 <div class="hero-image">
                     <img src="images/Plan_core-features.png" alt="MooPlan主界面">
                 </div>
+                <div class="hero-cta">
+                    <a href="download/MooPlan_free.dmg" class="primary-cta-btn">
+                        <span>免费下载体验</span>
+                        <img src="images/free.png" alt="Free Version" style="height: 20px;">
+                    </a>
+                </div>
             </section>
-            <!-- 下载按钮区域 -->
-            <div class="download-buttons">
-                <a href="download/MooFlow_free.dmg" class="app-download-btn" id="DownloadWFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>Download Mac</span>
-                    <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                </a>
-            </div>
-            <!-- 功能卡片区 -->
-            <section class="features-grid">
-                <!-- 核心功能 -->
-                <div class="feature-card">
-                    <div class="feature-content">
-                        <h3>多项目展示和管理平台</h3>
-                        <ul>
-                            <li>可视化项目管理面板</li>
-                            <li>分组卡片式布局，支持拖拽式跨组管理</li>
-                        </ul>
-                    </div>
-                    <div class="feature-image">
-                        <img src="images/Plan_core-features.png" alt="核心功能展示">
-                    </div>
-                </div>
-                <!-- 沉浸式工作台 -->
-                <div class="feature-card">
-                    <div class="feature-content">
-                        <h3>多维度工作台</h3>
-                        <ul>
-                            <li>动态工具栏集成视图切换/任务创建</li>
-                            <li>四维时间轴（年/季/月/日）无缝衔接</li>
-                        </ul>
-                    </div>
-                    <div class="feature-image">
-                        <img src="images/Plan_workspace.png" alt="沉浸式工作台展示">
-                    </div>
-                </div>
-                <!-- 视觉设计美学 -->
-                <div class="feature-card">
-                    <div class="feature-content">
-                        <h3>视觉设计美学</h3>
-                        <ul>
-                            <li>遵循macOS设计规范</li>
-                            <li>深色/浅色模式自定义</li>
-                        </ul>
-                    </div>
-                    <div class="feature-image carousel-container">
-                        <div class="carousel-slides">
-                            <img src="images/Plan_design.png" alt="视觉设计展示" class="carousel-slide active">
-                            <img src="images/Plan_design-dark.png" alt="深色模式展示" class="carousel-slide">
+
+            <!-- 核心价值/痛点解决 -->
+            <section class="value-section">
+                <h2>告别项目混乱，让多项目管理变得优雅高效</h2>
+                <p class="pain-points">还在为多项目进度混乱而烦恼？里程碑分散在不同工具中？项目间关联不清晰？切换视图太麻烦？MooPlan 一站式解决。</p>
+                
+                <div class="value-cards">
+                    <div class="value-card">
+                        <div class="card-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="9" x2="15" y2="9"/>
+                                <line x1="9" y1="12" x2="15" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
                         </div>
-                        <div class="carousel-controls">
-                            <button class="carousel-prev">&lt;</button>
-                            <button class="carousel-next">&gt;</button>
+                        <h3>多项目管理中枢</h3>
+                        <h4>卡片式分组，视觉化掌控全局</h4>
+                        <p>像整理Finder文件般拖拽项目，<strong>色彩标记系统</strong>让多任务并行一目了然。<strong>里程碑雷达</strong>整合展示跨项目关键节点。</p>
+                        <div class="advantage-tags">
+                            <span class="advantage-tag">分组管理</span>
+                            <span class="advantage-tag">色彩标记</span>
+                            <span class="advantage-tag">拖拽调整</span>
                         </div>
                     </div>
-                </div>
-                <!-- 个性化体验 -->
-                <div class="feature-card">
-                    <div class="feature-content">
-                        <h3>个性化体验</h3>
-                        <ul>
-                            <li>自定义项目主题颜色</li>
-                            <li>自定义项目排序规则</li>
-                        </ul>
-                    </div>
-                    <div class="feature-image">
-                        <img src="images/Plan_personalization.png" alt="个性化体验展示">
-                    </div>
-                </div>
-                <!-- 多项目管理矩阵 -->
-                <div class="feature-card">
-                    <div class="feature-content">
-                        <h3>自定义多项目管理矩阵</h3>
-                        <ul>
-                            <li>项目依赖关系可视化分配</li>
-                            <li>跨项目进度追踪管理</li>
-                        </ul>
-                    </div>
-                    <div class="feature-image">
-                        <img src="images/Plan_matrix.png" alt="多项目管理矩阵展示">
-                    </div>
-                </div>
-                <!-- 多维度视图系统 -->
-                <div class="feature-card">
-                    <div class="feature-content">
+                    
+                    <div class="value-card">
+                        <div class="card-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21,15 16,10 5,21"/>
+                            </svg>
+                        </div>
                         <h3>多维度视图系统</h3>
-                        <ul>
-                            <li>甘特图与看板视图自由切换</li>
-                            <li>日历视图与列表视图智能联动</li>
-                        </ul>
+                        <h4>甘特图、看板、日历自由切换</h4>
+                        <p>多种视图模式<strong>智能联动</strong>，从甘特图到看板，从日历到列表，<strong>进度聚焦</strong>，切换自如，掌控全局轻而易举。</p>
+                        <div class="advantage-tags">
+                            <span class="advantage-tag">视图联动</span>
+                            <span class="advantage-tag">进度聚焦</span>
+                            <span class="advantage-tag">切换自如</span>
+                        </div>
                     </div>
-                    <div class="feature-image">
-                        <img src="images/Plan_views.png" alt="多维度视图展示">
+                    
+                    <div class="value-card">
+                        <div class="card-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <h3>个性化体验</h3>
+                        <h4>定制专属工作流</h4>
+                        <p>自定义<strong>主题色彩</strong>、项目排序规则，<strong>智能聚焦</strong>时段内里程碑，打造完全属于你的项目管理方式。</p>
+                        <div class="advantage-tags">
+                            <span class="advantage-tag">主题定制</span>
+                            <span class="advantage-tag">智能排序</span>
+                            <span class="advantage-tag">专属工作流</span>
+                        </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- 无缝融合的力量 -->
+            <section class="fusion-section">
+                <h2>分组管理 + 多视图 + 个性化 = 三维一体项目管理平台</h2>
+                <p>在 MooPlan，三者并非割裂功能，而是<strong>自然融合</strong>。在分组中管理的项目，可在多种视图间自由切换；个性化设置实时影响所有视图的展示效果。<strong>一处设置，全局生效</strong>，真正实现从管理到执行的完美闭环。</p>
+                <div class="fusion-demo">
+                    <img src="images/Plan_workspace.png" alt="MooPlan融合功能演示">
+                </div>
+            </section>
+
+            <!-- 原生Mac体验 -->
+            <section class="platform-section">
+                <h2>专为Mac而生，完美融入macOS生态</h2>
+                <p>MooPlan 是专为 <strong>macOS</strong> 设计的原生应用。遵循<strong>Human Interface Guidelines</strong>，深浅色模式自动切换，<strong>Finder式拖拽</strong>逻辑，交互自然流畅。与系统通知、Spotlight搜索完美集成，让项目管理成为macOS体验的自然延伸。</p>
+                <div class="platform-icons">
+                    <div class="platform-item">
+                        <span class="platform-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+                            </svg>
+                        </span>
+                        <span class="platform-name">原生体验</span>
+                    </div>
+                    <div class="platform-item">
+                        <span class="platform-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"/>
+                                <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M6.34 6.34L4.93 4.93m12.73 12.73l1.41-1.41"/>
+                            </svg>
+                        </span>
+                        <span class="platform-name">深浅切换</span>
+                    </div>
+                    <div class="platform-item">
+                        <span class="platform-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>
+                                <path d="M3 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"/>
+                                <path d="M12 3c0 1-1 2-2 2s-2-1-2-2 1-2 2-2 2 1 2 2z"/>
+                                <path d="M12 21c0-1 1-2 2-2s2 1 2 2-1 2-2 2-2-1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="platform-name">系统集成</span>
+                    </div>
+                    <div class="platform-item">
+                        <span class="platform-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                        </span>
+                        <span class="platform-name">通知中心</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 客户证言/案例 -->
+            <section class="testimonials-section">
+                <h2>听听他们怎么说</h2>
+                <div class="testimonials">
+                    <div class="testimonial">
+                        <p>"MooPlan 的色彩标签让多项目管理变得一目了然！"</p>
+                        <span class="testimonial-author">— 某产品经理，XX公司</span>
+                    </div>
+                    <div class="testimonial">
+                        <p>"终于能在Mac上优雅地管理多个项目了，拖拽操作太自然了！"</p>
+                        <span class="testimonial-author">— 某项目经理，XX团队</span>
+                    </div>
+                    <div class="testimonial">
+                        <p>"多视图切换太方便了，从甘特图到看板无缝切换。"</p>
+                        <span class="testimonial-author">— 某运营负责人，XX机构</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 最终行动号召 -->
+            <section class="final-cta-section">
+                <h2>准备好在Mac上重新定义多项目管理了吗？</h2>
+                <p>立即免费下载 MooPlan，体验原生级多项目里程碑管理。</p>
+                <div class="final-cta-buttons">
+                    <a href="download/MooPlan_free.dmg" class="primary-cta-btn">
+                        <span>免费下载体验</span>
+                        <img src="images/free.png" alt="Free Version" style="height: 20px;">
+                    </a>
+                    <a href="#" class="secondary-cta-btn">观看演示视频</a>
                 </div>
             </section>
         </main>

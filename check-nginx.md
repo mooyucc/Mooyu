@@ -1,72 +1,156 @@
-# 检查当前 Nginx 配置
+# Nginx 配置检查指南
 
-## 1. 查看 Nginx 状态
+## 常见问题及解决方案
+
+### 1. 端口被占用
+```bash
+# 检查端口占用
+netstat -tlnp | grep :80
+netstat -tlnp | grep :443
+
+# 释放端口
+sudo fuser -k 80/tcp
+sudo fuser -k 443/tcp
+```
+
+### 2. 配置文件语法错误
+```bash
+# 测试配置文件语法
+nginx -t
+
+# 查看详细配置
+nginx -T
+```
+
+### 3. 权限问题
+```bash
+# 检查 Nginx 用户
+id nginx
+
+# 设置正确的权限
+sudo chown -R nginx:nginx /var/log/nginx
+sudo chown -R nginx:nginx /var/cache/nginx
+```
+
+### 4. SELinux 问题
+```bash
+# 检查 SELinux 状态
+sestatus
+
+# 临时禁用 SELinux（仅用于测试）
+sudo setenforce 0
+
+# 永久禁用 SELinux
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+```
+
+### 5. 防火墙问题
+```bash
+# 检查防火墙状态
+firewall-cmd --state
+
+# 开放端口
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --reload
+```
+
+## 诊断步骤
+
+1. **上传诊断脚本到服务器**：
+```bash
+scp diagnose-nginx.sh root@122.51.133.41:/root/Mooyu/
+```
+
+2. **在服务器上运行诊断**：
 ```bash
 ssh root@122.51.133.41
+cd /root/Mooyu
+chmod +x diagnose-nginx.sh
+bash diagnose-nginx.sh
+```
+
+3. **如果诊断发现问题，运行修复脚本**：
+```bash
+chmod +x fix-nginx.sh
+bash fix-nginx.sh
+```
+
+## 手动修复步骤
+
+### 步骤 1：停止所有 Nginx 进程
+```bash
+systemctl stop nginx
+pkill nginx
+```
+
+### 步骤 2：检查配置文件
+```bash
+nginx -t
+```
+
+### 步骤 3：检查端口占用
+```bash
+netstat -tlnp | grep :80
+netstat -tlnp | grep :443
+```
+
+### 步骤 4：检查日志
+```bash
+tail -20 /var/log/nginx/error.log
+journalctl -xeu nginx.service --no-pager | tail -20
+```
+
+### 步骤 5：重新启动
+```bash
+systemctl start nginx
 systemctl status nginx
 ```
 
-## 2. 查看默认配置文件
+## 常见错误及解决方案
+
+### 错误 1：bind() to 0.0.0.0:80 failed (98: Address already in use)
+**解决方案**：
 ```bash
-cat /etc/nginx/nginx.conf
-ls -la /etc/nginx/conf.d/
-ls -la /etc/nginx/sites-enabled/  # 如果存在
+# 查找占用端口的进程
+sudo lsof -i :80
+# 杀死进程
+sudo kill -9 <PID>
 ```
 
-## 3. 查看默认站点配置
+### 错误 2：nginx: [emerg] open() "/var/log/nginx/error.log" failed (13: Permission denied)
+**解决方案**：
 ```bash
-cat /etc/nginx/conf.d/default.conf
-# 或者
-cat /etc/nginx/sites-available/default
+# 创建日志目录并设置权限
+sudo mkdir -p /var/log/nginx
+sudo chown nginx:nginx /var/log/nginx
+sudo chmod 755 /var/log/nginx
 ```
 
-## 4. 停止 Nginx 默认配置
-```bash
-# 备份默认配置
-cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.backup
+### 错误 3：nginx: [emerg] "server" directive is not allowed here
+**解决方案**：
+检查配置文件语法，确保 server 块在 http 块内。
 
-# 删除或重命名默认配置
-mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled
-```
-
-## 5. 创建 MooYu 专用配置
-```bash
-nano /etc/nginx/conf.d/mooyu.conf
-```
-
-配置内容：
+### 错误 4：nginx: [emerg] unknown directive "proxy_pass"
+**解决方案**：
+确保在 http 块中包含了必要的模块：
 ```nginx
-server {
-    listen 80;
-    server_name 122.51.133.41 mooyu.cc www.mooyu.cc;
-    
-    # 反向代理到 Node.js 应用
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-    
-    # 静态文件缓存
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-        proxy_pass http://127.0.0.1:3000;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
+http {
+    include /etc/nginx/mime.types;
+    include /etc/nginx/conf.d/*.conf;
 }
 ```
 
-## 6. 测试并重启 Nginx
-```bash
-nginx -t
-systemctl restart nginx
-```
+## 测试访问
 
-## 7. 验证配置
-访问 http://122.51.133.41 应该现在显示 MooYu 网站了。 
+修复完成后，测试访问：
+```bash
+# 本地测试
+curl http://localhost
+
+# 检查服务状态
+systemctl status nginx
+
+# 检查端口监听
+netstat -tlnp | grep nginx
+``` 

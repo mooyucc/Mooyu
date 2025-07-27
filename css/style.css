@@ -2111,88 +2111,105 @@ footer {
 
 .value-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
+@media (max-width: 1200px) {
+    .value-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .value-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
 .value-card {
     background: rgba(255, 255, 255, 0.1);
-    padding: 32px;
+    padding: 32px 16px 28px 16px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 490px;
 }
 
-.value-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.card-icon {
-    font-size: 32px;
-    margin-bottom: 16px;
-    color: white;
-    opacity: 0.9;
+.card-icon.feature-image {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 16px;
+    margin-top: 8px;
 }
 
-.card-icon svg {
-    width: 48px;
-    height: 48px;
-    stroke: currentColor;
-    stroke-width: 1.0;
-    fill: none;
-    opacity: 0.9;
-    transition: opacity 0.3s ease;
-}
-
-.value-card:hover .card-icon svg {
-    opacity: 1;
+.card-icon.feature-image img {
+    height: 120px;
+    width: auto;
+    max-width: 90%;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: #fff;
 }
 
 .value-card h3 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: white;
+    color: #fff;
+    text-align: center;
+    margin-top: 16px;
 }
 
 .value-card h4 {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 16px;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255,255,255,0.92);
+    text-align: center;
+    margin-top: 0;
 }
 
 .value-card p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 24px;
+    text-align: center;
+    margin-top: 0;
 }
 
 .advantage-tags {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: auto;
+    margin-bottom: 0;
 }
 
 .advantage-tag {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 14px;
+    font-size: 14px;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255,255,255,0.28);
+    margin-bottom: 0;
 }
 
 .fusion-section {
@@ -2486,5 +2503,155 @@ footer {
     
     .testimonial p {
         font-size: 16px;
+    }
+} 
+
+/* MooPlan页面新增样式 */
+.feature-tags {
+    text-align: center;
+    margin: 40px 0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.time-views {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.view-item {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    border-left: 4px solid #007AFF;
+}
+
+.view-item strong {
+    color: #007AFF;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.view-item ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.view-item li {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.cta-section {
+    text-align: center;
+    margin: 60px 0;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cta-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.cta-section p {
+    font-size: 18px;
+    color: #6c757d;
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+.feature-content h4 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #007AFF;
+    margin: 8px 0 16px 0;
+    font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .time-views {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .feature-tags {
+        gap: 12px;
+    }
+    
+    .tag {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+    
+    .cta-section h2 {
+        font-size: 24px;
+    }
+    
+    .cta-section p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-tags {
+        gap: 8px;
+    }
+    
+    .tag {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+    
+    .view-item {
+        padding: 12px;
+    }
+    
+    .view-item strong {
+        font-size: 14px;
+    }
+    
+    .view-item li {
+        font-size: 13px;
+    }
+    
+    .cta-section {
+        padding: 30px 16px;
+        margin: 40px 0;
+    }
+    
+    .cta-section h2 {
+        font-size: 20px;
+    }
+    
+    .cta-section p {
+        font-size: 14px;
     }
 } 

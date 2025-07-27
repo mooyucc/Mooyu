@@ -76,16 +76,9 @@ MooYu Website 是一个多项目管理工具及其相关产品的官方网站，
 │   └── ...                   # 其他产品相关图片
 ├── /download                 # 应用安装包目录
 ├── /node_modules             # 依赖库（自动生成）
-├── /logs                     # 应用日志目录
 ├── /.github                  # GitHub 配置目录
 │   └── /workflows
 │       └── deploy.yml        # GitHub Actions 自动部署配置
-├── ecosystem.config.js       # PM2 配置文件
-├── deploy-domain.sh          # 域名部署脚本
-├── diagnose-nginx.sh         # Nginx 诊断脚本
-├── fix-nginx.sh             # Nginx 修复脚本
-├── nginx-config.md          # Nginx 配置文档
-├── ssl-setup.md             # SSL 证书配置文档
 └── .git/                     # Git 版本管理目录
 ```
 
@@ -178,13 +171,54 @@ ssh root@122.51.133.41
 mkdir -p /root/Mooyu
 ```
 
-### 3. 上传更新项目文件到服务器
+### 3. 上传项目文件到服务器
 在本地终端（不是 SSH 里）输入：
 ```bash
 scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/root/Mooyu
 ```
 输入服务器密码，等待上传完成。
 
+### 4. 安装 Node.js（如未安装）
+可用 nvm 或 yum/apt 安装，推荐 nvm 管理多版本。
+
+### 5. 安装 Docker（用于 MongoDB）
+```bash
+yum install -y docker
+systemctl start docker
+systemctl enable docker
+```
+
+### 6. 配置 Docker 国内镜像加速器（推荐）
+内容如下（以腾讯云为例）：
+```bash
+mkdir -p /etc/docker
+```
+```bash
+cat > /etc/docker/daemon.json <<EOF
+{
+  "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
+}
+EOF
+```
+```bash
+systemctl restart docker
+```
+
+### 7. 启动 MongoDB 容器
+```bash
+docker run -d --name mongo -p 27017:27017 -v /data/mongo:/data/db mongo:6.0
+```
+
+### 8. 安装 Node.js 项目依赖
+```bash
+cd /root/Mooyu
+npm install
+```
+
+### 9. 启动 Node.js 服务
+```bash
+npm start
+```
 
 ### 10. 配置腾讯云安全组，开放 3000 端口
 1. 登录腾讯云控制台
@@ -205,6 +239,41 @@ http://你的服务器IP:3000
 ```
 即可访问你的 Node.js 网站。
 
+---
+
+如需后续绑定域名、配置 HTTPS、Nginx 反代等，欢迎随时提问！
+
+##腾讯云服务器文件更新流程，以及重新启动Node.js服务
+1、先停止Node.js服务
+```bash
+ssh root@122.51.133.41
+cd /root/Mooyu
+pm2 stop mooyu
+```
+2、上传替换代码文件
+```bash
+scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/root/Mooyu
+```
+3、重新启动Node.js服务
+```bash
+pm2 restart mooyu
+```
+备注：如果你只是更新静态文件（如图片、前端 html/js/css），通常不需要重启服务，除非你改动了后端代码。
+
+##已经建立Github自动部署到腾讯云的Workflow，只要更新GitHub仓库即可
+
+---
+
+## 域名配置
+
+### 域名解析设置
+在域名注册商的DNS管理面板中添加A记录：
+```
+记录类型: A
+主机记录: @ (或留空)
+记录值: 122.51.133.41
+TTL: 600
+```
 
 ### 快速部署域名访问
 1. 上传部署脚本到服务器：
@@ -218,28 +287,6 @@ ssh root@122.51.133.41
 cd /root/Mooyu
 chmod +x deploy-domain.sh
 bash deploy-domain.sh
-```
-
-### 使用 PM2 管理 Node.js 服务
-```bash
-# 安装 PM2
-npm install -g pm2
-
-# 启动服务
-pm2 start ecosystem.config.js --env production
-
-# 查看状态
-pm2 status
-
-# 重启服务
-pm2 restart mooyu
-
-# 查看日志
-pm2 logs mooyu
-
-# 设置开机自启
-pm2 startup
-pm2 save
 ```
 
 ### 手动配置步骤
