@@ -6,9 +6,9 @@
 
 ## 部署方案
 
-### 方案一：多端口部署（推荐）
-- MooYu 主站：端口 3000 (http://mooyu.cc)
-- MooFlow 应用：端口 3001 (http://mooyu.cc:3001 或 https://flow.mooyu.cc)
+### 方案一：子域名部署（推荐）
+- MooYu 主站：https://mooyu.cc
+- MooFlow 应用：http://flow.mooyu.cc
 
 ### 方案二：子域名部署
 - MooYu 主站：https://mooyu.cc
@@ -22,17 +22,20 @@
 ```
 mooflow/
 ├── index.html          # 主页面
-├── css/                # 样式文件
-├── js/                 # JavaScript 文件
-├── images/             # 图片资源
-└── assets/             # 其他资源
+├── favicon.png         # 网站图标
+├── bg-login.png        # 登录背景图
+├── assets/             # 编译后的资源文件
+│   ├── index-*.css     # 样式文件
+│   └── index-*.js      # JavaScript 文件
+├── jspdf.umd.min.js    # PDF 生成库
+└── svg2pdf.umd.min.js  # SVG 转 PDF 库
 ```
 
 ### 2. 上传文件到服务器
 
 ```bash
 # 在本地终端执行
-scp -r /path/to/your/mooflow-app/* root@122.51.133.41:/root/Mooyu/mooflow/
+scp -r "/Users/kevinx/Documents/Ai Project/MooFlow-Web/dist/*" root@122.51.133.41:/root/Mooyu/mooflow/
 ```
 
 ### 3. 在服务器上执行部署
@@ -92,13 +95,13 @@ pm2 logs mooflow
 
 ## 访问地址
 
-### 多端口方案
-- MooYu 主站：http://mooyu.cc:3000 或 https://mooyu.cc
-- MooFlow 应用：http://mooyu.cc:3001
-
-### 子域名方案
+### 子域名方案（推荐）
 - MooYu 主站：https://mooyu.cc
-- MooFlow 应用：https://flow.mooyu.cc
+- MooFlow 应用：http://flow.mooyu.cc
+
+### 备用访问方式
+- MooYu 主站：http://mooyu.cc:3000
+- MooFlow 应用：http://mooyu.cc:3001
 
 ## 管理命令
 
@@ -125,7 +128,7 @@ pm2 delete mooflow
 
 ```bash
 # 1. 上传新文件
-scp -r /path/to/updated/mooflow-app/* root@122.51.133.41:/root/Mooyu/mooflow/
+scp -r "/Users/kevinx/Documents/Ai Project/MooFlow-Web/dist/*" root@122.51.133.41:/root/Mooyu/mooflow/
 
 # 2. 重启服务
 ssh root@122.51.133.41

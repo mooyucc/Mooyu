@@ -14,23 +14,63 @@ logs/
 # 系统文件
 .DS_Store
 Thumbs.db
+*.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 
 # Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.npm
+.eslintcache
 
 # 临时文件
 *.tmp
 *.temp
+*.pid
+*.seed
+*.pid.lock
 
 # IDE 文件
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # 备份文件
 *.backup
-*.bak 
+*.bak
+
+# SSL 证书文件（敏感信息）
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+SSLmooyu.cc_nginx/
+
+# 配置文件（可能包含敏感信息）
+config.json
+config.local.json
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+
+# 其他常见忽略文件
+.cache/
+.coverage/
+.nyc_output/ 

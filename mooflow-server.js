@@ -8,7 +8,44 @@ const PORT = process.env.PORT || 3001;
 // 中间件
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'mooflow'))); // 提供 mooFlow 静态文件
+
+// 设置正确的 MIME 类型
+app.use(express.static(path.join(__dirname, 'mooflow'), {
+  setHeaders: (res, path, stat) => {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    } else if (path.endsWith('.png')) {
+      res.set('Content-Type', 'image/png');
+    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+      res.set('Content-Type', 'image/jpeg');
+    } else if (path.endsWith('.svg')) {
+      res.set('Content-Type', 'image/svg+xml');
+    } else if (path.endsWith('.ico')) {
+      res.set('Content-Type', 'image/x-icon');
+    }
+  }
+}));
+
+// 处理 /MooFlowPages/ 路径的静态文件
+app.use('/MooFlowPages', express.static(path.join(__dirname, 'mooflow'), {
+  setHeaders: (res, path, stat) => {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    } else if (path.endsWith('.png')) {
+      res.set('Content-Type', 'image/png');
+    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+      res.set('Content-Type', 'image/jpeg');
+    } else if (path.endsWith('.svg')) {
+      res.set('Content-Type', 'image/svg+xml');
+    } else if (path.endsWith('.ico')) {
+      res.set('Content-Type', 'image/x-icon');
+    }
+  }
+}));
 
 // 健康检查接口
 app.get('/api/health', (req, res) => {

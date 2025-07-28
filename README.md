@@ -278,9 +278,25 @@ firewall-cmd --reload
 
 ### 访问地址
 配置完成后，可以通过以下地址访问：
-- HTTP: http://mooyu.cc
-- HTTPS: https://mooyu.cc
-- HTTPS: https://www.mooyu.cc
+- MooYu 主站：https://mooyu.cc
+- MooFlow 应用：http://flow.mooyu.cc
+- 备用访问：http://mooyu.cc:3001
+
+### 子域名问题修复
+如果 `flow.mooyu.cc` 显示主站内容而不是 MooFlow 应用，请运行：
+```bash
+# 上传修复脚本
+scp fix-flow-subdomain.sh root@122.51.133.41:/root/Mooyu/
+scp diagnose-flow-subdomain.sh root@122.51.133.41:/root/Mooyu/
+
+# 在服务器上执行修复
+ssh root@122.51.133.41
+cd /root/Mooyu
+chmod +x fix-flow-subdomain.sh
+./fix-flow-subdomain.sh
+```
+
+详细修复指南请参考 `flow-subdomain-fix.md` 文件。
 
 ### SSL 证书自动续期
 证书会自动续期，如需手动检查：
