@@ -1,0 +1,35 @@
+# 开发环境文件
+node_modules/
+.git/
+.env
+.DS_Store
+*.log
+
+# 版本控制文件
+.gitignore
+.gitattributes
+
+# 依赖锁定文件
+package-lock.json
+
+# 本地脚本文件
+update-website.sh
+update-mooflow.sh
+build-and-deploy-mooflow.sh
+
+# 日志目录
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+Thumbs.db
+.DS_Store 

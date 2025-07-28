@@ -181,7 +181,12 @@ mkdir -p /root/Mooyu
 ### 3. 上传更新项目文件到服务器
 在本地终端（不是 SSH 里）输入：
 ```bash
-scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/root/Mooyu
+# 方法一：使用新的更新脚本（推荐）
+./update-website.sh
+
+# 方法二：手动上传到正确的 Nginx 服务目录
+scp -r /Users/kevinx/Documents/Website/Mooyu/mooyu-website/* root@122.51.133.41:/var/www/mooyu-website/
+ssh root@122.51.133.41 "chown -R nginx:nginx /var/www/mooyu-website/ && systemctl restart nginx"
 ```
 输入服务器密码，等待上传完成。
 
@@ -218,6 +223,29 @@ ssh root@122.51.133.41
 cd /root/Mooyu
 chmod +x deploy-domain.sh
 bash deploy-domain.sh
+```
+
+### 应用更新方式
+
+#### 1. 主网站更新（MooYu 主站）
+```bash
+# 使用更新脚本（推荐）
+./update-website.sh
+
+# 或手动更新（使用 rsync，自动排除不需要的文件）
+rsync -av --progress --exclude-from=.rsyncignore /Users/kevinx/Documents/Website/Mooyu/mooyu-website/ root@122.51.133.41:/var/www/mooyu-website/
+ssh root@122.51.133.41 "chown -R nginx:nginx /var/www/mooyu-website/ && systemctl restart nginx"
+```
+
+#### 2. MooFlow 应用更新
+```bash
+# 使用 MooFlow 更新脚本（推荐）
+./update-mooflow.sh
+
+# 或手动更新
+scp -r "/Users/kevinx/Documents/Ai Project/MooFlow-Web/dist"/* root@122.51.133.41:/root/Mooyu/mooflow/
+scp /Users/kevinx/Documents/Website/Mooyu/mooyu-website/mooflow-server.js root@122.51.133.41:/root/Mooyu/
+ssh root@122.51.133.41 "pm2 restart mooflow"
 ```
 
 ### 使用 PM2 管理 Node.js 服务
