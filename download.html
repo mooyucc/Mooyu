@@ -16,6 +16,151 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            background: #f7f3eb;
+        }
+
+        #page-download {
+            background: #f7f3eb;
+        }
+
+        #page-download .header {
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(12px);
+        }
+
+        #page-download .download-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 120px;
+        }
+
+        #page-download .download-title {
+            margin-top: 120px;
+        }
+
+        #page-download .download-title span {
+            color: #1d1d1f;
+            font-size: 56px;
+            font-weight: 700;
+        }
+
+        #page-download .app-family-grid {
+            margin-top: 48px;
+            gap: 40px;
+        }
+
+        #page-download .app-card {
+            background: #f7f2ea;
+            border-radius: 28px;
+            padding: 40px 32px;
+            box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
+            border: 1px solid rgba(194, 177, 153, 0.35);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        #page-download .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 70px rgba(209, 195, 173, 0.45);
+        }
+
+        #page-download .app-title {
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        #page-download .app-description-cn,
+        #page-download .app-description-en {
+            color: #4f463c;
+        }
+
+        #page-download .app-download-btn {
+            background: #111;
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px 24px;
+            border: none;
+            box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        #page-download .app-download-btn:hover {
+            background: #000;
+            box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
+            transform: translateY(-3px);
+        }
+
+        #page-download #support-btn {
+            background: linear-gradient(135deg, rgba(17, 17, 17, 0.92) 0%, rgba(61, 55, 50, 0.92) 100%) !important;
+            box-shadow: 0 20px 35px rgba(26, 24, 22, 0.35);
+            border-radius: 16px;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        #page-download #support-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 26px 60px rgba(17, 17, 17, 0.4);
+        }
+
+        #page-download .footer {
+            border-top: none;
+            background: transparent;
+        }
+
+        #page-download .footer-content span,
+        #page-download .footer-content a {
+            color: #4f463c !important;
+        }
+
+        @media (max-width: 1024px) {
+            #page-download .download-main {
+                padding: 0 32px 100px;
+            }
+
+            #page-download .download-title span {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-download .download-main {
+                padding: 0 24px 100px;
+            }
+
+            #page-download .download-title {
+                margin-top: 100px;
+            }
+
+            #page-download .download-title span {
+                font-size: 40px;
+            }
+
+            #page-download .app-family-grid {
+                gap: 28px;
+            }
+
+            #page-download .app-card {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            #page-download .download-main {
+                padding: 0 20px 80px;
+            }
+
+            #page-download .download-title span {
+                font-size: 32px;
+            }
+
+            #page-download .app-card {
+                padding: 28px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- App Family下载页 -->
@@ -37,7 +182,7 @@
                 <span>MooApp Family</span>
             </h2>
             <div class="app-family-grid">
-                <div class="app-card center">
+                <div class="app-card center" style="display: none;">
                     <a href="mooplan.html"><img src="images/iconMooPlan.png" alt="MooPlan" class="app-icon" id="goto-mooplan-from-download"></a>
                     <div class="app-title">MooPlan</div>
                     <div class="app-description">
@@ -49,7 +194,7 @@
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>
                 </div>
-                <div class="app-card center">
+                <div class="app-card center" style="display: none;">
                     <a href="moodata.html"><img src="images/iconMooData.png" alt="MooData" class="app-icon" id="goto-moodata-from-download"></a>
                     <div class="app-title">MooData</div>
                     <div class="app-description">
@@ -57,6 +202,18 @@
                         <div class="app-description-en">Multi-project Data Management Tool</div>
                     </div>
                     <a href="download/MooData_free.dmg" class="app-download-btn" id="DownloadMDFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>Download Mac</span>
+                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                    </a>
+                </div>
+                <div class="app-card center">
+                    <a href="myfootprint.html"><img src="images/myfootprintLogo.png" alt="MooFootprint" class="app-icon" id="goto-moofootprint-from-download"></a>
+                    <div class="app-title">MooFootprint</div>
+                    <div class="app-description">
+                        <div class="app-description-cn">墨鱼足迹</div>
+                        <div class="app-description-en">Immersive travel and life journaling.</div>
+                    </div>
+                    <a href="download/MooFootprint_free.dmg" class="app-download-btn" id="DownloadMFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <span>Download Mac</span>
                         <img src="images/free.png" alt="Free Version" style="height: 25px;">
                     </a>

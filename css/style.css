@@ -387,9 +387,9 @@ footer {
     font-family: 'Indie Flower', cursive, 'Inter', sans-serif;
     font-size: 72px;
     font-weight: 400;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     margin-top: 10px;
-    margin-bottom: 24px;
+    margin-bottom: 0;
     text-align: center;
 }
 
@@ -1399,6 +1399,241 @@ footer {
 #page-moodata .hero-section h2,
 #page-moodata .hero-section p {
     color: #fff;
+}
+
+/* 调整MyFootprint页面的配色与层级 */
+#page-myfootprint {
+    background: #f7f3eb;
+}
+
+#page-myfootprint .header {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+#page-myfootprint .header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+#page-myfootprint .myfootprint-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 120px;
+}
+
+#page-myfootprint .hero-section {
+    background: #f1e7d9;
+    border-radius: 28px;
+    padding: 140px 80px 120px;
+    text-align: left;
+    box-shadow: 0 24px 60px rgba(208, 187, 156, 0.45);
+    position: relative;
+    overflow: hidden;
+}
+
+#page-myfootprint .hero-section::after {
+    content: "";
+    position: absolute;
+    top: -160px;
+    right: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.6), rgba(247, 239, 226, 0.1));
+    filter: blur(0.6px);
+    transform: rotate(8deg);
+}
+
+#page-myfootprint .hero-section h1 {
+    color: #1d1d1f;
+    font-size: 56px;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+#page-myfootprint .hero-section h2 {
+    color: #4f463c;
+    font-size: 24px;
+    max-width: 520px;
+    margin-bottom: 40px;
+}
+
+#page-myfootprint .hero-cta {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+#page-myfootprint .primary-cta-btn {
+    background: #111;
+    color: #fff;
+    border: none;
+    box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
+    backdrop-filter: none;
+}
+
+#page-myfootprint .primary-cta-btn:hover {
+    background: #000;
+    box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
+}
+
+#page-myfootprint .secondary-cta-btn {
+    border: 2px solid #111;
+    color: #111;
+    background: transparent;
+    backdrop-filter: none;
+}
+
+#page-myfootprint .secondary-cta-btn:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+#page-myfootprint .value-section {
+    background: #fff;
+    border-radius: 28px;
+    margin-top: 80px;
+    padding: 80px 60px;
+    box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
+}
+
+#page-myfootprint .value-section h2 {
+    color: #1d1d1f;
+}
+
+#page-myfootprint .pain-points {
+    color: #55504a;
+}
+
+#page-myfootprint .value-card {
+    background: #f7f2ea;
+    border: 1px solid rgba(194, 177, 153, 0.35);
+    box-shadow: 0 12px 34px rgba(209, 195, 173, 0.45);
+}
+
+#page-myfootprint .value-card svg {
+    stroke: #4f463c;
+}
+
+#page-myfootprint .value-card h3 {
+    color: #1d1d1f;
+}
+
+#page-myfootprint .value-card h4 {
+    color: #4f463c;
+}
+
+#page-myfootprint .value-card p {
+    color: #524a42;
+}
+
+#page-myfootprint .advantage-tag {
+    background: #fff;
+    color: #3d3732;
+    border: 1px solid rgba(194, 177, 153, 0.35);
+}
+
+#page-myfootprint .fusion-section {
+    margin-top: 80px;
+    background: #f3eee4;
+    border-radius: 28px;
+    padding: 80px 60px;
+    box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
+}
+
+#page-myfootprint .fusion-section h2 {
+    color: #1d1d1f;
+}
+
+#page-myfootprint .fusion-section p {
+    color: #4f463c;
+}
+
+#page-myfootprint .final-cta-section {
+    margin-top: 80px;
+    border-radius: 28px;
+    background: #111;
+    box-shadow: 0 28px 70px rgba(17, 17, 17, 0.45);
+}
+
+#page-myfootprint .final-cta-section h2 {
+    color: #fff;
+}
+
+#page-myfootprint .final-cta-section p {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+#page-myfootprint .final-cta-buttons .secondary-cta-btn {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+#page-myfootprint .final-cta-buttons .secondary-cta-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 1024px) {
+    #page-myfootprint .hero-section {
+        padding: 120px 48px 100px;
+    }
+
+    #page-myfootprint .hero-section h1 {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 768px) {
+    #page-myfootprint .myfootprint-main {
+        padding: 0 16px 100px;
+    }
+
+    #page-myfootprint .hero-section {
+        padding: 120px 32px 80px;
+    }
+
+    #page-myfootprint .hero-section h1 {
+        font-size: 40px;
+    }
+
+    #page-myfootprint .hero-section h2 {
+        font-size: 20px;
+    }
+
+    #page-myfootprint .value-section,
+    #page-myfootprint .fusion-section {
+        padding: 60px 28px;
+    }
+}
+
+@media (max-width: 540px) {
+    #page-myfootprint .hero-section {
+        padding: 120px 24px 72px;
+    }
+
+    #page-myfootprint .hero-section h1 {
+        font-size: 32px;
+    }
+
+    #page-myfootprint .hero-section h2 {
+        font-size: 18px;
+    }
+
+    #page-myfootprint .value-section,
+    #page-myfootprint .fusion-section {
+        padding: 48px 24px;
+    }
+
+    #page-myfootprint .primary-cta-btn,
+    #page-myfootprint .secondary-cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* 调整卡片样式以适应深色背景 */
