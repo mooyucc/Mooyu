@@ -5,7 +5,8 @@
   "main": "mooflow-server.js",
   "scripts": {
     "start": "node mooflow-server.js",
-    "dev": "nodemon mooflow-server.js"
+    "dev": "nodemon mooflow-server.js",
+    "build": "node build-assets.js"
   },
   "dependencies": {
     "express": "^4.18.2",

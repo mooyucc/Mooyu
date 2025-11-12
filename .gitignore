@@ -28,6 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 .npm
 .eslintcache
+dist/
 
 # 临时文件
 *.tmp
