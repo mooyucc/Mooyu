@@ -1281,9 +1281,9 @@ footer {
 
 /* 调整导航栏样式以适应深色背景 */
 #page-mooplan .header {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1409,10 +1409,11 @@ footer {
 #page-myfootprint .header {
     background: rgba(255, 255, 255, 0.85);
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px);
 }
 
 #page-myfootprint .header.scrolled {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
 
@@ -1651,9 +1652,9 @@ footer {
 
 /* 调整导航栏样式以适应深色背景 */
 #page-moodata .header {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1742,11 +1743,21 @@ footer {
 }
 
 /* 调整导航栏样式以适应深色背景 */
+#page-download .header {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px);
+}
+
+#page-download .header.scrolled {
+    background: rgba(255, 255, 255, 0.15);
+}
+
 #page-mooflow .header {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 #page-mooflow .header.scrolled {

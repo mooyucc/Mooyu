@@ -16,7 +16,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         #page-myfootprint {
-            background: #f7f3eb;
+            /* 三色渐变背景 - 从右上角到左下角 */
+            background: linear-gradient(135deg, 
+                #FBEFEC 0%, 
+                #FBEFEC 25%, 
+                #FAF7F2 50%, 
+                #FBF6EC 75%, 
+                #FBF6EC 100%);
+            min-height: 100vh;
         }
 
         #page-myfootprint .header {
@@ -32,11 +39,15 @@
         }
 
         #page-myfootprint .hero-section {
-            background: #f1e7d9;
+            /* 浅米色卡片背景 */
+            background: #FAF8F5;
             border-radius: 28px;
             padding: 140px 80px 120px;
             text-align: left;
-            box-shadow: 0 24px 60px rgba(208, 187, 156, 0.45);
+            /* 浅米色边框 */
+            border: 1px solid #EAE6DF;
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
             position: relative;
             overflow: hidden;
         }
@@ -54,14 +65,16 @@
         }
 
         #page-myfootprint .hero-section h1 {
-            color: #1d1d1f;
+            /* 主要文字颜色 */
+            color: #333333;
             font-size: 56px;
             line-height: 1.15;
             margin-bottom: 20px;
         }
 
         #page-myfootprint .hero-section h2 {
-            color: #4f463c;
+            /* 次要文字颜色 */
+            color: #666666;
             font-size: 24px;
             max-width: 520px;
             margin-bottom: 40px;
@@ -70,10 +83,21 @@
         #page-myfootprint .hero-cta {
             position: relative;
             z-index: 1;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 16px;
             flex-wrap: wrap;
+        }
+
+        #page-myfootprint .hero-download-buttons {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            width: 100%;
         }
 
         #page-myfootprint .primary-cta-btn {
@@ -94,6 +118,17 @@
             color: #111 !important;
             background: transparent !important;
             backdrop-filter: none !important;
+            padding: 12px 24px !important;
+            border-radius: 16px !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
         }
 
         #page-myfootprint .secondary-cta-btn:hover {
@@ -102,64 +137,263 @@
             border-color: #111 !important;
         }
 
+        #page-myfootprint .app-store-btn {
+            background: #111 !important;
+            color: #fff !important;
+            border: 1px solid #fff !important;
+            box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
+            backdrop-filter: none !important;
+            padding: 12px 24px !important;
+            border-radius: 16px !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+        }
+
+        #page-myfootprint .app-store-btn:hover {
+            background: #000 !important;
+            box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
+            transform: translateY(-2px);
+        }
+
+        #page-myfootprint .testflight-btn {
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%) !important;
+            color: #fff !important;
+            border: 1px solid #fff !important;
+            box-shadow: 0 20px 35px rgba(0, 122, 255, 0.25);
+            backdrop-filter: none !important;
+            padding: 12px 24px !important;
+            border-radius: 16px !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+        }
+
+        #page-myfootprint .testflight-btn:hover {
+            background: linear-gradient(135deg, #0051D5 0%, #003d9e 100%) !important;
+            box-shadow: 0 24px 46px rgba(0, 122, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
         #page-myfootprint .value-section {
+            /* 白卡片背景 */
             background: #ffffff;
             border-radius: 28px;
             margin-top: 80px;
             padding: 80px 60px;
-            box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         #page-myfootprint .value-section h2 {
-            color: #1d1d1f;
+            /* 主要文字颜色 */
+            color: #333333;
         }
 
         #page-myfootprint .pain-points {
-            color: #55504a;
+            /* 次要文字颜色 */
+            color: #666666;
         }
 
         #page-myfootprint .value-card {
-            background: #f7f2ea;
-            border: 1px solid rgba(194, 177, 153, 0.35);
-            box-shadow: 0 12px 34px rgba(209, 195, 173, 0.45);
+            /* 浅米色卡片背景 */
+            background: #FAF8F5;
+            /* 浅米色边框 */
+            border: 1px solid #EAE6DF;
+            /* 小卡片阴影 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
         #page-myfootprint .value-card svg {
-            stroke: #4f463c;
+            /* 图标统一使用品牌红色 */
+            stroke: #F75C62;
         }
 
         #page-myfootprint .value-card h3 {
-            color: #1d1d1f !important;
+            /* 主要文字颜色 */
+            color: #333333 !important;
         }
 
         #page-myfootprint .value-card h4 {
-            color: #4f463c !important;
+            /* 次要文字颜色 */
+            color: #666666 !important;
         }
 
         #page-myfootprint .value-card p {
-            color: #524a42 !important;
+            /* 主要文字颜色 */
+            color: #333333 !important;
         }
 
         #page-myfootprint .advantage-tag {
             background: #fff !important;
-            color: #3d3732 !important;
-            border: 1px solid rgba(194, 177, 153, 0.35) !important;
+            /* 主要文字颜色 */
+            color: #333333 !important;
+            /* 标准边框颜色 */
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+
+        #page-myfootprint .module-content {
+            margin-top: 24px;
+        }
+
+        #page-myfootprint .module-content > div {
+            margin-bottom: 32px;
+        }
+
+        #page-myfootprint .module-content > div:last-child {
+            margin-bottom: 0;
+        }
+
+        #page-myfootprint .module-content h5 {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        #page-myfootprint .module-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #page-myfootprint .module-content ul li {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            padding-left: 0;
+        }
+
+        #page-myfootprint .module-content ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        #page-myfootprint .module-content ul li strong {
+            font-weight: 600;
+        }
+
+        #page-myfootprint .emotion-value,
+        #page-myfootprint .usage-scenarios {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        #page-myfootprint .feature-highlights {
+            padding-top: 8px;
+        }
+
+        #page-myfootprint .screenshots-section {
+            margin-top: 80px;
+            /* 白卡片背景 */
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 80px 60px;
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        #page-myfootprint .screenshots-section h2 {
+            /* 主要文字颜色 */
+            color: #333333;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        #page-myfootprint .screenshots-section .section-subtitle {
+            /* 次要文字颜色 */
+            color: #666666;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #page-myfootprint .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        #page-myfootprint .screenshot-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #page-myfootprint .screenshot-image {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            margin-bottom: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #page-myfootprint .screenshot-image:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        #page-myfootprint .screenshot-title {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        #page-myfootprint .screenshot-description {
+            /* 次要文字颜色 */
+            color: #666666;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 400px;
         }
 
         #page-myfootprint .fusion-section {
             margin-top: 80px;
-            background: #f3eee4;
+            /* 浅米色卡片背景 */
+            background: #FAF8F5;
             border-radius: 28px;
             padding: 80px 60px;
-            box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
+            /* 浅米色边框 */
+            border: 1px solid #EAE6DF;
+            /* 小卡片阴影 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
         #page-myfootprint .fusion-section h2 {
-            color: #1d1d1f;
+            /* 主要文字颜色 */
+            color: #333333;
         }
 
         #page-myfootprint .fusion-section p {
-            color: #4f463c;
+            /* 次要文字颜色 */
+            color: #666666;
         }
 
         #page-myfootprint .final-cta-section {
@@ -215,12 +449,46 @@
             }
 
             #page-myfootprint .value-section,
+            #page-myfootprint .screenshots-section,
             #page-myfootprint .fusion-section {
                 padding: 60px 28px;
             }
 
+            #page-myfootprint .screenshots-grid {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            #page-myfootprint .screenshot-image {
+                max-width: 280px;
+            }
+
+            #page-myfootprint .module-content h5 {
+                font-size: 15px;
+            }
+
+            #page-myfootprint .module-content ul li {
+                font-size: 14px;
+            }
+
+            #page-myfootprint .emotion-value,
+            #page-myfootprint .usage-scenarios {
+                padding: 16px;
+            }
+
             #page-myfootprint .primary-cta-btn,
             #page-myfootprint .secondary-cta-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #page-myfootprint .hero-download-buttons {
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            #page-myfootprint .app-store-btn,
+            #page-myfootprint .testflight-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -240,8 +508,51 @@
             }
 
             #page-myfootprint .value-section,
+            #page-myfootprint .screenshots-section,
             #page-myfootprint .fusion-section {
                 padding: 48px 24px;
+            }
+
+            #page-myfootprint .screenshots-section .section-subtitle {
+                font-size: 16px;
+                margin-bottom: 40px;
+            }
+
+            #page-myfootprint .screenshots-grid {
+                gap: 40px;
+                margin-top: 40px;
+            }
+
+            #page-myfootprint .screenshot-image {
+                max-width: 240px;
+                border-radius: 16px;
+            }
+
+            #page-myfootprint .screenshot-title {
+                font-size: 18px;
+            }
+
+            #page-myfootprint .screenshot-description {
+                font-size: 14px;
+            }
+
+            #page-myfootprint .module-content > div {
+                margin-bottom: 24px;
+            }
+
+            #page-myfootprint .module-content h5 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            #page-myfootprint .module-content ul li {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            #page-myfootprint .emotion-value,
+            #page-myfootprint .usage-scenarios {
+                padding: 14px;
             }
         }
     </style>
@@ -263,16 +574,28 @@
                 <h1>墨鱼足迹：沉浸式旅行与生活记录</h1>
                 <h2>通过沉浸式地图体验点亮每一次出发的记忆，围绕「记录、管理、回忆、分享」打造完整足迹闭环。</h2>
                 <div class="hero-cta">
-                    <a href="download.html#myfootprint" class="primary-cta-btn">
-                        <span>了解更多</span>
-                    </a>
                     <a href="myfootprintprivacy.html" class="secondary-cta-btn">用户隐私政策</a>
+                    <a href="moofootprintlicense.html" class="secondary-cta-btn">软件许可及服务协议</a>
+                </div>
+                <div class="hero-download-buttons">
+                    <a href="https://apps.apple.com/cn/app/id6754274652" target="_blank" class="app-store-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                        </svg>
+                        <span>App Store 下载</span>
+                    </a>
+                    <a href="https://testflight.apple.com/join/2bUWBS6S" target="_blank" class="testflight-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/>
+                        </svg>
+                        <span>TestFlight 测试版</span>
+                    </a>
                 </div>
             </section>
 
             <section class="value-section">
-                <h2>记录生活每一程，打造专属的旅行时光胶囊</h2>
-                <p class="pain-points">记录、管理、回忆、分享——四大核心场景构建完整闭环，为你提供可靠的数据存储与优雅的交互体验。</p>
+                <h2>墨鱼足迹APP · 三大核心模块</h2>
+                <p class="pain-points">记录、分享、回忆——三大核心模块构建完整闭环，让每一段旅程都成为值得珍藏的温暖回忆。</p>
 
                 <div class="value-cards">
                     <div class="value-card">
@@ -280,77 +603,188 @@
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 1 1 18 0z"/>
                                 <circle cx="12" cy="10" r="3"/>
+                                <line x1="12" y1="7" x2="12" y2="13"/>
+                                <line x1="9" y1="10" x2="15" y2="10"/>
                             </svg>
                         </div>
-                        <h3>沉浸式记录</h3>
-                        <h4>用地图点亮每一次出发</h4>
-                        <p>沉浸式地图体验帮助你快速标记每个目的地，自动记录行程轨迹，让旅程足迹一目了然。</p>
-                        <div class="advantage-tags">
-                            <span class="advantage-tag">地图收藏</span>
-                            <span class="advantage-tag">地点标记</span>
-                            <span class="advantage-tag">行程轨迹</span>
+                        <h3>📝 记录 · 当时当下的轻松记录</h3>
+                        <h4>核心价值：一键轻松打卡，留住旅行中的每一个精彩瞬间</h4>
+                        
+                        <div class="module-content">
+                            <div class="emotion-value">
+                                <h5>💫 情绪价值</h5>
+                                <ul>
+                                    <li><strong>轻松无负担地留住当下</strong>：想象一下，你正站在雪山之巅，壮丽的景色让你心潮澎湃，此时你只想快速记录这一刻，而不想因为复杂的操作而打断这份感动。墨鱼足迹的"记录"模块让你只需轻点一下，就能将此刻的震撼与感动完整保存。</li>
+                                    <li><strong>治愈记录焦虑</strong>：告别旅行中"想记又嫌麻烦"的纠结，让记录成为一种自然而然的习惯，而非负担。</li>
+                                </ul>
+                            </div>
+
+                            <div class="usage-scenarios">
+                                <h5>🎯 使用场景</h5>
+                                <ul>
+                                    <li><strong>偶遇美景时刻</strong>：当你在异国他乡的转角，突然遇见一片绝美的樱花雨，来不及细细构思长篇大论，只想快速定格这份不期而遇的美好。</li>
+                                    <li><strong>味蕾惊艳瞬间</strong>：品尝到让灵魂都为之一颤的当地美食，热气腾腾的拉面馆里，你迫不及待想要记录这份舌尖上的幸福。</li>
+                                    <li><strong>旅途小确幸</strong>：路边偶遇的可爱猫咪、当地人善意的微笑、同伴搞笑的瞬间——那些转瞬即逝却值得珍藏的片段。</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-highlights">
+                                <h5>✨ 功能亮点</h5>
+                                <div class="advantage-tags">
+                                    <span class="advantage-tag">智能一键打卡</span>
+                                    <span class="advantage-tag">温馨心情引导</span>
+                                    <span class="advantage-tag">自动填充位置和时间</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="value-card">
                         <div class="card-icon">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-                                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                             </svg>
                         </div>
-                        <h3>智慧管理</h3>
-                        <h4>多维度分类轻松整理</h4>
-                        <p>用列表、标签与主题整理旅行与生活记录，多设备随时同步，实现轻松管理与检索。</p>
-                        <div class="advantage-tags">
-                            <span class="advantage-tag">列表管理</span>
-                            <span class="advantage-tag">主题标签</span>
-                            <span class="advantage-tag">iCloud 同步</span>
+                        <h3>🌐 分享 · 即时分享旅程的乐趣</h3>
+                        <h4>核心价值：即时分享旅程的乐趣</h4>
+                        
+                        <div class="module-content">
+                            <div class="emotion-value">
+                                <h5>💫 情绪价值</h5>
+                                <ul>
+                                    <li><strong>即时同步的安全感</strong>：当你们在陌生的城市分头探索，你发现了一个隐藏的宝藏小店，通过即时分享，仿佛在说"我在这里，这里有惊喜"，让分开的旅程依然紧密相连。</li>
+                                    <li><strong>分享旅程的成就感</strong>：精心整理的旅行记忆获得朋友的赞叹时，那种"我的生活也很精彩"的自信与满足，让旅途的辛苦都变成了值得骄傲的勋章。</li>
+                                    <li><strong>被看见的温暖</strong>：你的旅行故事被人认真阅读、点赞、评论，感受到自己的经历正在触动他人，产生奇妙的情感连接。</li>
+                                </ul>
+                            </div>
+
+                            <div class="usage-scenarios">
+                                <h5>🎯 使用场景</h5>
+                                <ul>
+                                    <li><strong>分头行动的默契</strong>：你和旅伴一个去探索古迹，一个去逛当地市场，通过实时分享各自的位置和发现，虽分头行动却心意相通。</li>
+                                    <li><strong>归来的故事分享</strong>：旅行结束后，在温暖的咖啡馆里，向好友展示精心整理的旅行轨迹，讲述路上的趣事轶闻。</li>
+                                    <li><strong>寻找同频旅人</strong>：分享自己的旅行路线后，意外发现有人走过相似的路径，产生"原来你也在这里"的奇妙缘分。</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-highlights">
+                                <h5>✨ 功能亮点</h5>
+                                <div class="advantage-tags">
+                                    <span class="advantage-tag">分阶段智能分享</span>
+                                    <span class="advantage-tag">精美旅程总结</span>
+                                    <span class="advantage-tag">同程匹配</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="value-card">
                         <div class="card-icon">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15a2 2 0 0 1-2 2h-6l-4 4v-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
                             </svg>
                         </div>
-                        <h3>回忆与分享</h3>
-                        <h4>重温旅程故事，分享生活灵感</h4>
-                        <p>在时间线中重温每段旅程，精选足迹瞬间，一键分享至社交平台，让故事被更多人看见。</p>
-                        <div class="advantage-tags">
-                            <span class="advantage-tag">时间线</span>
-                            <span class="advantage-tag">精选回顾</span>
-                            <span class="advantage-tag">快捷分享</span>
+                        <h3>💖 回忆 · 唤醒旅途的温暖感动</h3>
+                        <h4>核心价值：让记录在平凡日子里绽放温暖</h4>
+                        
+                        <div class="module-content">
+                            <div class="emotion-value">
+                                <h5>💫 情绪价值</h5>
+                                <ul>
+                                    <li><strong>被唤醒的温暖感</strong>：在一个疲惫的工作日下午，手机突然弹出一年前你在海边看日落的照片，那一刻的宁静与美好瞬间治愈了当下的焦虑。</li>
+                                    <li><strong>时光的温柔馈赠</strong>：那些当时看似平常的瞬间，在回忆的滤镜下都变成了闪闪发光的珍贵记忆，提醒你生活除了眼前的苟且，还有诗和远方。</li>
+                                    <li><strong>情感的延续</strong>：旅行结束了，但感动还在继续。通过回忆，让旅途中的美好渗透到日常生活的每一个角落。</li>
+                                </ul>
+                            </div>
+
+                            <div class="usage-scenarios">
+                                <h5>🎯 使用场景</h5>
+                                <ul>
+                                    <li><strong>重游故地的感动</strong>：再次来到曾经旅行过的城市，APP自动推送当年在这里拍摄的照片和记录，新旧回忆交织出奇妙的时空对话。</li>
+                                    <li><strong>特殊日子的仪式感</strong>：在旅行周年纪念日，收到墨鱼足迹自动生成的"一年前的今天"特别回忆集，与爱人一起重温那段美好时光。</li>
+                                    <li><strong>心情低落时的慰藉</strong>：当生活遇到挫折时，随机翻看旅行中的快乐瞬间，让那些美好的回忆成为支撑你继续前行的力量。</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-highlights">
+                                <h5>✨ 功能亮点</h5>
+                                <div class="advantage-tags">
+                                    <span class="advantage-tag">随机回忆泡泡</span>
+                                    <span class="advantage-tag">智能场景触发</span>
+                                    <span class="advantage-tag">桌面小部件</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <section class="screenshots-section">
+                <h2>墨鱼足迹APP · 真实体验</h2>
+                <p class="section-subtitle">通过沉浸式界面设计，让每一次记录都成为美好的体验</p>
+                
+                <div class="screenshots-grid">
+                    <div class="screenshot-item">
+                        <img src="images/App1 打卡记录.PNG" alt="打卡记录" class="screenshot-image">
+                        <h3 class="screenshot-title">📝 一键打卡记录</h3>
+                        <p class="screenshot-description">在地图上轻松标记你的位置，自动记录时间和天气信息。无论是偶遇的美景还是惊艳的美食，都能快速定格当下的感动。</p>
+                    </div>
+                    
+                    <div class="screenshot-item">
+                        <img src="images/App2 旅程卡片.PNG" alt="旅程卡片" class="screenshot-image">
+                        <h3 class="screenshot-title">🌐 旅程规划与分享</h3>
+                        <p class="screenshot-description">可视化你的旅行路线，查看总距离和停留地点。精心整理的旅程卡片，让每一次分享都充满故事感，与朋友分享你的探索足迹。</p>
+                    </div>
+                    
+                    <div class="screenshot-item">
+                        <img src="images/App3 旅行徽章.PNG" alt="旅行徽章" class="screenshot-image">
+                        <h3 class="screenshot-title">🏆 旅行徽章收集</h3>
+                        <p class="screenshot-description">点亮你去过的每一个国家和省份，用精美的徽章记录你的旅行成就。每一枚徽章都是你探索世界的见证，让旅行充满仪式感。</p>
+                    </div>
+                    
+                    <div class="screenshot-item">
+                        <img src="images/App4 足迹统计.PNG" alt="足迹统计" class="screenshot-image">
+                        <h3 class="screenshot-title">💖 我的足迹时光</h3>
+                        <p class="screenshot-description">收藏你最爱的目的地，按年份回顾你的旅行足迹。让每一次回忆都成为平凡日子里的温暖慰藉，重温那些美好的旅行时光。</p>
+                    </div>
+                </div>
+            </section>
+
             <section class="fusion-section">
-                <h2>沉浸体验 × 智能整理 = 专属的生活足迹档案馆</h2>
-                <p>墨鱼足迹以沉浸式地图为核心，结合智能分类与回忆场景，让旅行与生活记录形成闭环。从灵感记录到旅程归档，每一步都自成故事。</p>
+                <h2>墨鱼足迹APP · 让每一段旅程都成为值得珍藏的温暖回忆</h2>
+                <p>记录、分享、回忆——三大核心模块构建完整闭环，从灵感记录到旅程归档，从即时分享到时光回溯，每一步都自成故事，每一刻都值得珍藏。</p>
             </section>
 
             <section class="final-cta-section">
                 <h2>开启你的墨鱼足迹之旅</h2>
-                <p>让每次出发、每个瞬间都被优雅收藏。即刻了解更多，探索属于你的足迹世界。</p>
+                <p>更多功能正在开发中，敬请期待。</p>
                 <div class="final-cta-buttons">
-                    <a href="download.html#myfootprint" class="primary-cta-btn">
-                        <span>立即探索</span>
+                    <a href="https://apps.apple.com/cn/app/id6754274652" target="_blank" class="app-store-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                        </svg>
+                        <span>App Store 下载</span>
                     </a>
-                    <a href="myfootprintprivacy.html" class="secondary-cta-btn">查看隐私政策</a>
+                    <a href="https://testflight.apple.com/join/2bUWBS6S" target="_blank" class="testflight-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/>
+                        </svg>
+                        <span>TestFlight 测试版</span>
+                    </a>
                 </div>
             </section>
         </main>
         <footer class="footer">
             <div class="footer-content">
                 <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
-                    <img src="images/MooyuB.png" alt="MooYu" style="width:32px;height:32px;opacity:1;">
                     <div style="display:flex;flex-direction:column;gap:4px;">
-                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu platforms 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Tech 2025</span>
                         <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
                         <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪ICP备2025134738号-1</a></span>
                     </div>

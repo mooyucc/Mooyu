@@ -15,15 +15,28 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Aclonica&display=swap" rel="stylesheet">
     <style>
         html,
         body {
-            background: #f7f3eb;
+            /* 三色渐变背景 - 从右上角到左下角 */
+            background: linear-gradient(135deg, 
+                #FBEFEC 0%, 
+                #FBEFEC 25%, 
+                #FAF7F2 50%, 
+                #FBF6EC 75%, 
+                #FBF6EC 100%);
         }
 
         #page-download {
-            background: #f7f3eb;
+            /* 三色渐变背景 - 从右上角到左下角 */
+            background: linear-gradient(135deg, 
+                #FBEFEC 0%, 
+                #FBEFEC 25%, 
+                #FAF7F2 50%, 
+                #FBF6EC 75%, 
+                #FBF6EC 100%);
+            min-height: 100vh;
         }
 
         #page-download .header {
@@ -43,9 +56,11 @@
         }
 
         #page-download .download-title span {
-            color: #1d1d1f;
+            /* 主要文字颜色 */
+            color: #333333;
             font-size: 56px;
             font-weight: 700;
+            font-family: 'Aclonica', sans-serif;
         }
 
         #page-download .app-family-grid {
@@ -54,27 +69,111 @@
         }
 
         #page-download .app-card {
-            background: #f7f2ea;
+            /* 浅米色卡片背景 */
+            background: #FAF8F5;
             border-radius: 28px;
             padding: 40px 32px;
-            box-shadow: 0 18px 60px rgba(209, 199, 186, 0.35);
-            border: 1px solid rgba(194, 177, 153, 0.35);
+            /* 浅米色边框 */
+            border: 1px solid #EAE6DF;
+            /* 小卡片阴影 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             transition: transform 0.28s ease, box-shadow 0.28s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #page-download .app-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 24px 70px rgba(209, 195, 173, 0.45);
+            /* hover 时使用稍大的阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
+        #page-download .app-card.center {
+            gap: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 图标区域 - 固定高度 */
+        #page-download .app-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            object-fit: contain;
+            display: block;
+        }
+
+        #page-download .app-icon-wrapper {
+            height: 84px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+
+        /* 标题区域 - 固定高度 */
         #page-download .app-title {
-            color: #1d1d1f;
+            /* 主要文字颜色 */
+            color: #333333;
             font-weight: 600;
+            margin-bottom: 0;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.3;
+            width: 100%;
+        }
+
+        #page-download .app-title-wrapper {
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        /* 描述区域 - 固定高度 */
+        #page-download .app-description {
+            margin-bottom: 0;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+        #page-download .app-description-wrapper {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+            width: 100%;
         }
 
         #page-download .app-description-cn,
         #page-download .app-description-en {
-            color: #4f463c;
+            /* 次要文字颜色 */
+            color: #666666;
+        }
+
+        /* 按钮区域 - 固定高度 */
+        #page-download .app-card .button-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-top: 0;
+            min-height: 120px;
+            justify-content: flex-start;
         }
 
         #page-download .app-download-btn {
@@ -85,6 +184,9 @@
             border: none;
             box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
             transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         #page-download .app-download-btn:hover {
@@ -94,15 +196,22 @@
         }
 
         #page-download #support-btn {
-            background: linear-gradient(135deg, rgba(17, 17, 17, 0.92) 0%, rgba(61, 55, 50, 0.92) 100%) !important;
-            box-shadow: 0 20px 35px rgba(26, 24, 22, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #F75C62 !important;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 20px 35px rgba(247, 92, 98, 0.35);
             border-radius: 16px;
-            transition: transform 0.28s ease, box-shadow 0.28s ease;
+            transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
         }
 
         #page-download #support-btn:hover {
+            background: #e54a50 !important;
             transform: translateY(-4px);
-            box-shadow: 0 26px 60px rgba(17, 17, 17, 0.4);
+            box-shadow: 0 26px 60px rgba(247, 92, 98, 0.4);
         }
 
         #page-download .footer {
@@ -112,7 +221,8 @@
 
         #page-download .footer-content span,
         #page-download .footer-content a {
-            color: #4f463c !important;
+            /* 次要文字颜色 */
+            color: #666666 !important;
         }
 
         @media (max-width: 1024px) {
@@ -145,6 +255,35 @@
             #page-download .app-card {
                 padding: 32px 24px;
             }
+
+            #page-download .app-icon-wrapper {
+                height: 72px;
+            }
+
+            #page-download .app-icon {
+                width: 56px;
+                height: 56px;
+            }
+
+            #page-download .app-title-wrapper {
+                height: 52px;
+            }
+
+            #page-download .app-title {
+                height: 44px;
+            }
+
+            #page-download .app-description-wrapper {
+                height: 56px;
+            }
+
+            #page-download .app-description {
+                height: 48px;
+            }
+
+            #page-download .app-card .button-container {
+                min-height: 120px;
+            }
         }
 
         @media (max-width: 540px) {
@@ -159,6 +298,44 @@
             #page-download .app-card {
                 padding: 28px 20px;
             }
+
+            #page-download .app-icon-wrapper {
+                height: 64px;
+            }
+
+            #page-download .app-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            #page-download .app-title-wrapper {
+                height: 44px;
+            }
+
+            #page-download .app-title {
+                height: 36px;
+                font-size: 18px;
+            }
+
+            #page-download .app-description-wrapper {
+                height: 48px;
+            }
+
+            #page-download .app-description {
+                height: 40px;
+            }
+
+            #page-download .app-description-cn {
+                font-size: 14px;
+            }
+
+            #page-download .app-description-en {
+                font-size: 11px;
+            }
+
+            #page-download .app-card .button-container {
+                min-height: 120px;
+            }
         }
     </style>
 </head>
@@ -168,7 +345,7 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo clickable" id="logo-to-home2">
-                    <a href="index.html"><img src="images/MooyuB.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;" alt="MooYu Logo"></a>
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;" alt="MooYu Logo"></a>
                     <!--<span>墨鱼</span>-->
                 </div>
                 <nav>
@@ -207,38 +384,73 @@
                     </a>
                 </div>
                 <div class="app-card center">
-                    <a href="myfootprint.html"><img src="images/myfootprintLogo.png" alt="MooFootprint" class="app-icon" id="goto-moofootprint-from-download"></a>
-                    <div class="app-title">MooFootprint</div>
-                    <div class="app-description">
-                        <div class="app-description-cn">墨鱼足迹</div>
-                        <div class="app-description-en">Immersive travel and life journaling.</div>
+                    <div class="app-icon-wrapper">
+                        <a href="myfootprint.html"><img src="images/myfootprintLogo.png" alt="MooFootprint" class="app-icon" id="goto-moofootprint-from-download"></a>
                     </div>
-                    <a href="download/MooFootprint_free.dmg" class="app-download-btn" id="DownloadMFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>Download Mac</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooFootprint<br>墨鱼足迹</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">沉浸式旅行与生活日志记录</div>
+                            <div class="app-description-en">Immersive travel and life journaling.</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="https://apps.apple.com/cn/app/id6754274652" target="_blank" class="app-download-btn" id="DownloadMFAppStore" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                            </svg>
+                            <span>App Store 下载</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                        <a href="https://testflight.apple.com/join/2bUWBS6S" target="_blank" class="app-download-btn" id="DownloadMFTestFlight" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="currentColor"/>
+                            </svg>
+                            <span>TestFlight 测试版</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                        <div style="font-size: 10px; color: #666666; margin-top: 4px; text-align: center;">测试版有更多功能体验：）</div>
+                    </div>
                 </div>
                 <div class="app-card center">
-                    <a href="mooflow.html"><img src="images/iconMooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-download"></a>
-                    <div class="app-title">MooFlow</div>
-                    <div class="app-description">
-                        <div class="app-description-cn">项目计划可视化编制工具</div>
-                        <div class="app-description-en">Project Planning Visualization Compilation Tool</div>
+                    <div class="app-icon-wrapper">
+                        <a href="mooflow.html"><img src="images/iconMooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-download"></a>
                     </div>
-                    <a href="http://flow.mooyu.cc" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
-                        <span>Web端程序链接</span>
-                        <img src="images/free.png" alt="Free Version" style="height: 25px;">
-                    </a>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooFlow</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">项目计划可视化编制工具</div>
+                            <div class="app-description-en">Project Planning Visualization Compilation Tool</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="http://flow.mooyu.cc" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>Web端程序链接</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                    </div>
                 </div>
                 <div class="app-card center">
-                    <a href="#" style="text-decoration: none; color: inherit;"><img src="images/iconsGood.gif" alt="赞赏" class="app-icon"></a>
-                    <div class="app-title">请支持我们</div>
-                    <div class="app-description">
-                        <div class="app-description-cn">如果我们的工具对您有帮助</div>
-                        <div class="app-description-en">If our tools help you</div>
+                    <div class="app-icon-wrapper">
+                        <a href="#" style="text-decoration: none; color: inherit;"><img src="images/iconsGood.gif" alt="赞赏" class="app-icon"></a>
                     </div>
-                    <div class="app-download-btn" id="support-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer;">
-                        <span>赞赏支持</span>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">请支持我们</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">如果我们的App对您有帮助</div>
+                            <div class="app-description-en">If our apps help you</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <div class="app-download-btn" id="support-btn">
+                            <span>请我们喝杯咖啡 ☕</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,9 +458,8 @@
         <footer class="footer">
             <div class="footer-content">
                 <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
-                    <img src="images/MooyuB.png" alt="MooYu" style="width:32px;height:32px;opacity:1;">
                     <div style="display:flex;flex-direction:column;gap:4px;">
-                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu platforms 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Tech 2025</span>
                         <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
                         <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪ICP备2025134738号-1</a></span>
                     </div>
