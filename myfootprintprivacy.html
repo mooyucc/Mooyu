@@ -11,11 +11,68 @@
     <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .lang-btn.active {
+            background: #007AFF;
+            color: white;
+        }
+        .lang-btn:hover {
+            color: #007AFF;
+        }
+        .lang-btn.active:hover {
+            color: white;
+        }
+        .content-lang {
+            display: none;
+        }
+        .content-lang.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="zh" id="btn-zh">中文</button>
+        <button class="lang-btn" data-lang="en" id="btn-en">English</button>
+    </div>
     <main class="page page-content" style="max-width:800px;margin:0 auto;padding:48px 24px;line-height:1.8;">
-        <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">“墨鱼足迹”用户隐私政策</h1>
-        <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2025 年 11 月 11 日</p>
+        <div id="content-zh" class="content-lang active">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"墨鱼足迹"用户隐私政策</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2025 年 11 月 11 日</p>
 
         <section style="margin-bottom:32px;">
             <h2 style="font-size:20px;margin-bottom:12px;">一、引言</h2>
@@ -113,7 +170,111 @@
             <p>我们将在收到您的反馈后 15 个工作日内答复。</p>
         </section>
 
-        <p>感谢您信任“墨鱼足迹”。我们将持续优化隐私保护措施，为您提供安全可靠的体验。</p>
+            <p>感谢您信任"墨鱼足迹"。我们将持续优化隐私保护措施，为您提供安全可靠的体验。</p>
+        </div>
+
+        <div id="content-en" class="content-lang">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"MooFootprint" User Privacy Policy</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">Last Updated: November 11, 2025</p>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">I. Introduction</h2>
+                <p>Thank you for using "MooFootprint". We highly value your personal information and privacy protection. This User Privacy Policy explains how we collect, use, store, share, and protect your personal information, as well as how you can manage this information. Please read and fully understand the contents of this policy before using our products or services. If you do not agree with any part of this policy, please stop using "MooFootprint" immediately.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">II. Information Collection Scope</h2>
+                <p>We follow the principles of legality, legitimacy, and necessity, collecting only the minimum information required for core functionality:</p>
+                <ul style="padding-left:20px;">
+                    <li>Apple Sign-In Information: When you use "Sign in with Apple", we obtain necessary information provided by Apple (which may include your name, avatar, Apple ID associated email or hidden email, etc.) based on your authorization, for account creation, login verification, and identity identification.</li>
+                    <li>iCloud Data: After your authorization, we write and read content such as trips, destinations, and notes in your iCloud account to help you sync data across devices. This data is only stored in your personal iCloud space.</li>
+                    <li>Device and Operation Information: Including device model, operating system, application version, etc., for basic statistics, performance optimization, and security auditing.</li>
+                    <li>Usage Logs and Diagnostic Information: Including crash logs, error records, etc., used only to improve product experience and troubleshoot issues.</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">III. Information Usage</h2>
+                <p>We will process your personal information for the following purposes:</p>
+                <ul style="padding-left:20px;">
+                    <li>Providing and maintaining core functionality, such as trip planning, destination recording, route management, etc.;</li>
+                    <li>Ensuring service security, such as identity verification, anti-fraud, and preventing illegal use;</li>
+                    <li>Providing customer support and feedback channels, responding to your inquiries and suggestions;</li>
+                    <li>Conducting data analysis and research to improve product performance and user experience;</li>
+                    <li>With your consent, sending you notifications, updates, activities, or personalized content;</li>
+                    <li>Complying with laws, regulations, and regulatory requirements, such as assisting administrative or judicial authorities in lawful execution.</li>
+                </ul>
+                <p>We will not use information for purposes unrelated to those mentioned above.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IV. Information Storage and Protection</h2>
+                <ul style="padding-left:20px;">
+                    <li>Storage Location and Method: Except for logs and necessary operational information stored securely by us within China, your core data such as trips is stored in your personal iCloud account and will not be stored separately on our own servers. We only read and write this data with your authorization.</li>
+                    <li>Storage Period: We only retain information for the period necessary to achieve the above purposes; after the period expires, service termination, or your active deletion/account cancellation, we will delete or anonymize the information (except as otherwise required by laws and regulations). Data stored in iCloud can be managed and deleted by you.</li>
+                    <li>Security Measures: We adopt encryption for transmission and storage, access control, permission levels, audit monitoring, and other measures to protect the security of your information. Only authorized personnel can access necessary information and have signed confidentiality agreements.</li>
+                    <li>Security Incident Handling: In the event of an information security incident, we will promptly inform you of the incident situation, impact, and remedial measures taken in accordance with legal requirements, and report to the competent authorities.</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">V. Information Sharing, Transfer, and Public Disclosure</h2>
+                <p>We do not sell your personal information, nor do we share or transfer your information to third parties other than Apple. Sharing or transfer may only occur in the following circumstances:</p>
+                <ul style="padding-left:20px;">
+                    <li>With your explicit authorization or consent;</li>
+                    <li>In accordance with laws, regulations, administrative supervision, or judicial requirements;</li>
+                    <li>Necessary collaboration with Apple-related ecosystem services (such as CloudKit, Sign in with Apple); these services are all subject to Apple's official privacy policy;</li>
+                    <li>Enterprise mergers, reorganizations, and other situations. If information transfer is involved, we will require the new information holder to continue to be bound by this policy or obtain your authorization again.</li>
+                </ul>
+                <p>Except as otherwise required by law, we will not publicly disclose your personal information. If public disclosure is indeed necessary, we will notify you in advance in a manner that complies with legal requirements and obtain your consent.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VI. Third-Party Services and SDKs</h2>
+                <p>"MooFootprint" currently only uses SDKs provided by Apple, including but not limited to:</p>
+                <ul style="padding-left:20px;">
+                    <li>Sign in with Apple (for identity authentication);</li>
+                    <li>CloudKit / iCloud (for data storage and synchronization).</li>
+                </ul>
+                <p>These services are subject to Apple's relevant privacy policy. We recommend that you refer to Apple's Privacy Policy for more information.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VII. Your Rights and Information Management</h2>
+                <p>We respect your relevant rights regarding personal information:</p>
+                <ul style="padding-left:20px;">
+                    <li>Access and Correction: You can view and update your personal profile and trip data within the application.</li>
+                    <li>Deletion: You can independently delete corresponding data in the application or iCloud management interface.</li>
+                    <li>Withdraw Authorization: You can adjust Apple sign-in authorization, iCloud sync permissions, etc., in your device's system settings; after withdrawal, some features may no longer be available.</li>
+                    <li>Account Cancellation: The application provides an account cancellation entry; after cancellation is completed, we will delete or anonymize information related to the account (except as otherwise required by laws and regulations).</li>
+                    <li>Complaints and Appeals: If you have any questions about this policy or personal information processing, you can contact us through the methods listed in this policy.</li>
+                </ul>
+                <p>After verifying your identity, we will process your request within a reasonable period as required by law. We may refuse repeated or unreasonable requests.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VIII. Protection of Minors</h2>
+                <p>We primarily target adults. If you are under 18 years old, you should use "MooFootprint" under the guidance of a guardian and obtain guardian consent before submitting personal information. If we discover that we have collected information from minors without guardian consent, we will delete it as soon as possible.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IX. Policy Updates</h2>
+                <p>We may update this policy from time to time. We will publish updated versions in prominent positions within the application or through other reasonable means, and notify you before they take effect. Continued use of MooFootprint indicates your agreement to be bound by the updated policy.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">X. Contact and Feedback</h2>
+                <p>If you have any questions, comments, or suggestions regarding this policy or personal information protection, you can contact us through the following methods:</p>
+                <ul style="padding-left:20px;">
+                    <li>Email: mooyucc@qq.com</li>
+                    <li>Mailing Address: Room 502, No. 19, Lane 177, Rongke Road, Pudong New Area, Shanghai</li>
+                    <li>Customer Service: Submit suggestions through "Settings - Help & Feedback" in the "MooFootprint" application</li>
+                </ul>
+                <p>We will respond within 15 business days after receiving your feedback.</p>
+            </section>
+
+            <p>Thank you for trusting "MooFootprint". We will continue to optimize privacy protection measures to provide you with a safe and reliable experience.</p>
+        </div>
     </main>
 
     <footer class="footer">
@@ -127,6 +288,43 @@
             </div>
         </div>
     </footer>
+    <script>
+        // 语言切换功能
+        (function() {
+            const btnZh = document.getElementById('btn-zh');
+            const btnEn = document.getElementById('btn-en');
+            const contentZh = document.getElementById('content-zh');
+            const contentEn = document.getElementById('content-en');
+            
+            // 从localStorage读取保存的语言偏好
+            const savedLang = localStorage.getItem('privacy-policy-lang') || 'zh';
+            
+            function switchLanguage(lang) {
+                if (lang === 'zh') {
+                    btnZh.classList.add('active');
+                    btnEn.classList.remove('active');
+                    contentZh.classList.add('active');
+                    contentEn.classList.remove('active');
+                    document.documentElement.lang = 'zh-CN';
+                } else {
+                    btnEn.classList.add('active');
+                    btnZh.classList.remove('active');
+                    contentEn.classList.add('active');
+                    contentZh.classList.remove('active');
+                    document.documentElement.lang = 'en';
+                }
+                // 保存语言偏好
+                localStorage.setItem('privacy-policy-lang', lang);
+            }
+            
+            // 绑定按钮事件
+            btnZh.addEventListener('click', () => switchLanguage('zh'));
+            btnEn.addEventListener('click', () => switchLanguage('en'));
+            
+            // 初始化语言
+            switchLanguage(savedLang);
+        })();
+    </script>
 </body>
 </html>
 
