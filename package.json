@@ -4,13 +4,25 @@
   "description": "MooFlow 应用服务器",
   "main": "mooflow-server.js",
   "scripts": {
-    "start": "node mooflow-server.js",
-    "dev": "nodemon mooflow-server.js",
-    "build": "node build-assets.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "node build-assets.js",
+    "import-school": "node import-school-data.js",
+    "import-all": "node import-schools-batch.js",
+    "import-csv": "node import-csv-all.js",
+    "export-csv": "node export-school-data.js",
+    "download-csv": "node download-school-data.js",
+    "sync": "node sync-school-data.js",
+    "watch-schools": "node watch-school-data.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "mongoose": "^8.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "express-validator": "^7.0.1",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

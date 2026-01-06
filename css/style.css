@@ -2896,6 +2896,202 @@ footer {
     .cta-section h2 {
         font-size: 20px;
     }
+}
+
+/* AI评估过程展示样式 */
+.evaluation-process {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.evaluation-process-header {
+    margin-bottom: 24px;
+}
+
+.evaluation-process-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.evaluation-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.evaluation-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007AFF, #5AC8FA);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.evaluation-progress-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.evaluation-live-log {
+    margin: 12px 0 16px;
+    padding: 12px;
+    background: #f5f6f7;
+    border-radius: 10px;
+    max-height: 140px;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+}
+
+.evaluation-live-log-line {
+    font-size: 12px;
+    color: #7a7a7a;
+    line-height: 1.5;
+    word-break: break-all;
+}
+
+.evaluation-step.current {
+    outline: 2px solid rgba(0, 122, 255, 0.25);
+}
+
+.evaluation-steps {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.evaluation-step {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #007AFF;
+    animation: slideIn 0.3s ease;
+}
+
+.evaluation-step-start {
+    border-left-color: #007AFF;
+    background: #e7f3ff;
+}
+
+.evaluation-step-step {
+    border-left-color: #34c759;
+    background: #e8f5e9;
+}
+
+.evaluation-step-thinking {
+    border-left-color: #ff9500;
+    background: #fff4e6;
+}
+
+.evaluation-step-evaluating {
+    border-left-color: #af52de;
+    background: #f3e5f5;
+}
+
+.evaluation-step-complete {
+    border-left-color: #34c759;
+    background: #e8f5e9;
+}
+
+.evaluation-step-error {
+    border-left-color: #ff3b30;
+    background: #ffe5e5;
+}
+
+.evaluation-step-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.evaluation-step-content {
+    flex: 1;
+}
+
+.evaluation-step-message {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.evaluation-step-detail {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 滚动条样式 */
+.evaluation-steps::-webkit-scrollbar {
+    width: 6px;
+}
+
+.evaluation-steps::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.evaluation-steps::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.evaluation-steps::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .evaluation-process {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .evaluation-process-header h3 {
+        font-size: 20px;
+    }
+    
+    .evaluation-step {
+        padding: 12px;
+    }
+    
+    .evaluation-step-message {
+        font-size: 14px;
+    }
+    
+    .evaluation-step-detail {
+        font-size: 13px;
+    }
     
     .cta-section p {
         font-size: 14px;

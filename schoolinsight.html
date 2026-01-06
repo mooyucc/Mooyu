@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Insight - 学校查询与对比 | MooYu</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        #page-schoolinsight {
+            background: linear-gradient(135deg, 
+                #F5F7FA 0%, 
+                #E8ECF1 50%, 
+                #F0F4F8 100%);
+            min-height: 100vh;
+            color: #333333;
+            padding-top: 80px;
+        }
+
+        #page-schoolinsight .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .schoolinsight-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px 120px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title h1 {
+            font-size: 48px;
+            color: #333333;
+            margin-bottom: 16px;
+        }
+
+        .page-title p {
+            font-size: 18px;
+            color: #666666;
+        }
+
+        /* 搜索区域 */
+        .search-section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #F75C62;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999999;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .clear-search-btn:hover {
+            color: #F75C62;
+        }
+
+        .clear-search-btn.visible {
+            display: flex;
+        }
+
+        .clear-results-container {
+            text-align: center;
+            margin-top: 24px;
+            margin-bottom: 32px;
+        }
+
+        .clear-results-btn {
+            padding: 12px 32px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .clear-results-btn:hover {
+            border-color: #999999;
+            color: #333333;
+            background: #F9FAFB;
+        }
+
+        .search-btn {
+            padding: 14px 32px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #e54a50;
+        }
+
+        /* 学校列表 */
+        .schools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .school-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .school-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: #F75C62;
+        }
+
+        .school-card.selected {
+            border-color: #F75C62;
+            background: #FFF5F5;
+        }
+
+        .school-card h3 {
+            font-size: 20px;
+            color: #333333;
+            margin-bottom: 12px;
+        }
+
+        .school-card .school-info {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .school-card .compare-checkbox {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .school-card .compare-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .school-card .compare-checkbox label {
+            font-size: 14px;
+            color: #666666;
+            cursor: pointer;
+        }
+
+        /* 对比按钮 */
+        .compare-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 2px solid #E5E7EB;
+            padding: 20px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            display: none;
+            z-index: 100;
+        }
+
+        .compare-bar.active {
+            display: block;
+        }
+
+        .compare-bar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selected-schools {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .selected-school-tag {
+            background: #F75C62;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selected-school-tag .remove-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .compare-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .compare-btn {
+            padding: 12px 32px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .compare-btn:hover {
+            background: #e54a50;
+        }
+
+        .compare-btn:disabled {
+            background: #CCCCCC;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            padding: 12px 24px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            border-color: #999999;
+            color: #333333;
+        }
+
+        /* 对比视图 */
+        .compare-view {
+            display: none;
+            margin-top: 32px;
+        }
+
+        .compare-view.active {
+            display: block;
+        }
+
+        .compare-table {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+        }
+
+        .compare-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table th {
+            background: #F75C62;
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 500;
+            min-width: 200px;
+        }
+
+        .compare-table td {
+            padding: 16px;
+            border-bottom: 1px solid #E5E7EB;
+            vertical-align: top;
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .compare-table .category-header {
+            background: #F9FAFB;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .back-to-search {
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            border-color: #F75C62;
+            color: #F75C62;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666666;
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            color: #333333;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #666666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666666;
+        }
+
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 32px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .schools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .compare-bar-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .compare-actions {
+                width: 100%;
+            }
+
+            .compare-btn,
+            .clear-btn,
+            #basicCompareBtn {
+                flex: 1;
+            }
+
+            .compare-table {
+                overflow-x: auto;
+            }
+
+            .compare-table th,
+            .compare-table td {
+                min-width: 150px;
+            }
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #F75C62 0%, #e54a50 100%);
+            color: white;
+            padding: 32px;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .modal-header .school-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 32px;
+            overflow-y: auto;
+            flex: 1;
+            background: #ffffff;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #F0F0F0;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #CCCCCC;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #999999;
+        }
+
+        .info-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: #F75C62;
+            border-radius: 2px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .info-item {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            border-bottom: 2px solid #E5E7EB;
+            transition: all 0.2s;
+        }
+
+        .info-item:hover {
+            border-color: #F75C62;
+            box-shadow: 0 2px 8px rgba(247, 92, 98, 0.1);
+        }
+
+        .info-item-label {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item-value {
+            font-size: 15px;
+            color: #333333;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .info-item-value.boolean-true {
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .info-item-value.boolean-false {
+            color: #999999;
+        }
+
+        .info-item-value.empty {
+            color: #999999;
+            font-style: italic;
+        }
+
+        .info-item-value.boolean-true::before {
+            content: '✓ ';
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        .info-item-value.boolean-false::before {
+            content: '— ';
+            color: #999999;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            background: #F75C62;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge.inactive {
+            background: #E5E7EB;
+            color: #666666;
+        }
+
+        /* 免责声明样式 */
+        .disclaimer-section {
+            background: #FFF9E6;
+            border: 1px solid #FFE066;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .disclaimer-icon {
+            color: #F59E0B;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .disclaimer-content {
+            flex: 1;
+            color: #92400E;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .disclaimer-content p {
+            margin: 0 0 6px 0;
+        }
+
+        .disclaimer-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .modal-container {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-header {
+                padding: 24px;
+            }
+
+            .modal-header h2 {
+                font-size: 22px;
+                padding-right: 50px;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="page-schoolinsight" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home">
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;"></a>
+                </div>
+                <nav>
+                    <a href="download.html" class="download-btn">MooApp Family</a>
+                </nav>
+            </div>
+        </header>
+        <main class="schoolinsight-main">
+            <div class="page-title">
+                <h1>School Insight</h1>
+                <p>查询和对比学校信息，做出明智的选择</p>
+            </div>
+
+            <!-- 搜索区域 -->
+            <div class="search-section">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <input type="text" class="search-input" id="searchInput" placeholder="搜索学校名称...">
+                        <button class="clear-search-btn" id="clearSearchBtn" title="清空搜索">×</button>
+                    </div>
+                    <button class="search-btn" id="searchBtn">搜索</button>
+                </div>
+            </div>
+
+            <!-- 免责声明 -->
+            <div class="disclaimer-section">
+                <div class="disclaimer-icon">⚠️</div>
+                <div class="disclaimer-content">
+                    <p><strong>数据来源说明：</strong>本平台所有学校数据均来自AI自动搜索和整理，数据可能存在延迟或不完整的情况，仅供参考使用，不构成任何决策建议。</p>
+                    <p><strong>评估得分说明：</strong>AI评估得分仅代表算法分析结果，基于公开信息进行综合评估，不代表官方评价或权威认证，仅供参考，请结合实际情况谨慎判断。</p>
+                </div>
+            </div>
+
+            <!-- 学校列表视图 -->
+            <div id="schoolsListView">
+                <div id="schoolsGrid" class="schools-grid">
+                    <!-- 学校卡片将在这里动态生成 -->
+                </div>
+                <div id="clearResultsContainer" class="clear-results-container" style="display: none;">
+                    <button class="clear-results-btn" id="clearResultsBtn">清空搜索结果</button>
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 8v4m0 4h.01"/>
+                    </svg>
+                    <h3 id="emptyStateTitle">请输入搜索关键词</h3>
+                    <p id="emptyStateMessage">在上方搜索框中输入学校名称进行查询</p>
+                </div>
+                <div id="loadingState" class="loading" style="display: none;">
+                    <p>AI搜索中，请耐心等候...</p>
+                </div>
+                <!-- AI评估过程展示 -->
+                <div id="evaluationProcess" class="evaluation-process" style="display: none;">
+                    <div class="evaluation-process-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3>AI 评估进行中</h3>
+                            <div class="evaluation-timer" id="evaluationTimer" style="font-size: 16px; color: #6c757d; font-weight: 500;">
+                                <span style="margin-right: 4px;">⏱️</span>
+                                <span id="evaluationTimerText">00:00</span>
+                            </div>
+                        </div>
+                        <div class="evaluation-progress-bar">
+                            <div class="evaluation-progress-fill" id="evaluationProgressFill"></div>
+                        </div>
+                        <div class="evaluation-progress-status">
+                            <span id="evaluationProgressText">0%</span>
+                            <span id="evaluationCurrentStep">等待开始...</span>
+                        </div>
+                    </div>
+                    <div class="evaluation-live-log" id="evaluationLiveLog">
+                        <!-- 实时分析过程将流式显示在此 -->
+                    </div>
+                    <div class="evaluation-steps" id="evaluationSteps">
+                        <!-- 评估步骤将在这里动态添加 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 对比视图 -->
+            <div id="compareView" class="compare-view">
+                <div class="back-to-search">
+                    <button class="back-btn" id="backToSearchBtn">← 返回搜索</button>
+                    <button class="back-btn" id="backToBasicBtn" style="margin-left: 12px; display: none;" onclick="switchToBasicCompare()">返回基础对比</button>
+                    <button class="back-btn" id="scoringCompareBtn" style="margin-left: 12px; display: none;" onclick="handleCompareScoring()">AI评分对比</button>
+                </div>
+                <div class="compare-table" id="compareTable">
+                    <!-- 对比表格将在这里动态生成 -->
+                </div>
+            </div>
+        </main>
+
+        <!-- 对比操作栏 -->
+        <div class="compare-bar" id="compareBar">
+            <div class="compare-bar-content">
+                <div class="selected-schools" id="selectedSchools">
+                    <!-- 选中的学校标签将在这里显示 -->
+                </div>
+                <div class="compare-actions">
+                    <button class="compare-btn" id="compareBtn" disabled>AI评估 (0)</button>
+                    <button class="clear-btn" id="basicCompareBtn" disabled>基础对比</button>
+                    <button class="clear-btn" id="clearBtn">清空</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 学校详情弹窗 -->
+    <div class="modal-overlay" id="schoolModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-close" id="modalCloseBtn">×</button>
+                <h2 id="modalSchoolName">学校名称</h2>
+                <div class="school-subtitle" id="modalSchoolSubtitle"></div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    <script src="js/schoolinsight.js"></script>
+</body>
+</html>
+

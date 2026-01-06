@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooyuLab - 墨鱼实验室 | MooYu</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Aclonica&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            /* 三色渐变背景 - 从右上角到左下角 */
+            background: linear-gradient(135deg, 
+                #FBEFEC 0%, 
+                #FBEFEC 25%, 
+                #FAF7F2 50%, 
+                #FBF6EC 75%, 
+                #FBF6EC 100%);
+        }
+
+        #page-mooyulab {
+            /* 三色渐变背景 - 从右上角到左下角 */
+            background: linear-gradient(135deg, 
+                #FBEFEC 0%, 
+                #FBEFEC 25%, 
+                #FAF7F2 50%, 
+                #FBF6EC 75%, 
+                #FBF6EC 100%);
+            min-height: 100vh;
+        }
+
+        #page-mooyulab .header {
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(12px);
+        }
+
+        #page-mooyulab .mooyulab-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 120px;
+        }
+
+        #page-mooyulab .download-title {
+            margin-top: 120px;
+        }
+
+        #page-mooyulab .download-title span {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 56px;
+            font-weight: 700;
+            font-family: 'Aclonica', sans-serif;
+        }
+
+        #page-mooyulab .app-family-grid {
+            margin-top: 48px;
+            gap: 40px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        #page-mooyulab .app-card {
+            /* 浅米色卡片背景 */
+            background: #FAF8F5;
+            border-radius: 28px;
+            padding: 40px 32px;
+            /* 浅米色边框 */
+            border: 1px solid #EAE6DF;
+            /* 小卡片阴影 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #page-mooyulab .app-card:hover {
+            transform: translateY(-6px);
+            /* hover 时使用稍大的阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        #page-mooyulab .app-card.center {
+            gap: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 图标区域 - 固定高度 */
+        #page-mooyulab .app-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            object-fit: contain;
+            display: block;
+        }
+
+        #page-mooyulab .app-icon-wrapper {
+            height: 84px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+
+        /* 标题区域 - 固定高度 */
+        #page-mooyulab .app-title {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-weight: 600;
+            margin-bottom: 0;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.3;
+            width: 100%;
+        }
+
+        #page-mooyulab .app-title-wrapper {
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        /* 描述区域 - 固定高度 */
+        #page-mooyulab .app-description {
+            margin-bottom: 0;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+        #page-mooyulab .app-description-wrapper {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        #page-mooyulab .app-description-cn,
+        #page-mooyulab .app-description-en {
+            /* 次要文字颜色 */
+            color: #666666;
+        }
+
+        /* 按钮区域 - 固定高度 */
+        #page-mooyulab .app-card .button-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-top: 0;
+            min-height: 120px;
+            justify-content: flex-start;
+        }
+
+        #page-mooyulab .app-download-btn {
+            background: #111;
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px 24px;
+            border: none;
+            box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #page-mooyulab .app-download-btn:hover {
+            background: #000;
+            box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
+            transform: translateY(-3px);
+        }
+
+        #page-mooyulab .footer {
+            border-top: none;
+            background: transparent;
+        }
+
+        #page-mooyulab .footer-content span,
+        #page-mooyulab .footer-content a {
+            /* 次要文字颜色 */
+            color: #666666 !important;
+        }
+
+        @media (max-width: 1024px) {
+            #page-mooyulab .mooyulab-main {
+                padding: 0 32px 100px;
+            }
+
+            #page-mooyulab .download-title span {
+                font-size: 48px;
+            }
+
+            #page-mooyulab .app-family-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-mooyulab .mooyulab-main {
+                padding: 0 24px 100px;
+            }
+
+            #page-mooyulab .download-title {
+                margin-top: 100px;
+            }
+
+            #page-mooyulab .download-title span {
+                font-size: 40px;
+            }
+
+            #page-mooyulab .app-family-grid {
+                gap: 28px;
+                grid-template-columns: 1fr;
+            }
+
+            #page-mooyulab .app-card {
+                padding: 32px 24px;
+            }
+
+            #page-mooyulab .app-icon-wrapper {
+                height: 72px;
+            }
+
+            #page-mooyulab .app-icon {
+                width: 56px;
+                height: 56px;
+            }
+
+            #page-mooyulab .app-title-wrapper {
+                height: 52px;
+            }
+
+            #page-mooyulab .app-title {
+                height: 44px;
+            }
+
+            #page-mooyulab .app-description-wrapper {
+                height: 56px;
+            }
+
+            #page-mooyulab .app-description {
+                height: 48px;
+            }
+
+            #page-mooyulab .app-card .button-container {
+                min-height: 120px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            #page-mooyulab .mooyulab-main {
+                padding: 0 20px 80px;
+            }
+
+            #page-mooyulab .download-title span {
+                font-size: 32px;
+            }
+
+            #page-mooyulab .app-card {
+                padding: 28px 20px;
+            }
+
+            #page-mooyulab .app-icon-wrapper {
+                height: 64px;
+            }
+
+            #page-mooyulab .app-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            #page-mooyulab .app-title-wrapper {
+                height: 44px;
+            }
+
+            #page-mooyulab .app-title {
+                height: 36px;
+                font-size: 18px;
+            }
+
+            #page-mooyulab .app-description-wrapper {
+                height: 48px;
+            }
+
+            #page-mooyulab .app-description {
+                height: 40px;
+            }
+
+            #page-mooyulab .app-description-cn {
+                font-size: 14px;
+            }
+
+            #page-mooyulab .app-description-en {
+                font-size: 11px;
+            }
+
+            #page-mooyulab .app-card .button-container {
+                min-height: 120px;
+            }
+        }
+
+        /* 密码保护模态框样式 */
+        #password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        #password-modal.hidden {
+            display: none;
+        }
+
+        .password-modal-content {
+            background: #FAF8F5;
+            border-radius: 28px;
+            padding: 48px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid #EAE6DF;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .password-modal-content h2 {
+            color: #333333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-family: 'Aclonica', sans-serif;
+        }
+
+        .password-modal-content p {
+            color: #666666;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #EAE6DF;
+            border-radius: 16px;
+            font-size: 16px;
+            background: #fff;
+            color: #333333;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #111;
+        }
+
+        .password-error {
+            color: #F75C62;
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px;
+            display: block;
+        }
+
+        .password-submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .password-submit-btn:hover {
+            background: #000;
+            box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
+            transform: translateY(-2px);
+        }
+
+        .password-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 页面内容隐藏样式 */
+        #page-mooyulab.locked .mooyulab-main,
+        #page-mooyulab.locked .header,
+        #page-mooyulab.locked .footer {
+            display: none;
+        }
+
+        @media (max-width: 540px) {
+            .password-modal-content {
+                padding: 36px 28px;
+            }
+
+            .password-modal-content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 密码保护模态框 -->
+    <div id="password-modal">
+        <div class="password-modal-content">
+            <h2>MooyuLab</h2>
+            <p>请输入密码以访问实验室</p>
+            <div class="password-input-wrapper">
+                <input type="password" id="password-input" class="password-input" placeholder="请输入密码" autocomplete="off">
+                <span class="password-error" id="password-error"></span>
+            </div>
+            <button class="password-submit-btn" id="password-submit-btn">进入实验室</button>
+        </div>
+    </div>
+
+    <!-- MooyuLab 页面 -->
+    <div id="page-mooyulab" class="page locked">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home2">
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;" alt="MooYu Logo"></a>
+                </div>
+                <nav>
+                    <a href="download.html" class="download-btn">MooApp Family</a>
+                </nav>
+            </div>
+        </header>
+        <main class="mooyulab-main">
+            <h2 class="download-title download-title-center">
+                <span>MooyuLab</span>
+            </h2>
+            <div class="app-family-grid">
+                <div class="app-card center">
+                    <div class="app-icon-wrapper">
+                        <a href="mooflow.html"><img src="images/iconMooFlow.png" alt="MooFlow" class="app-icon" id="goto-mooflow-from-mooyulab"></a>
+                    </div>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooFlow</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">项目计划可视化编制工具</div>
+                            <div class="app-description-en">Project Planning Visualization Compilation Tool</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="http://flow.mooyu.cc" target="_blank" class="app-download-btn" id="DownloadMPIntel" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>Web端程序链接</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                    </div>
+                </div>
+                <div class="app-card center">
+                    <div class="app-icon-wrapper">
+                        <a href="schoolinsight.html"><img src="images/Mooyu.png" alt="MooSchool" class="app-icon" id="goto-mooschool-from-mooyulab"></a>
+                    </div>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooSchool</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">学校查询与对比工具</div>
+                            <div class="app-description-en">School Query and Comparison Tool</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="schoolinsight.html" class="app-download-btn" id="goto-schoolinsight-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>进入 School Insight</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+    <script>
+        // 密码保护功能
+        (function() {
+            // 设置密码 - 请修改此处的密码
+            const CORRECT_PASSWORD = 'mooyulab2025';
+            
+            // 检查是否已通过验证
+            const isAuthenticated = sessionStorage.getItem('mooyulab_authenticated') === 'true';
+            
+            const passwordModal = document.getElementById('password-modal');
+            const passwordInput = document.getElementById('password-input');
+            const passwordSubmitBtn = document.getElementById('password-submit-btn');
+            const passwordError = document.getElementById('password-error');
+            const pageContent = document.getElementById('page-mooyulab');
+            
+            // 如果已通过验证，显示页面内容
+            if (isAuthenticated) {
+                passwordModal.classList.add('hidden');
+                pageContent.classList.remove('locked');
+            } else {
+                // 未通过验证，显示密码输入框
+                passwordModal.classList.remove('hidden');
+                pageContent.classList.add('locked');
+                passwordInput.focus();
+            }
+            
+            // 验证密码函数
+            function verifyPassword() {
+                const inputPassword = passwordInput.value.trim();
+                
+                if (inputPassword === '') {
+                    passwordError.textContent = '请输入密码';
+                    return;
+                }
+                
+                if (inputPassword === CORRECT_PASSWORD) {
+                    // 密码正确，设置验证标记
+                    sessionStorage.setItem('mooyulab_authenticated', 'true');
+                    // 隐藏密码框，显示页面内容
+                    passwordModal.classList.add('hidden');
+                    pageContent.classList.remove('locked');
+                } else {
+                    // 密码错误
+                    passwordError.textContent = '密码错误，请重试';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+            
+            // 提交按钮点击事件
+            passwordSubmitBtn.addEventListener('click', verifyPassword);
+            
+            // 回车键提交
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyPassword();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+
