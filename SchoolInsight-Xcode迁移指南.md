@@ -2,6 +2,25 @@
 
 本文档说明如何将 School Insight 的完整功能迁移到 Xcode 进行 iOS 原生应用开发。
 
+## 📁 快速参考：关键代码文件路径
+
+**建议先查看以下代码文件以了解实际实现：**
+
+| 功能模块 | 文件路径 | 关键代码位置 | 说明 |
+|---------|---------|-------------|------|
+| **数据模型** | `server.js` | 第 40-89 行 | School 数据模型定义（包含 schoolType、affiliatedGroup） |
+| **学校搜索** | `server.js` | 第 254-395 行 | 学校列表和搜索 API |
+| **教育集团查询** | `server.js` | 第 360-395 行 | 根据教育集团查询学校 API |
+| **流式AI评估** | `server.js` | 第 1132-1350 行 | 流式AI评分对比后端实现（SSE） |
+| **标准AI评估** | `server.js` | 第 1353-1636 行 | 标准AI评分对比后端实现 |
+| **前端流式处理** | `js/schoolinsight.js` | 第 869-1001 行 | 流式评估前端实现（handleCompareScoringStream） |
+| **前端教育集团** | `js/schoolinsight.js` | 第 1238-1280 行 | 教育集团查询前端实现 |
+| **字段兼容处理** | `js/schoolinsight.js` | 第 1108-1236 行 | schoolType/nature 兼容处理 |
+| **UI界面** | `schoolinsight.html` | 全文 | 完整的HTML结构和样式 |
+| **API文档** | `SchoolInsight-API接口清单.md` | 全文 | 完整的API接口文档 |
+
+> 💡 **提示**：所有文件路径基于项目根目录。可以直接在代码仓库中搜索这些文件查看具体实现。
+
 ## 一、功能概览
 
 School Insight 是一个学校查询与对比系统，包含以下核心功能：
@@ -21,9 +40,11 @@ School Insight 是一个学校查询与对比系统，包含以下核心功能�
 ### 1.2 后端 API
 - `GET /api/schools` - 获取学校列表（支持搜索）
 - `GET /api/schools/:id` - 获取单个学校详情
+- `GET /api/schools/by-group/:groupName` - 根据教育集团查询学校
 - `POST /api/schools/create-from-name` - 根据名称创建学校
 - `POST /api/schools/compare` - 基础对比
-- `POST /api/schools/compare-scoring` - AI 评分对比
+- `POST /api/schools/compare-scoring` - AI 评分对比（标准版本）
+- `POST /api/schools/compare-scoring-stream` - AI 评分对比（流式版本，支持实时进度）
 
 ## 二、技术架构分析
 
@@ -40,11 +61,19 @@ School Insight 是一个学校查询与对比系统，包含以下核心功能�
 
 ### 2.3 数据模型
 学校数据包含以下字段：
-- 基本信息：序号、名称、网址、国家、城市、性质、涵盖学段
-- 学段设置：幼儿园、小学、初中、高中
-- IB 课程：PYP、MYP、DP、CP
-- 其他课程：A-Level、AP、加拿大课程、澳大利亚课程、IGCSE、其他课程
-- AI 评估字段：总分、各维度得分和说明、最终总结
+- **基本信息**：序号、名称、网址、国家、城市、学校类型（schoolType）、涵盖学段、隶属教育集团（affiliatedGroup）
+- **学段设置**：幼儿园、小学、初中、高中
+- **IB 课程**：PYP、MYP、DP、CP
+- **其他课程**：A-Level、AP、加拿大课程、澳大利亚课程、IGCSE、其他课程
+- **AI 评估字段**：总分、各维度得分和说明、最终总结
+
+**字段说明**：
+- `schoolType`：学校类型（新增字段，替代/兼容旧的 `nature` 字段）
+  - 可能值：`"公立学校"`、`"普通民办学校"`、`"民办双语学校"`、`"公立学校（国际部）"`
+- `affiliatedGroup`：隶属教育集团（新增字段）
+  - 如果学校隶属于某个教育集团，填写集团名称
+  - 如果没有隶属任何教育集团，值为 `"无"`
+- `nature`：学校性质（旧字段，保留以兼容旧数据，建议使用 `schoolType`）
 
 ## 三、迁移到 Xcode 的步骤
 
@@ -93,8 +122,10 @@ struct School: Codable, Identifiable {
     let website: String?
     let country: String?
     let city: String?
-    let nature: String?
+    let schoolType: String? // 学校类型（新增，优先使用）
+    let nature: String? // 学校性质（旧字段，保留兼容）
     let coveredStages: String?
+    let affiliatedGroup: String? // 隶属教育集团（新增）
     
     // 学段设置
     let kindergarten: String?
@@ -122,6 +153,11 @@ struct School: Codable, Identifiable {
     let ai评估课程声誉与体系成熟度说明: String?
     // ... 其他AI评估字段
     
+    // 计算属性：获取学校类型（优先使用schoolType，兼容nature）
+    var displaySchoolType: String? {
+        return schoolType ?? nature
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case sequenceNumber
@@ -129,8 +165,10 @@ struct School: Codable, Identifiable {
         case website
         case country
         case city
+        case schoolType
         case nature
         case coveredStages
+        case affiliatedGroup
         case kindergarten
         case primary
         case juniorHigh
@@ -172,6 +210,18 @@ struct CompareResponse: Codable {
 struct ScoringResponse: Codable {
     let schools: [School]
     let scoring: ScoringData
+    let warning: ScoringWarning? // 评分警告（如学校性质不一致）
+}
+
+struct ScoringWarning: Codable {
+    let type: String
+    let message: String
+}
+
+struct SchoolsByGroupResponse: Codable {
+    let schools: [School]
+    let total: Int
+    let groupName: String
 }
 
 struct ScoringData: Codable {
@@ -272,7 +322,18 @@ class APIService {
         return try JSONDecoder().decode(CompareResponse.self, from: data)
     }
     
-    // MARK: - AI评分对比
+    // MARK: - 根据教育集团查询学校
+    func getSchoolsByGroup(groupName: String) async throws -> SchoolsByGroupResponse {
+        guard let encodedName = groupName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+              let url = URL(string: "\(baseURL)/schools/by-group/\(encodedName)") else {
+            throw APIError.invalidURL
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        return try JSONDecoder().decode(SchoolsByGroupResponse.self, from: data)
+    }
+    
+    // MARK: - AI评分对比（标准版本）
     func compareScoring(ids: [String]) async throws -> ScoringResponse {
         guard let url = URL(string: "\(baseURL)/schools/compare-scoring") else {
             throw APIError.invalidURL
@@ -287,6 +348,99 @@ class APIService {
         
         let (data, _) = try await URLSession.shared.data(for: request)
         return try JSONDecoder().decode(ScoringResponse.self, from: data)
+    }
+    
+    // MARK: - AI评分对比（流式版本，支持实时进度）
+    func compareScoringStream(ids: [String], progressHandler: @escaping (EvaluationEvent) -> Void) async throws -> ScoringResponse {
+        guard let url = URL(string: "\(baseURL)/schools/compare-scoring-stream") else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        
+        let body = ["schoolIds": ids]
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (asyncBytes, _) = try await URLSession.shared.bytes(for: request)
+        var buffer = ""
+        var finalResponse: ScoringResponse?
+        
+        for try await line in asyncBytes.lines {
+            if line.hasPrefix("data: ") {
+                let jsonString = String(line.dropFirst(6))
+                if let data = jsonString.data(using: .utf8),
+                   let event = try? JSONDecoder().decode(EvaluationEvent.self, from: data) {
+                    progressHandler(event)
+                    
+                    // 如果是完成事件，解析最终结果
+                    if event.type == "complete", let eventData = event.data {
+                        if let schools = eventData["schools"] as? [[String: Any]],
+                           let scoring = eventData["scoring"] as? [String: Any] {
+                            // 解析最终响应
+                            // 注意：这里需要根据实际返回的数据结构进行解析
+                            // 示例代码，需要根据实际情况调整
+                        }
+                    }
+                }
+            }
+        }
+        
+        guard let response = finalResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        return response
+    }
+}
+
+// 评估事件模型（用于流式响应）
+struct EvaluationEvent: Codable {
+    let type: String // "start", "step", "thinking", "evaluating", "complete", "error"
+    let message: String
+    let timestamp: String?
+    let data: [String: Any]?
+    
+    enum CodingKeys: String, CodingKey {
+        case type, message, timestamp, data
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(String.self, forKey: .type)
+        message = try container.decode(String.self, forKey: .message)
+        timestamp = try container.decodeIfPresent(String.self, forKey: .timestamp)
+        
+        // 处理data字段（可能是字典或null）
+        if let dataContainer = try? container.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: .data) {
+            var dataDict: [String: Any] = [:]
+            for key in dataContainer.allKeys {
+                if let value = try? dataContainer.decode(String.self, forKey: key) {
+                    dataDict[key.stringValue] = value
+                } else if let value = try? dataContainer.decode(Int.self, forKey: key) {
+                    dataDict[key.stringValue] = value
+                } else if let value = try? dataContainer.decode(Double.self, forKey: key) {
+                    dataDict[key.stringValue] = value
+                }
+                // 可以添加更多类型支持
+            }
+            data = dataDict.isEmpty ? nil : dataDict
+        } else {
+            data = nil
+        }
+    }
+    
+    struct DynamicCodingKeys: CodingKey {
+        var stringValue: String
+        init?(stringValue: String) {
+            self.stringValue = stringValue
+        }
+        var intValue: Int?
+        init?(intValue: Int) {
+            return nil
+        }
     }
 }
 
@@ -483,24 +637,120 @@ class CompareViewModel: ObservableObject {
 - 使用 `TextField` 实现搜索输入
 - 调用 `APIService.searchSchools()` 获取结果
 - 处理 `possibleSchoolNames` 情况（显示选择界面）
+- **新增**：支持点击教育集团名称进行关联查询（调用 `getSchoolsByGroup()`）
 
 ### 4.2 学校详情
 - 使用 `Sheet` 或 `NavigationLink` 显示详情
 - 按分类展示信息（基本信息、学段、课程等）
 - 支持网址链接跳转
+- **新增**：显示 `schoolType`（学校类型）和 `affiliatedGroup`（隶属教育集团）
+- **新增**：教育集团字段可点击，跳转到该集团下的所有学校列表
+- **兼容性**：优先显示 `schoolType`，如果不存在则显示 `nature`（兼容旧数据）
 
 ### 4.3 多学校对比
 - **基础对比**：使用 `Table` 或自定义表格视图
 - **AI 评分对比**：
+  - **标准版本**：调用 `compareScoring()`，等待完整结果返回
+  - **流式版本**：调用 `compareScoringStream()`，实时显示评估进度
+    - 显示评估步骤（开始、检查信息、思考、评估各指标等）
+    - 显示进度条和百分比
+    - 显示实时日志
+    - 评估完成后显示完整结果
   - 显示量化对比表
   - 显示总分和各项得分
   - 显示评分说明和总结
+  - **新增**：显示评分警告（如学校性质不一致时的提示）
   - 使用图表可视化（可选）
 
 ### 4.4 状态管理
 - 使用 `@StateObject` 和 `@ObservedObject` 管理状态
 - 使用 `Combine` 处理异步操作
 - 缓存对比数据以提高性能
+- **新增**：管理流式评估进度状态（当前步骤、进度百分比、日志等）
+
+### 4.5 流式AI评估实现要点
+
+流式AI评估使用 Server-Sent Events (SSE) 协议，实时推送评估进度。实现要点：
+
+1. **SSE 连接设置**
+   - 使用 `URLSession.bytes(for:)` 方法建立流式连接
+   - 设置请求头：`Accept: text/event-stream`
+   - 设置响应头处理：`Content-Type: text/event-stream`
+
+2. **事件解析**
+   - SSE 事件格式：`data: {JSON对象}\n\n`
+   - 逐行读取并解析 JSON 事件
+   - 事件类型包括：
+     - `start`: 评估开始
+     - `step`: 评估步骤（如检查信息完整性）
+     - `thinking`: AI 思考阶段
+     - `evaluating`: 正在评估某个指标（包含进度信息）
+     - `complete`: 评估完成（包含最终结果）
+     - `error`: 评估出错
+
+3. **进度更新**
+   - 根据事件类型更新进度条（0-100%）
+   - 显示当前评估步骤文本
+   - 记录并显示实时日志
+   - 显示评估耗时（计时器）
+
+4. **结果处理**
+   - 在 `complete` 事件中解析 `data.schools` 和 `data.scoring`
+   - 解析 `data.warning`（如果有警告）
+   - 更新UI显示最终对比结果
+
+5. **错误处理**
+   - 监听 `error` 事件
+   - 处理网络中断
+   - 处理超时情况
+   - 提供重试机制
+
+**示例代码结构**：
+```swift
+// 在 ViewModel 中
+@Published var evaluationProgress: Double = 0
+@Published var evaluationStep: String = ""
+@Published var evaluationLogs: [String] = []
+
+func startScoringStream(ids: [String]) async {
+    do {
+        try await APIService.shared.compareScoringStream(ids: ids) { event in
+            DispatchQueue.main.async {
+                switch event.type {
+                case "start":
+                    self.evaluationStep = event.message
+                    self.evaluationProgress = 10
+                case "step":
+                    self.evaluationStep = event.message
+                    self.evaluationProgress = 30
+                case "thinking":
+                    self.evaluationStep = event.message
+                    self.evaluationProgress = 50
+                case "evaluating":
+                    self.evaluationStep = event.message
+                    if let progress = event.data?["progress"] as? String {
+                        // 解析进度 "1/10" 格式
+                        // 更新进度条
+                    }
+                case "complete":
+                    self.evaluationProgress = 100
+                    // 解析最终结果
+                case "error":
+                    // 显示错误
+                default:
+                    break
+                }
+                // 添加日志
+                if let timestamp = event.timestamp {
+                    self.evaluationLogs.append("[\(timestamp)] \(event.message)")
+                }
+            }
+        }
+    } catch {
+        // 处理错误
+    }
+}
+```
 
 ## 五、UI/UX 设计建议
 
@@ -566,34 +816,161 @@ class CompareViewModel: ObservableObject {
 
 ## 九、参考资源
 
-### 9.1 相关文件位置
-- **前端 HTML**：`schoolinsight.html`
-- **前端 JavaScript**：`js/schoolinsight.js`
-- **后端 API**：`server.js`（第 254-838 行）
-- **评估体系**：`evaluation-system.js`
-- **API 文档**：`API访问指南.md`
+### 9.1 相关代码文件位置（可直接查看参考）
 
-### 9.2 学习资源
+以下文件路径基于项目根目录，Xcode 程序员可以直接查看这些文件来理解具体实现：
+
+#### 前端代码文件
+- **前端 HTML**：`schoolinsight.html`
+  - 完整的 UI 结构和样式定义
+  - 搜索框、学校卡片、对比视图、弹窗等组件
+  
+- **前端 JavaScript**：`js/schoolinsight.js`
+  - 第 1-158 行：状态管理和初始化
+  - 第 159-288 行：学校搜索和加载逻辑
+  - 第 290-402 行：学校列表渲染和选择管理
+  - 第 404-478 行：基础对比和 AI 评分对比处理
+  - 第 480-569 行：对比表格渲染
+  - 第 571-702 行：AI 评分对比结果渲染
+  - 第 869-1001 行：**流式 AI 评估实现**（`handleCompareScoringStream` 函数）
+  - 第 1058-1280 行：学校详情弹窗和教育集团查询
+
+#### 后端代码文件
+- **后端 API 服务器**：`server.js`
+  - 第 39-91 行：**数据模型定义**（SchoolSchema，包含 schoolType 和 affiliatedGroup）
+  - 第 254-395 行：学校列表和搜索 API（`GET /api/schools`）
+  - 第 360-395 行：**根据教育集团查询**（`GET /api/schools/by-group/:groupName`）
+  - 第 397-425 行：获取单个学校详情（`GET /api/schools/:id`）
+  - 第 427-478 行：根据名称创建学校（`POST /api/schools/create-from-name`）
+  - 第 483-506 行：基础对比（`POST /api/schools/compare`）
+  - 第 1132-1350 行：**流式 AI 评分对比**（`POST /api/schools/compare-scoring-stream`）
+    - 第 1139-1147 行：SSE 事件发送函数
+    - 第 1174-1230 行：基础信息完整性检查
+    - 第 1232-1258 行：AI 评估调用和流式处理
+  - 第 1353-1636 行：标准 AI 评分对比（`POST /api/schools/compare-scoring`）
+  - 第 1958-2031 行：**学校类型统一化函数**（`unifyNature`，nature 到 schoolType 的转换逻辑）
+
+#### 数据迁移和工具脚本
+- **数据库迁移脚本**：`migrate-nature-to-schooltype.js`
+  - 将旧的 `nature` 字段迁移到新的 `schoolType` 字段
+  
+- **学校类型统一脚本**：`unify-school-nature.js`
+  - 统一学校类型字段的格式和分类
+
+#### 评估系统
+- **评估体系定义**：`evaluation-system.js`
+  - AI 评估的指标定义、权重分配、评分规则等
+
+#### API 文档
+- **API 接口清单**：`SchoolInsight-API接口清单.md`
+  - 所有 API 接口的详细说明、请求参数、响应格式等
+
+### 9.2 关键代码片段位置
+
+#### 数据模型相关
+- **School 模型定义**：`server.js` 第 40-89 行
+- **字段映射示例**：`sync-school-data.js` 第 44-90 行（CSV 字段到数据库字段的映射）
+
+#### 流式评估相关
+- **前端流式处理**：`js/schoolinsight.js` 第 869-1001 行
+  - `handleCompareScoringStream()` 函数：完整的流式处理实现
+  - `handleEvaluationEvent()` 函数：事件处理逻辑
+  - `appendEvaluationLiveLog()` 函数：实时日志追加
+  
+- **后端 SSE 实现**：`server.js` 第 1132-1350 行
+  - SSE 响应头设置
+  - 事件发送函数 `sendProgress()`
+  - 流式评估流程
+
+#### 教育集团查询相关
+- **前端实现**：`js/schoolinsight.js` 第 1238-1280 行
+  - `loadSchoolsByGroup()` 函数：根据教育集团加载学校列表
+  - 教育集团链接点击事件处理
+  
+- **后端实现**：`server.js` 第 360-395 行
+  - `GET /api/schools/by-group/:groupName` 路由处理
+
+#### 学校类型兼容性处理
+- **前端兼容处理**：`js/schoolinsight.js` 第 1108-1110 行、第 1172-1174 行、第 1186-1189 行
+  - 优先使用 `schoolType`，不存在则使用 `nature`
+  
+- **后端兼容处理**：`server.js` 第 576-577 行、第 591 行、第 1671 行、第 1880 行
+  - 多处使用 `school.schoolType || school.nature` 的兼容写法
+
+### 9.2 快速参考：关键代码文件清单
+
+**建议 Xcode 程序员按以下顺序查看代码文件：**
+
+1. **首先查看数据模型**（了解数据结构）
+   ```
+   server.js (第 40-89 行) - School 数据模型定义
+   ```
+
+2. **查看 API 接口实现**（了解接口规范）
+   ```
+   server.js (第 254-395 行) - 学校搜索和列表 API
+   server.js (第 360-395 行) - 教育集团查询 API
+   server.js (第 1132-1350 行) - 流式 AI 评分对比 API
+   server.js (第 1353-1636 行) - 标准 AI 评分对比 API
+   ```
+
+3. **查看前端实现**（了解交互逻辑）
+   ```
+   js/schoolinsight.js (第 869-1001 行) - 流式评估前端实现
+   js/schoolinsight.js (第 1238-1280 行) - 教育集团查询前端实现
+   js/schoolinsight.js (第 1108-1236 行) - 学校详情展示（包含字段兼容处理）
+   ```
+
+4. **查看 API 文档**（了解接口规范）
+   ```
+   SchoolInsight-API接口清单.md - 完整的 API 接口文档
+   ```
+
+### 9.3 学习资源
 - SwiftUI 官方文档
 - Combine 框架文档
 - URLSession 网络编程
 - Core Data / SwiftData 数据持久化
+- Server-Sent Events (SSE) 协议文档
 
 ## 十、迁移检查清单
 
+### 基础功能
 - [ ] 创建 Xcode 项目
 - [ ] 实现数据模型（School、ScoringData 等）
+  - [ ] 添加 `schoolType` 字段
+  - [ ] 添加 `affiliatedGroup` 字段
+  - [ ] 实现 `displaySchoolType` 计算属性（兼容 `nature`）
 - [ ] 实现 API 服务层
+  - [ ] 实现基础 API（搜索、详情、对比）
+  - [ ] 实现 `getSchoolsByGroup()` 方法
+  - [ ] 实现 `compareScoring()` 标准版本
+  - [ ] 实现 `compareScoringStream()` 流式版本
 - [ ] 实现搜索视图
 - [ ] 实现学校列表视图
 - [ ] 实现学校详情视图
+  - [ ] 显示 `schoolType` 和 `affiliatedGroup`
+  - [ ] 实现教育集团名称点击跳转
 - [ ] 实现基础对比视图
 - [ ] 实现 AI 评分对比视图
+  - [ ] 标准版本（等待完整结果）
+  - [ ] 流式版本（实时进度显示）
+  - [ ] 显示评分警告信息
+
+### 高级功能
+- [ ] 实现流式评估进度UI
+  - [ ] 进度条和百分比显示
+  - [ ] 当前步骤文本显示
+  - [ ] 实时日志显示
+  - [ ] 评估计时器
 - [ ] 实现状态管理（ViewModel）
 - [ ] 添加错误处理
 - [ ] 添加加载状态
 - [ ] UI/UX 优化
 - [ ] 测试所有功能
+  - [ ] 测试新旧字段兼容性
+  - [ ] 测试流式评估功能
+  - [ ] 测试教育集团关联查询
 - [ ] 性能优化
 - [ ] 准备发布
 
@@ -611,7 +988,46 @@ A: 使用 `LazyVStack`/`LazyVGrid`，实现分页加载，添加本地缓存。
 ### Q4: 对比表格在 iOS 上如何实现？
 A: 使用 SwiftUI 的 `Table`（iOS 16+）或自定义 `VStack`/`HStack` 布局。
 
+### Q5: 如何实现流式AI评估进度显示？
+A: 使用 `URLSession.bytes(for:)` 处理 SSE 流，逐行解析事件并更新UI。参考 `compareScoringStream()` 方法的实现。
+
+### Q6: `schoolType` 和 `nature` 字段有什么区别？
+A: `schoolType` 是新字段，统一了学校类型的分类标准（四种标准类型：`"公立学校"`、`"普通民办学校"`、`"民办双语学校"`、`"公立学校（国际部）"`）。`nature` 是旧字段，保留以兼容旧数据。建议优先使用 `schoolType`，如果不存在则回退到 `nature`。在 Swift 模型中可以使用计算属性 `displaySchoolType` 来统一处理。
+
+### Q7: 如何实现教育集团关联查询？
+A: 在学校详情页面，将 `affiliatedGroup` 字段显示为可点击链接，点击后调用 `getSchoolsByGroup(groupName:)` 接口，跳转到该集团下的学校列表。
+
+### Q8: 流式评估和标准评估有什么区别？应该使用哪个？
+A: 
+- **标准评估** (`compare-scoring`)：等待完整结果返回，适合不需要实时反馈的场景，实现简单
+- **流式评估** (`compare-scoring-stream`)：实时显示评估进度，用户体验更好，但实现较复杂
+- **建议**：优先使用流式评估，如果流式评估失败则回退到标准评估
+
+### Q7: 如何实现教育集团关联查询？
+A: 在学校详情页面，将 `affiliatedGroup` 字段显示为可点击链接，点击后调用 `getSchoolsByGroup(groupName:)` 接口，跳转到该集团下的学校列表。
+
+---
+
+## 十二、最新更新（2025-01）
+
+### 12.1 数据库字段更新
+- ✅ 新增 `schoolType` 字段（学校类型）
+- ✅ 新增 `affiliatedGroup` 字段（隶属教育集团）
+- ✅ 保留 `nature` 字段以兼容旧数据
+
+### 12.2 API 接口更新
+- ✅ 新增 `/api/schools/compare-scoring-stream` 流式AI评分对比接口
+- ✅ 新增 `/api/schools/by-group/:groupName` 根据教育集团查询接口
+- ✅ AI评分对比响应新增 `warning` 字段（学校性质不一致警告）
+
+### 12.3 功能优化
+- ✅ AI评估支持流式输出，实时显示评估进度
+- ✅ 学校详情页面支持点击教育集团名称进行关联查询
+- ✅ 增加学校性质一致性检查，对比时提示用户
+
 ---
 
 **注意**：本文档仅提供迁移指导，不修改现有代码。所有代码示例仅供参考，需要根据实际项目需求进行调整。
+
+**最后更新日期**：2026-01-05
 

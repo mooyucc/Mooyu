@@ -62,24 +62,22 @@ const SchoolSchema = new mongoose.Schema({
     
     // AI评估字段
     'AI评估_总分': { type: Number }, // AI评估总分
-    'AI评估_课程声誉与体系成熟度_得分': { type: Number }, // 课程声誉与体系成熟度得分
-    'AI评估_课程声誉与体系成熟度_说明': { type: String }, // 课程声誉与体系成熟度说明
-    'AI评估_教学成果与影响力_得分': { type: Number }, // 教学成果与影响力得分
-    'AI评估_教学成果与影响力_说明': { type: String }, // 教学成果与影响力说明
-    'AI评估_大学认可度_得分': { type: Number }, // 大学认可度得分
-    'AI评估_大学认可度_说明': { type: String }, // 大学认可度说明
+    'AI评估_课程与融合_得分': { type: Number }, // 课程与融合得分
+    'AI评估_课程与融合_说明': { type: String }, // 课程与融合说明
+    'AI评估_学术评估_得分': { type: Number }, // 学术评估得分
+    'AI评估_学术评估_说明': { type: String }, // 学术评估说明
     'AI评估_升学成果_得分': { type: Number }, // 升学成果得分
     'AI评估_升学成果_说明': { type: String }, // 升学成果说明
-    'AI评估_师生比_得分': { type: Number }, // 师生比得分
-    'AI评估_师生比_说明': { type: String }, // 师生比说明
-    'AI评估_教师教育背景与稳定性_得分': { type: Number }, // 教师教育背景与稳定性得分
-    'AI评估_教师教育背景与稳定性_说明': { type: String }, // 教师教育背景与稳定性说明
-    'AI评估_国际教员比例_得分': { type: Number }, // 国际教员比例得分
-    'AI评估_国际教员比例_说明': { type: String }, // 国际教员比例说明
-    'AI评估_国际学生比例_得分': { type: Number }, // 国际学生比例得分
-    'AI评估_国际学生比例_说明': { type: String }, // 国际学生比例说明
-    'AI评估_国际研究网络_得分': { type: Number }, // 国际研究网络得分
-    'AI评估_国际研究网络_说明': { type: String }, // 国际研究网络说明
+    'AI评估_规划体系_得分': { type: Number }, // 规划体系得分
+    'AI评估_规划体系_说明': { type: String }, // 规划体系说明
+    'AI评估_师资稳定_得分': { type: Number }, // 师资稳定得分
+    'AI评估_师资稳定_说明': { type: String }, // 师资稳定说明
+    'AI评估_课堂文化_得分': { type: Number }, // 课堂文化得分
+    'AI评估_课堂文化_说明': { type: String }, // 课堂文化说明
+    'AI评估_活动系统_得分': { type: Number }, // 活动系统得分
+    'AI评估_活动系统_说明': { type: String }, // 活动系统说明
+    'AI评估_幸福感/生活_得分': { type: Number }, // 幸福感/生活得分
+    'AI评估_幸福感/生活_说明': { type: String }, // 幸福感/生活说明
     'AI评估_品牌与社区影响力_得分': { type: Number }, // 品牌与社区影响力得分
     'AI评估_品牌与社区影响力_说明': { type: String }, // 品牌与社区影响力说明
     'AI评估_最终总结_JSON': { type: String }, // 最终总结（JSON格式）
@@ -687,17 +685,16 @@ function hasCompleteAIScoring(school, verbose = false) {
         return false;
     }
     
-    // 检查所有10个二级指标是否都有得分和说明
+    // 检查所有9个二级指标是否都有得分和说明
     const indicators = [
-        '课程声誉与体系成熟度',
-        '教学成果与影响力',
-        '大学认可度',
+        '课程与融合',
+        '学术评估',
         '升学成果',
-        '师生比',
-        '教师教育背景与稳定性',
-        '国际教员比例',
-        '国际学生比例',
-        '国际研究网络',
+        '规划体系',
+        '师资稳定',
+        '课堂文化',
+        '活动系统',
+        '幸福感/生活',
         '品牌与社区影响力'
     ];
     
@@ -841,15 +838,14 @@ function hasScoringButMissingSummary(school) {
     
     // 检查是否有至少一个指标的得分和说明
     const indicators = [
-        '课程声誉与体系成熟度',
-        '教学成果与影响力',
-        '大学认可度',
+        '课程与融合',
+        '学术评估',
         '升学成果',
-        '师生比',
-        '教师教育背景与稳定性',
-        '国际教员比例',
-        '国际学生比例',
-        '国际研究网络',
+        '规划体系',
+        '师资稳定',
+        '课堂文化',
+        '活动系统',
+        '幸福感/生活',
         '品牌与社区影响力'
     ];
     
@@ -1030,43 +1026,97 @@ function convertDBToAIFormat(schools, evaluationSystem) {
 }
 
 // 将AI返回的数据保存到数据库
-async function saveAIScoringToDB(schools, aiResult) {
+async function saveAIScoringToDB(schools, aiResult, evaluationSystem) {
     const indicatorToFieldMap = {
-        '课程声誉与体系成熟度': '课程声誉与体系成熟度',
-        '教学成果与影响力': '教学成果与影响力',
-        '大学认可度': '大学认可度',
+        '课程与融合': '课程与融合',
+        '学术评估': '学术评估',
         '升学成果': '升学成果',
-        '师生比': '师生比',
-        '教师教育背景与稳定性': '教师教育背景与稳定性',
-        '国际教员比例': '国际教员比例',
-        '国际学生比例': '国际学生比例',
-        '国际研究网络': '国际研究网络',
+        '规划体系': '规划体系',
+        '师资稳定': '师资稳定',
+        '课堂文化': '课堂文化',
+        '活动系统': '活动系统',
+        '幸福感/生活': '幸福感/生活',
         '品牌与社区影响力': '品牌与社区影响力'
     };
+    
+    // 构建指标权重映射表（用于验证得分范围）
+    const indicatorWeightMap = {};
+    if (evaluationSystem && evaluationSystem.dimensions) {
+        evaluationSystem.dimensions.forEach(dimension => {
+            dimension.indicators.forEach(indicator => {
+                indicatorWeightMap[indicator.name] = indicator.weight;
+            });
+        });
+    }
     
     const updatePromises = schools.map(async (school) => {
         const schoolName = school.name;
         const updateData = {};
+        const validationWarnings = [];
         
-        // 保存总分
-        if (aiResult.totalScores && aiResult.totalScores[schoolName] !== undefined) {
-            updateData['AI评估_总分'] = parseFloat(aiResult.totalScores[schoolName]);
-        }
-        
-        // 保存各二级指标的得分和说明
+        // 保存各二级指标的得分和说明（带验证和约束）
         if (aiResult.comparisonTable) {
             aiResult.comparisonTable.forEach(row => {
                 const indicator = row.indicator;
                 const fieldBase = indicatorToFieldMap[indicator];
                 
                 if (fieldBase && row.scores && row.scores[schoolName] !== undefined) {
-                    updateData[`AI评估_${fieldBase}_得分`] = parseFloat(row.scores[schoolName]);
+                    let score = parseFloat(row.scores[schoolName]);
+                    const expectedWeight = indicatorWeightMap[indicator] || row.weight;
+                    
+                    // 验证和约束得分范围
+                    if (isNaN(score)) {
+                        console.warn(`⚠ 学校 "${schoolName}" 的指标 "${indicator}" 得分不是有效数字: ${row.scores[schoolName]}`);
+                        validationWarnings.push(`指标 "${indicator}" 得分无效`);
+                        return; // 跳过无效得分
+                    }
+                    
+                    // 约束得分在 0 到权重值之间
+                    const originalScore = score;
+                    score = Math.max(0, Math.min(score, expectedWeight));
+                    
+                    if (originalScore !== score) {
+                        const warning = `学校 "${schoolName}" 的指标 "${indicator}" 得分 ${originalScore} 超出范围 [0, ${expectedWeight}]，已约束为 ${score}`;
+                        console.warn(`⚠ ${warning}`);
+                        validationWarnings.push(warning);
+                    }
+                    
+                    updateData[`AI评估_${fieldBase}_得分`] = score;
                 }
                 
                 if (fieldBase && row.explanations && row.explanations[schoolName]) {
                     updateData[`AI评估_${fieldBase}_说明`] = row.explanations[schoolName];
                 }
             });
+        }
+        
+        // 保存总分（带验证和约束）
+        if (aiResult.totalScores && aiResult.totalScores[schoolName] !== undefined) {
+            let totalScore = parseFloat(aiResult.totalScores[schoolName]);
+            
+            // 验证总分范围
+            if (isNaN(totalScore)) {
+                console.warn(`⚠ 学校 "${schoolName}" 的总分不是有效数字: ${aiResult.totalScores[schoolName]}`);
+                validationWarnings.push('总分无效');
+            } else {
+                // 约束总分在 0 到 100 之间
+                const originalTotalScore = totalScore;
+                totalScore = Math.max(0, Math.min(totalScore, 100));
+                
+                if (originalTotalScore !== totalScore) {
+                    const warning = `学校 "${schoolName}" 的总分 ${originalTotalScore} 超出范围 [0, 100]，已约束为 ${totalScore}`;
+                    console.warn(`⚠ ${warning}`);
+                    validationWarnings.push(warning);
+                }
+                
+                updateData['AI评估_总分'] = totalScore;
+            }
+        }
+        
+        // 如果有验证警告，记录日志
+        if (validationWarnings.length > 0) {
+            console.warn(`学校 "${schoolName}" 分值验证警告 (${validationWarnings.length} 项):`);
+            validationWarnings.forEach(warning => console.warn(`  - ${warning}`));
         }
         
         // 保存最终总结
@@ -1096,10 +1146,17 @@ async function saveAIScoringToDB(schools, aiResult) {
             
             if (summaryData) {
                 try {
-                    // 确保 summary 中的 totalScore 与 totalScores 保持一致
-                    if (aiResult.totalScores && aiResult.totalScores[schoolName] !== undefined) {
+                    // 确保 summary 中的 totalScore 与 totalScores 保持一致（使用约束后的值）
+                    if (updateData['AI评估_总分'] !== undefined) {
+                        // 使用已经约束后的总分
+                        const constrainedTotalScore = updateData['AI评估_总分'];
+                        if (summaryData.totalScore !== constrainedTotalScore) {
+                            console.warn(`⚠ 学校 "${schoolName}" 的 summary.totalScore (${summaryData.totalScore}) 与约束后的总分 (${constrainedTotalScore}) 不一致，使用约束后的总分`);
+                            summaryData.totalScore = constrainedTotalScore;
+                        }
+                    } else if (aiResult.totalScores && aiResult.totalScores[schoolName] !== undefined) {
+                        // 如果没有约束后的总分，使用原始值（这种情况不应该发生，但作为备用）
                         const totalScoreFromTotalScores = parseFloat(aiResult.totalScores[schoolName]);
-                        // 如果 summary 中的 totalScore 与 totalScores 不一致，使用 totalScores 的值
                         if (summaryData.totalScore !== totalScoreFromTotalScores) {
                             console.warn(`⚠ 学校 "${schoolName}" 的 summary.totalScore (${summaryData.totalScore}) 与 totalScores (${totalScoreFromTotalScores}) 不一致，使用 totalScores 的值`);
                             summaryData.totalScore = totalScoreFromTotalScores;
@@ -1309,7 +1366,7 @@ app.post('/api/schools/compare-scoring-stream', async (req, res) => {
             
             // 将AI评估结果保存到数据库（conclusion不会被保存，因为它不在saveAIScoringToDB中处理）
             try {
-                await saveAIScoringToDB(updatedSchools, scoringResult);
+                await saveAIScoringToDB(updatedSchools, scoringResult, evaluationSystem);
                 sendProgress('step', '✓ 评估结果已保存');
             } catch (saveError) {
                 console.error('保存AI评估结果到数据库失败:', saveError);
@@ -1573,7 +1630,7 @@ app.post('/api/schools/compare-scoring', async (req, res) => {
             
             // 将AI评估结果保存到数据库（使用更新后的学校数据）
             try {
-                await saveAIScoringToDB(updatedSchools, scoringResult);
+                await saveAIScoringToDB(updatedSchools, scoringResult, evaluationSystem);
                 console.log('AI评估结果已保存到数据库');
                 
                 // 验证最终总结是否都已保存
@@ -1639,6 +1696,11 @@ app.post('/api/schools/compare-scoring', async (req, res) => {
 function buildScoringPrompt(schools, evaluationSystem) {
     let prompt = `你是一位专业的学校评估专家。请根据以下评估体系，对以下学校进行量化评分对比（满分100分）。
 
+**重要：请严格按照三步搜索法进行信息搜索和验证**
+1. **第一步：官网扫描** - 访问学校官方网站，查找认证(Accreditation)页面，核实IBO、College Board、CIE等标志；查找"中西融合"教案，核算外教任课比例；查看School Profile(学校概况)PDF等官方文档
+2. **第二步：社交媒体** - 查阅学校官方公众号、社交媒体账号，查看"竞赛战报"等信息，核实是否为国际主流竞赛（如AMC, VEX等）；关注家长口碑、学生反馈、压力感知等信息
+3. **第三步：行业背书** - 查找行业排名、竞赛获奖记录、百强排名等第三方认证信息；关注Cialfo/Maia系统、ACAMIS/ISAC联赛、PD预算等核心关键词，帮助从海量营销信息中筛选出真正代表学校实力的硬核数据
+
 评估体系（包含三级维度，用于内部评分计算，但最终返回结果只需包含一级维度和二级指标）：
 `;
     
@@ -1656,10 +1718,15 @@ function buildScoringPrompt(schools, evaluationSystem) {
                     Object.keys(thirdLevel.scoringCriteria).sort((a, b) => parseInt(b) - parseInt(a)).forEach(score => {
                         prompt += `            ${score}分：${thirdLevel.scoringCriteria[score]}\n`;
                     });
+                    // 添加搜索建议
+                    if (thirdLevel.searchSuggestions) {
+                        prompt += `          **搜索建议：** ${thirdLevel.searchSuggestions}\n`;
+                    }
                 });
                 prompt += `      注意：请根据上述三级维度的5分制评分标准，对每个三级维度进行评分（1-5分），然后按照公式计算二级指标得分：\n`;
                 prompt += `      二级指标得分 = Σ(三级维度得分 ÷ 5 × 三级维度权重)\n`;
                 prompt += `      例如：如果某个三级维度得分为4分，权重为10分，则贡献值为 4÷5×10 = 8分\n`;
+                prompt += `      **重要：在评分前，请严格按照每个三级维度提供的搜索建议进行信息搜索和验证，确保评分的准确性和客观性。**\n`;
             }
         });
     });
@@ -1708,34 +1775,8 @@ function buildScoringPrompt(schools, evaluationSystem) {
 {
   "comparisonTable": [
     {
-      "dimension": "科研",
-      "indicator": "课程声誉与体系成熟度",
-      "weight": 25,
-      "scores": {
-        "学校1名称": 得分数字（0-25之间）,
-        "学校2名称": 得分数字（0-25之间）
-      },
-      "explanations": {
-        "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
-        "学校2名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）"
-      }
-    },
-    {
-      "dimension": "科研",
-      "indicator": "教学成果与影响力",
-      "weight": 20,
-      "scores": {
-        "学校1名称": 得分数字（0-20之间）,
-        "学校2名称": 得分数字（0-20之间）
-      },
-      "explanations": {
-        "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
-        "学校2名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）"
-      }
-    },
-    {
-      "dimension": "升学",
-      "indicator": "大学认可度",
+      "dimension": "学术卓越",
+      "indicator": "课程与融合",
       "weight": 15,
       "scores": {
         "学校1名称": 得分数字（0-15之间）,
@@ -1747,12 +1788,12 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "升学",
-      "indicator": "升学成果",
-      "weight": 5,
+      "dimension": "学术卓越",
+      "indicator": "学术评估",
+      "weight": 15,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-15之间）,
+        "学校2名称": 得分数字（0-15之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1760,8 +1801,8 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "教学",
-      "indicator": "师生比",
+      "dimension": "全球升学",
+      "indicator": "升学成果",
       "weight": 10,
       "scores": {
         "学校1名称": 得分数字（0-10之间）,
@@ -1773,12 +1814,12 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "教学",
-      "indicator": "教师教育背景与稳定性",
-      "weight": 5,
+      "dimension": "全球升学",
+      "indicator": "规划体系",
+      "weight": 10,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-10之间）,
+        "学校2名称": 得分数字（0-10之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1786,12 +1827,12 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "国际化",
-      "indicator": "国际教员比例",
-      "weight": 5,
+      "dimension": "师资交互",
+      "indicator": "师资稳定",
+      "weight": 8,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-8之间）,
+        "学校2名称": 得分数字（0-8之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1799,12 +1840,12 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "国际化",
-      "indicator": "国际学生比例",
-      "weight": 5,
+      "dimension": "师资交互",
+      "indicator": "课堂文化",
+      "weight": 7,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-7之间）,
+        "学校2名称": 得分数字（0-7之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1812,12 +1853,25 @@ function buildScoringPrompt(schools, evaluationSystem) {
       }
     },
     {
-      "dimension": "国际化",
-      "indicator": "国际研究网络",
-      "weight": 5,
+      "dimension": "全人成长",
+      "indicator": "活动系统",
+      "weight": 10,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-10之间）,
+        "学校2名称": 得分数字（0-10之间）
+      },
+      "explanations": {
+        "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
+        "学校2名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）"
+      }
+    },
+    {
+      "dimension": "全人成长",
+      "indicator": "幸福感/生活",
+      "weight": 10,
+      "scores": {
+        "学校1名称": 得分数字（0-10之间）,
+        "学校2名称": 得分数字（0-10之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1827,10 +1881,10 @@ function buildScoringPrompt(schools, evaluationSystem) {
     {
       "dimension": "社会影响",
       "indicator": "品牌与社区影响力",
-      "weight": 5,
+      "weight": 15,
       "scores": {
-        "学校1名称": 得分数字（0-5之间）,
-        "学校2名称": 得分数字（0-5之间）
+        "学校1名称": 得分数字（0-15之间）,
+        "学校2名称": 得分数字（0-15之间）
       },
       "explanations": {
         "学校1名称": "概括性说明该学校在此指标上的整体表现和特点（不要详细列出第三级维度得分）",
@@ -1893,15 +1947,20 @@ async function generateComparisonConclusion(schools, scoringData) {
             prompt += `\n`;
         });
         
-        prompt += `请根据以上信息，生成一个综合的对比结论和建议。结论应该：
-1. 对比各学校的总分和核心优势
-2. 分析各学校的特点和定位差异
-3. 根据不同家庭的需求和优先级，提供选择建议
-4. 语言简洁明了，重点突出
+        prompt += `请根据以上信息，生成一个综合的对比结论和建议。
+
+重要要求：
+1. 文字简洁精炼，控制在400字以内
+2. 不要使用任何Markdown格式符号（如**、##、-等），使用纯文本
+3. 使用清晰的段落结构，用空行分隔不同部分
+4. 直接说明各学校的总分对比和核心优势差异
+5. 明确说明各学校的定位差异（如"学术强校"vs"成长乐园"）
+6. 根据不同家庭需求提供简洁的选择建议
+7. 语言专业但易懂，避免冗长描述
 
 请使用JSON格式返回，结构如下：
 {
-  "conclusion": "核心结论和建议（详细描述各学校的对比情况，并根据不同需求提供选择建议）"
+  "conclusion": "核心结论和建议（纯文本，不使用任何Markdown格式）"
 }`;
         
         const result = await callDeepseekAPI(prompt);
@@ -2031,6 +2090,93 @@ function unifyNature(nature, schoolName, schoolData) {
   return nature;
 }
 
+// 统一涵盖学段格式
+// 将"K-12"、"小学、初中、高中"等格式统一为"幼儿园、小学、初中、高中"的标准格式
+function unifyCoveredStages(coveredStages, kindergarten, primary, juniorHigh, seniorHigh) {
+  if (!coveredStages || coveredStages === '未知' || coveredStages === '无') {
+    // 如果没有涵盖学段信息，根据学段设置推断
+    const stages = [];
+    if (kindergarten && (kindergarten === '有' || kindergarten.includes('有'))) {
+      stages.push('幼儿园');
+    }
+    if (primary && (primary === '有' || primary.includes('有'))) {
+      stages.push('小学');
+    }
+    if (juniorHigh && (juniorHigh === '有' || juniorHigh.includes('有'))) {
+      stages.push('初中');
+    }
+    if (seniorHigh && (seniorHigh === '有' || seniorHigh.includes('有'))) {
+      stages.push('高中');
+    }
+    return stages.length > 0 ? stages.join('、') : '未知';
+  }
+  
+  // 如果已经是标准格式（包含"幼儿园"、"小学"、"初中"、"高中"），直接返回
+  const standardStages = ['幼儿园', '小学', '初中', '高中'];
+  const hasStandardFormat = standardStages.some(stage => coveredStages.includes(stage));
+  if (hasStandardFormat) {
+    // 提取并排序标准学段
+    const foundStages = standardStages.filter(stage => coveredStages.includes(stage));
+    return foundStages.join('、');
+  }
+  
+  // 处理"K-12"格式
+  if (coveredStages.includes('K-12') || coveredStages.includes('k-12')) {
+    // 根据学段设置确定具体包含哪些学段
+    const stages = [];
+    if (kindergarten && (kindergarten === '有' || kindergarten.includes('有'))) {
+      stages.push('幼儿园');
+    }
+    if (primary && (primary === '有' || primary.includes('有'))) {
+      stages.push('小学');
+    }
+    if (juniorHigh && (juniorHigh === '有' || juniorHigh.includes('有'))) {
+      stages.push('初中');
+    }
+    if (seniorHigh && (seniorHigh === '有' || seniorHigh.includes('有'))) {
+      stages.push('高中');
+    }
+    // 如果无法从学段设置推断，默认返回"幼儿园、小学、初中、高中"
+    return stages.length > 0 ? stages.join('、') : '幼儿园、小学、初中、高中';
+  }
+  
+  // 处理其他可能的格式（如"小学、初中、高中"）
+  const stages = [];
+  if (coveredStages.includes('幼儿园') || coveredStages.includes('学前')) {
+    stages.push('幼儿园');
+  }
+  if (coveredStages.includes('小学')) {
+    stages.push('小学');
+  }
+  if (coveredStages.includes('初中')) {
+    stages.push('初中');
+  }
+  if (coveredStages.includes('高中')) {
+    stages.push('高中');
+  }
+  
+  if (stages.length > 0) {
+    return stages.join('、');
+  }
+  
+  // 如果无法识别，根据学段设置推断
+  const inferredStages = [];
+  if (kindergarten && (kindergarten === '有' || kindergarten.includes('有'))) {
+    inferredStages.push('幼儿园');
+  }
+  if (primary && (primary === '有' || primary.includes('有'))) {
+    inferredStages.push('小学');
+  }
+  if (juniorHigh && (juniorHigh === '有' || juniorHigh.includes('有'))) {
+    inferredStages.push('初中');
+  }
+  if (seniorHigh && (seniorHigh === '有' || seniorHigh.includes('有'))) {
+    inferredStages.push('高中');
+  }
+  
+  return inferredStages.length > 0 ? inferredStages.join('、') : coveredStages;
+}
+
 // 验证和清理网址
 function validateAndCleanWebsite(website) {
     if (!website || website === '' || website === '无' || website === '未知') {
@@ -2060,11 +2206,144 @@ function validateAndCleanWebsite(website) {
     }
 }
 
+// 测试网站是否可以访问
+async function testWebsiteAccess(url) {
+    if (!url || url === '') {
+        return { accessible: false, error: '网址为空' };
+    }
+    
+    try {
+        console.log(`正在测试网站访问: ${url}`);
+        const https = require('https');
+        const http = require('http');
+        
+        const urlObj = new URL(url);
+        const protocol = urlObj.protocol === 'https:' ? https : http;
+        
+        return new Promise((resolve) => {
+            const timeout = 10000; // 10秒超时
+            
+            const request = protocol.get(url, {
+                timeout: timeout,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                }
+            }, (response) => {
+                const statusCode = response.statusCode;
+                
+                // 处理重定向
+                if (statusCode >= 300 && statusCode < 400 && response.headers.location) {
+                    console.log(`网站重定向: ${statusCode} -> ${response.headers.location}`);
+                    resolve({ 
+                        accessible: true, 
+                        statusCode: statusCode,
+                        redirectUrl: response.headers.location 
+                    });
+                    return;
+                }
+                
+                if (statusCode >= 200 && statusCode < 300) {
+                    console.log(`网站访问成功: ${statusCode}`);
+                    resolve({ accessible: true, statusCode: statusCode });
+                } else {
+                    console.log(`网站访问失败: ${statusCode}`);
+                    resolve({ accessible: false, statusCode: statusCode, error: `HTTP ${statusCode}` });
+                }
+                
+                // 消费响应数据以释放内存
+                response.resume();
+            });
+            
+            request.on('timeout', () => {
+                console.log(`网站访问超时: ${url}`);
+                request.destroy();
+                resolve({ accessible: false, error: '访问超时' });
+            });
+            
+            request.on('error', (error) => {
+                console.log(`网站访问错误: ${error.message}`);
+                resolve({ accessible: false, error: error.message });
+            });
+            
+            request.setTimeout(timeout);
+        });
+    } catch (error) {
+        console.log(`测试网站访问异常: ${error.message}`);
+        return { accessible: false, error: error.message };
+    }
+}
+
+// 从网站上读取学校名称并验证
+async function verifySchoolNameFromWebsite(url, userInputName) {
+    if (!url || url === '') {
+        return { verified: false, websiteName: null, reason: '网址为空' };
+    }
+    
+    try {
+        console.log(`正在从网站读取学校名称: ${url}`);
+        
+        // 使用AI从网站内容中提取学校名称
+        const prompt = `你是一位专业的学校信息提取专家。请访问学校官网 ${url}，提取网站上显示的学校官方名称。
+
+**重要说明：**
+1. 请仔细查看网站的标题(title)、顶部logo区域、页面标题(h1)等位置的学校名称
+2. 提取完整的官方学校名称，不要遗漏任何关键词
+3. 用户输入的学校名称是："${userInputName}"
+4. 请判断网站上的学校名称与用户输入的名称是否一致
+
+请使用JSON格式返回，结构如下：
+{
+  "websiteName": "网站上显示的完整学校名称",
+  "isMatch": true/false,
+  "confidence": "high/medium/low",
+  "notes": "补充说明（如果名称不一致，请说明差异）"
+}
+
+注意：
+- 如果无法访问网站或提取名称，websiteName字段请填写null
+- isMatch表示网站名称与用户输入名称是否一致（允许有轻微差异，如"学校"vs"School"）
+- confidence表示匹配的置信度：high(完全一致), medium(基本一致但有细微差异), low(差异较大)`;
+
+        const result = await callDeepseekAPI(prompt);
+        
+        if (!result) {
+            return { verified: false, websiteName: null, reason: 'AI返回结果为空' };
+        }
+        
+        const websiteName = result.websiteName;
+        const isMatch = result.isMatch === true || result.isMatch === 'true';
+        const confidence = result.confidence || 'low';
+        
+        console.log(`网站名称: ${websiteName}, 匹配: ${isMatch}, 置信度: ${confidence}`);
+        
+        if (!websiteName) {
+            return { verified: false, websiteName: null, reason: '无法从网站提取学校名称' };
+        }
+        
+        return {
+            verified: true,
+            websiteName: websiteName,
+            isMatch: isMatch,
+            confidence: confidence,
+            notes: result.notes || ''
+        };
+        
+    } catch (error) {
+        console.log(`从网站读取学校名称异常: ${error.message}`);
+        return { verified: false, websiteName: null, reason: error.message };
+    }
+}
+
 // 通过AI查询学校基础信息
 async function querySchoolBasicInfoFromAI(schoolName) {
     const prompt = `你是一位专业的学校信息查询专家。请根据学校名称"${schoolName}"，查询并返回该学校的基础信息。
 
 **重要：请务必查询准确的官方网址**
+
+**搜索方法：请严格按照三步搜索法进行信息查询**
+1. **第一步：官网扫描** - 访问学校官方网站，查找认证(Accreditation)页面，核实IBO、College Board、CIE等标志；查找"中西融合"教案，核算外教任课比例；查看School Profile(学校概况)PDF等官方文档
+2. **第二步：社交媒体** - 查阅学校官方公众号、社交媒体账号，查看"竞赛战报"等信息，核实是否为国际主流竞赛（如AMC, VEX等）
+3. **第三步：行业背书** - 查找行业排名、竞赛获奖记录、百强排名等第三方认证信息
 
 请查询以下信息：
 1. 学校名称（完整准确的全称）
@@ -2082,7 +2361,16 @@ async function querySchoolBasicInfoFromAI(schoolName) {
    - 如果学校名称包含"公立"、"公办"等，且不包含国际部相关关键词，选择"公立学校"
    - 如果学校是民办性质，且提供国际课程（IB/AP/A-Level等），选择"民办双语学校"
    - 如果学校是民办性质，但不提供国际课程或主要面向国内升学，选择"普通民办学校"
-6. 涵盖学段（如：K-12、小学、初中、高中等）
+6. 涵盖学段（**重要：必须从"幼儿园"、"小学"、"初中"、"高中"中选择，用"、"分隔，如："幼儿园、小学、初中、高中"或"小学、初中、高中"。不要使用"K-12"等英文格式）：
+   - 根据学校实际开设的学段，从以下选项中选择并组合：
+     * 幼儿园
+     * 小学
+     * 初中
+     * 高中
+   - 示例：
+     * 如果学校开设幼儿园、小学、初中、高中，填写："幼儿园、小学、初中、高中"
+     * 如果学校只开设小学、初中、高中，填写："小学、初中、高中"
+     * 如果学校只开设初中、高中，填写："初中、高中"
 7. 隶属教育集团（如果学校隶属于某个教育集团，请填写集团名称；如果学校没有隶属任何教育集团，请填写"无"）
 8. 学段设置：
    - 幼儿园（有/无）
@@ -2109,7 +2397,7 @@ async function querySchoolBasicInfoFromAI(schoolName) {
   "country": "国家（如：中国、美国、英国等）",
   "city": "城市（如：上海、北京、纽约等）",
   "nature": "学校类型（必须是以下四类之一：'公立学校'、'普通民办学校'、'民办双语学校'、'公立学校（国际部）'）",
-  "coveredStages": "涵盖学段",
+  "coveredStages": "涵盖学段（必须从'幼儿园'、'小学'、'初中'、'高中'中选择，用'、'分隔，如：'幼儿园、小学、初中、高中'）",
   "affiliatedGroup": "隶属教育集团（如果学校隶属于某个教育集团，请填写集团名称；如果学校没有隶属任何教育集团，请填写"无"）",
   "kindergarten": "幼儿园（有/无）",
   "primary": "小学（有/无）",
@@ -2144,10 +2432,51 @@ async function querySchoolBasicInfoFromAI(schoolName) {
         // 验证返回的数据结构
         if (result && result.name) {
             // 验证和清理网址
-            const validatedWebsite = validateAndCleanWebsite(result.website);
+            let validatedWebsite = validateAndCleanWebsite(result.website);
+            let finalSchoolName = result.name;
+            
+            // 测试网站是否可以访问
+            if (validatedWebsite) {
+                console.log(`\n========== 开始验证学校网站 ==========`);
+                console.log(`用户输入的学校名称: ${schoolName}`);
+                console.log(`AI返回的学校名称: ${result.name}`);
+                console.log(`AI返回的网站地址: ${validatedWebsite}`);
+                
+                const accessTest = await testWebsiteAccess(validatedWebsite);
+                console.log(`网站访问测试结果: ${JSON.stringify(accessTest)}`);
+                
+                if (accessTest.accessible) {
+                    console.log(`✓ 网站可以正常访问`);
+                    
+                    // 如果网站可访问，验证学校名称
+                    const nameVerification = await verifySchoolNameFromWebsite(validatedWebsite, schoolName);
+                    console.log(`学校名称验证结果: ${JSON.stringify(nameVerification)}`);
+                    
+                    if (nameVerification.verified && nameVerification.websiteName) {
+                        if (!nameVerification.isMatch || nameVerification.confidence === 'low') {
+                            // 名称不匹配或置信度低，使用网站上的名称
+                            console.log(`⚠ 学校名称不一致，使用网站名称: ${nameVerification.websiteName}`);
+                            console.log(`  原名称: ${result.name}`);
+                            console.log(`  新名称: ${nameVerification.websiteName}`);
+                            console.log(`  备注: ${nameVerification.notes}`);
+                            finalSchoolName = nameVerification.websiteName;
+                        } else {
+                            console.log(`✓ 学校名称验证一致 (置信度: ${nameVerification.confidence})`);
+                        }
+                    } else {
+                        console.log(`✗ 无法从网站提取学校名称: ${nameVerification.reason}`);
+                    }
+                } else {
+                    console.log(`✗ 网站无法访问: ${accessTest.error}`);
+                    console.log(`将清空网站地址字段`);
+                    validatedWebsite = ''; // 如果网站无法访问，清空网站地址
+                }
+                
+                console.log(`========== 验证完成 ==========\n`);
+            }
             
             // 统一处理学校类型
-            const unifiedSchoolType = unifyNature(result.nature, result.name, {
+            const unifiedSchoolType = unifyNature(result.nature, finalSchoolName, {
                 ibPYP: result.ibPYP,
                 ibMYP: result.ibMYP,
                 ibDP: result.ibDP,
@@ -2159,6 +2488,15 @@ async function querySchoolBasicInfoFromAI(schoolName) {
                 australian: result.australian
             });
             
+            // 统一处理涵盖学段格式
+            const unifiedCoveredStages = unifyCoveredStages(
+                result.coveredStages,
+                result.kindergarten,
+                result.primary,
+                result.juniorHigh,
+                result.seniorHigh
+            );
+            
             // 确保所有字段都有值（至少是空字符串）
             // 处理隶属教育集团字段：如果为空或未找到，设置为"无"
             const affiliatedGroup = result.affiliatedGroup;
@@ -2167,12 +2505,12 @@ async function querySchoolBasicInfoFromAI(schoolName) {
                 : '无';
             
             return {
-                name: result.name || '',
+                name: finalSchoolName, // 使用验证后的学校名称
                 website: validatedWebsite, // 使用验证后的网址
                 country: result.country || '未知',
                 city: result.city || '未知',
                 schoolType: unifiedSchoolType,
-                coveredStages: result.coveredStages || '未知',
+                coveredStages: unifiedCoveredStages, // 使用统一后的涵盖学段格式
                 affiliatedGroup: finalAffiliatedGroup, // 隶属教育集团，如果没有则设置为"无"
                 kindergarten: result.kindergarten || '无',
                 primary: result.primary || '无',

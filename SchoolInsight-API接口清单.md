@@ -53,8 +53,10 @@ GET /api/schools?search=万科&page=1&limit=20
       "igcse": "无",
       "otherCourses": "",
       "AI评估_总分": 85.5,
-      "AI评估_课程声誉与体系成熟度_得分": 22.5,
-      "AI评估_课程声誉与体系成熟度_说明": "该校IB课程体系完整...",
+      "AI评估_课程与融合_得分": 12.5,
+      "AI评估_课程与融合_说明": "该校IB课程体系完整...",
+      "AI评估_学术评估_得分": 13.0,
+      "AI评估_学术评估_说明": "学生在标准化考试和竞赛中表现突出...",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
     }
@@ -110,9 +112,11 @@ GET /api/schools/695bac0f78b790e0a720e09c
   "australian": "无",
   "igcse": "无",
   "otherCourses": "",
-  "AI评估_总分": 85.5,
-  "AI评估_课程声誉与体系成熟度_得分": 22.5,
-  "AI评估_课程声誉与体系成熟度_说明": "该校IB课程体系完整...",
+      "AI评估_总分": 85.5,
+      "AI评估_课程与融合_得分": 12.5,
+      "AI评估_课程与融合_说明": "该校IB课程体系完整...",
+      "AI评估_学术评估_得分": 13.0,
+      "AI评估_学术评估_说明": "学生在标准化考试和竞赛中表现突出...",
   "createdAt": "2024-01-01T00:00:00.000Z",
   "updatedAt": "2024-01-01T00:00:00.000Z"
 }
@@ -181,7 +185,46 @@ GET /api/schools/695bac0f78b790e0a720e09c
 
 ---
 
-### 4. 基础对比（多学校）
+### 4. 根据教育集团获取学校列表
+
+**接口**: `GET /api/schools/by-group/:groupName`
+
+**路径参数**:
+- `groupName` (必需, String): 教育集团名称（URL 编码）
+
+**请求示例**:
+```
+GET /api/schools/by-group/万科教育集团
+```
+
+**响应示例**:
+```json
+{
+  "schools": [
+    {
+      "_id": "695bac0f78b790e0a720e09c",
+      "sequenceNumber": 3,
+      "name": "上海浦东新区民办万科学校",
+      "website": "https://vsp.dtd-edu.cn",
+      "country": "中国",
+      "city": "上海",
+      "schoolType": "民办双语学校",
+      "affiliatedGroup": "万科教育集团",
+      ...
+    }
+  ],
+  "total": 5,
+  "groupName": "万科教育集团"
+}
+```
+
+**特殊说明**:
+- 如果教育集团为"无"或空字符串，返回空数组
+- 返回的学校按序号排序
+
+---
+
+### 5. 基础对比（多学校）
 
 **接口**: `POST /api/schools/compare`
 
@@ -249,7 +292,7 @@ GET /api/schools/695bac0f78b790e0a720e09c
 
 ---
 
-### 5. AI 评分对比
+### 6. AI 评分对比（标准版）
 
 **接口**: `POST /api/schools/compare-scoring`
 
@@ -289,12 +332,12 @@ GET /api/schools/695bac0f78b790e0a720e09c
   "scoring": {
     "comparisonTable": [
       {
-        "dimension": "科研",
-        "indicator": "课程声誉与体系成熟度",
-        "weight": 25,
+        "dimension": "学术卓越",
+        "indicator": "课程与融合",
+        "weight": 15,
         "scores": {
-          "上海浦东新区民办万科学校": 22.5,
-          "上海某国际学校": 20.0
+          "上海浦东新区民办万科学校": 13.5,
+          "上海某国际学校": 12.0
         },
         "explanations": {
           "上海浦东新区民办万科学校": "该校IB课程体系完整，获得官方认证...",
@@ -302,12 +345,12 @@ GET /api/schools/695bac0f78b790e0a720e09c
         }
       },
       {
-        "dimension": "科研",
-        "indicator": "教学成果与影响力",
-        "weight": 20,
+        "dimension": "学术卓越",
+        "indicator": "学术评估",
+        "weight": 15,
         "scores": {
-          "上海浦东新区民办万科学校": 18.0,
-          "上海某国际学校": 16.5
+          "上海浦东新区民办万科学校": 13.0,
+          "上海某国际学校": 12.5
         },
         "explanations": {
           "上海浦东新区民办万科学校": "学生在学术竞赛中表现优异...",
@@ -335,9 +378,18 @@ GET /api/schools/695bac0f78b790e0a720e09c
       },
       "conclusion": "综合对比，上海浦东新区民办万科学校在课程体系和教学成果方面表现更优..."
     }
+  },
+  "warning": {
+    "type": "nature_inconsistency",
+    "message": "注意：对比的学校类型不同（民办双语学校（学校A、学校B）；公立学校（学校C）），评分结果可能存在偏差..."
   }
 }
 ```
+
+**响应字段说明**:
+- `warning` (可选, Object): 学校类型不一致警告
+  - `type`: 警告类型，如 `"nature_inconsistency"`
+  - `message`: 警告信息
 
 **错误响应**:
 - `400`: 参数错误
@@ -372,6 +424,89 @@ GET /api/schools/695bac0f78b790e0a720e09c
 - 如果学校已有完整的 AI 评估数据，直接从数据库返回
 - 如果缺少数据，会调用 AI API 进行评估（可能需要较长时间）
 - 评估结果会自动保存到数据库
+- 如果对比的学校类型不一致，响应中会包含 `warning` 字段提示
+
+---
+
+### 7. AI 评分对比（流式版本，使用 SSE）
+
+**接口**: `POST /api/schools/compare-scoring-stream`
+
+**请求头**:
+- `Content-Type: application/json`
+- `Accept: text/event-stream` (推荐)
+
+**请求体**:
+```json
+{
+  "schoolIds": [
+    "695bac0f78b790e0a720e09c",
+    "695bac0f78b790e0a720e09d",
+    "695bac0f78b790e0a720e09e"
+  ]
+}
+```
+
+**限制**:
+- 最少 2 所学校
+- 最多 3 所学校（AI 评估限制）
+
+**响应格式**: Server-Sent Events (SSE)
+
+**事件类型**:
+- `start`: 开始评估流程
+- `step`: 评估步骤进度
+- `thinking`: AI 正在思考和分析
+- `evaluating`: AI 正在评估各项指标
+- `evaluating` (带 progress): 评估进度（如 "1/10", "2/10"）
+- `complete`: 评估完成，包含最终结果
+- `error`: 评估出错
+
+**事件示例**:
+
+开始事件:
+```
+data: {"type":"start","message":"开始评估流程...","timestamp":"2024-01-01T00:00:00.000Z"}
+```
+
+进度事件:
+```
+data: {"type":"step","message":"正在检查学校基础信息完整性...","timestamp":"2024-01-01T00:00:00.000Z","data":{"schools":["学校A","学校B"]}}
+```
+
+评估事件:
+```
+data: {"type":"evaluating","message":"AI正在评估 学术卓越部分的课程与融合...","timestamp":"2024-01-01T00:00:00.000Z","data":{"dimension":"学术卓越","indicator":"课程与融合","schools":["学校A","学校B"],"progress":"1/9"}}
+```
+
+完成事件:
+```
+data: {"type":"complete","message":"评估完成","timestamp":"2024-01-01T00:00:00.000Z","data":{"schools":[...],"scoring":{...},"warning":{...}}}
+```
+
+错误事件:
+```
+data: {"type":"error","message":"评估失败: ...","timestamp":"2024-01-01T00:00:00.000Z"}
+```
+
+**客户端处理示例** (Swift):
+```swift
+let url = URL(string: "https://mooyu.cc/api/schools/compare-scoring-stream")!
+var request = URLRequest(url: url)
+request.httpMethod = "POST"
+request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+request.httpBody = try? JSONSerialization.data(withJSONObject: ["schoolIds": schoolIds])
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+    // 处理 SSE 流
+}
+```
+
+**特殊说明**:
+- 使用 SSE 可以实时显示评估进度，提升用户体验
+- 适合长时间运行的评估任务
+- 评估完成后会自动保存到数据库
+- 如果对比的学校类型不一致，最终结果会包含 `warning` 字段
 
 ---
 
@@ -387,8 +522,10 @@ GET /api/schools/695bac0f78b790e0a720e09c
 | `website` | String | 网址 | "https://vsp.dtd-edu.cn" |
 | `country` | String | 国家 | "中国" |
 | `city` | String | 城市 | "上海" |
-| `nature` | String | 学校性质 | "民办双语K-12学校" |
+| `schoolType` | String | 学校类型（新字段） | "民办双语学校" / "公立学校" / "普通民办学校" / "公立学校（国际部）" |
+| `nature` | String | 学校性质（兼容字段，可能为旧值） | "民办双语K-12学校" |
 | `coveredStages` | String | 涵盖学段 | "K-12" |
+| `affiliatedGroup` | String | 隶属教育集团 | "万科教育集团" / "无" |
 
 ### 学段设置字段
 
@@ -424,24 +561,22 @@ GET /api/schools/695bac0f78b790e0a720e09c
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
 | `AI评估_总分` | Double | AI 评估总分（满分 100） |
-| `AI评估_课程声誉与体系成熟度_得分` | Double | 课程声誉与体系成熟度得分 |
-| `AI评估_课程声誉与体系成熟度_说明` | String | 课程声誉与体系成熟度说明 |
-| `AI评估_教学成果与影响力_得分` | Double | 教学成果与影响力得分 |
-| `AI评估_教学成果与影响力_说明` | String | 教学成果与影响力说明 |
-| `AI评估_大学认可度_得分` | Double | 大学认可度得分 |
-| `AI评估_大学认可度_说明` | String | 大学认可度说明 |
+| `AI评估_课程与融合_得分` | Double | 课程与融合得分 |
+| `AI评估_课程与融合_说明` | String | 课程与融合说明 |
+| `AI评估_学术评估_得分` | Double | 学术评估得分 |
+| `AI评估_学术评估_说明` | String | 学术评估说明 |
 | `AI评估_升学成果_得分` | Double | 升学成果得分 |
 | `AI评估_升学成果_说明` | String | 升学成果说明 |
-| `AI评估_师生比_得分` | Double | 师生比得分 |
-| `AI评估_师生比_说明` | String | 师生比说明 |
-| `AI评估_教师教育背景与稳定性_得分` | Double | 教师教育背景与稳定性得分 |
-| `AI评估_教师教育背景与稳定性_说明` | String | 教师教育背景与稳定性说明 |
-| `AI评估_国际教员比例_得分` | Double | 国际教员比例得分 |
-| `AI评估_国际教员比例_说明` | String | 国际教员比例说明 |
-| `AI评估_国际学生比例_得分` | Double | 国际学生比例得分 |
-| `AI评估_国际学生比例_说明` | String | 国际学生比例说明 |
-| `AI评估_国际研究网络_得分` | Double | 国际研究网络得分 |
-| `AI评估_国际研究网络_说明` | String | 国际研究网络说明 |
+| `AI评估_规划体系_得分` | Double | 规划体系得分 |
+| `AI评估_规划体系_说明` | String | 规划体系说明 |
+| `AI评估_师资稳定_得分` | Double | 师资稳定得分 |
+| `AI评估_师资稳定_说明` | String | 师资稳定说明 |
+| `AI评估_课堂文化_得分` | Double | 课堂文化得分 |
+| `AI评估_课堂文化_说明` | String | 课堂文化说明 |
+| `AI评估_活动系统_得分` | Double | 活动系统得分 |
+| `AI评估_活动系统_说明` | String | 活动系统说明 |
+| `AI评估_幸福感/生活_得分` | Double | 幸福感/生活得分 |
+| `AI评估_幸福感/生活_说明` | String | 幸福感/生活说明 |
 | `AI评估_品牌与社区影响力_得分` | Double | 品牌与社区影响力得分 |
 | `AI评估_品牌与社区影响力_说明` | String | 品牌与社区影响力说明 |
 | `AI评估_最终总结_JSON` | String | 最终总结（JSON 格式字符串） |
@@ -476,8 +611,9 @@ GET /api/schools/695bac0f78b790e0a720e09c
    - 缓存数据以减少请求次数
 
 2. **AI 评估耗时**: AI 评分对比可能需要较长时间（10-30 秒），建议：
-   - 显示加载状态
-   - 实现超时处理
+   - 使用流式版本 API (`/api/schools/compare-scoring-stream`) 获取实时进度
+   - 显示加载状态和进度提示
+   - 实现超时处理（建议 60 秒超时）
    - 考虑异步处理和后台任务
 
 3. **数据更新**: 学校数据可能会通过 AI 自动补充，建议：
@@ -504,13 +640,41 @@ curl -X POST "https://mooyu.cc/api/schools/compare" \
   -H "Content-Type: application/json" \
   -d '{"schoolIds": ["id1", "id2"]}'
 
-# AI评分对比
+# AI评分对比（标准版）
 curl -X POST "https://mooyu.cc/api/schools/compare-scoring" \
   -H "Content-Type: application/json" \
   -d '{"schoolIds": ["id1", "id2"]}'
+
+# AI评分对比（流式版本，SSE）
+curl -X POST "https://mooyu.cc/api/schools/compare-scoring-stream" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{"schoolIds": ["id1", "id2"]}'
+
+# 根据教育集团获取学校列表
+curl "https://mooyu.cc/api/schools/by-group/万科教育集团"
 ```
 
 ---
 
-**最后更新**: 2025-01-XX
+## 字段兼容性说明
+
+### schoolType vs nature 字段
+
+- **`schoolType`** (新字段，推荐使用): 标准化的学校类型，值为以下四种之一：
+  - `"公立学校"`
+  - `"普通民办学校"`
+  - `"民办双语学校"`
+  - `"公立学校（国际部）"`
+
+- **`nature`** (兼容字段): 可能包含旧的描述性值，如 `"民办双语K-12学校"` 等
+
+**建议**: 
+- 优先使用 `schoolType` 字段
+- 如果 `schoolType` 不存在或为空，可以回退使用 `nature` 字段
+- 服务器端会自动将 `nature` 统一转换为 `schoolType`
+
+---
+
+**最后更新**: 2026-01-06
 

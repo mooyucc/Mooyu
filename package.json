@@ -13,7 +13,9 @@
     "export-csv": "node export-school-data.js",
     "download-csv": "node download-school-data.js",
     "sync": "node sync-school-data.js",
-    "watch-schools": "node watch-school-data.js"
+    "watch-schools": "node watch-school-data.js",
+    "clear-db": "node clear-and-migrate-db.js",
+    "verify-schema": "node verify-db-schema.js"
   },
   "dependencies": {
     "express": "^4.18.2",
