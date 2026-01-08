@@ -33,15 +33,15 @@ const fieldMapping = {
     'primary': '小学',
     'juniorHigh': '初中',
     'seniorHigh': '高中',
-    'ibPYP': 'IB（国际文凭课程）PYP',
-    'ibMYP': 'IB（国际文凭课程）MYP',
-    'ibDP': 'IB（国际文凭课程）DP',
-    'ibCP': 'IB（国际文凭课程）CP',
-    'aLevel': 'A-Level（英国高中课程）',
-    'ap': 'AP（美国大学先修课程）',
+    'ibPYP': 'IB PYP国际文凭小学项目',
+    'ibMYP': 'IB MYP国际文凭中学项目',
+    'ibDP': 'IB DP国际文凭大学预科项目',
+    'ibCP': 'IB CP国际文凭职业相关课程',
+    'aLevel': 'A-Level英国普通高中水平证书',
+    'ap': 'AP美国大学先修课程',
     'canadian': '加拿大课程',
     'australian': '澳大利亚课程',
-    'igcse': 'IGCSE',
+    'igcse': 'IGCSE国际普通中学教育文凭',
     'otherCourses': '其他课程',
     // AI评估字段（字段名在CSV和数据库中相同，直接映射）
     'AI评估_总分': 'AI评估_总分',
@@ -66,12 +66,12 @@ const fieldMapping = {
     'AI评估_最终总结_JSON': 'AI评估_最终总结_JSON'
 };
 
-// CSV列顺序（按照原始CSV格式）
+// CSV列顺序（与数据库字段完全一致，删除所有旧字段）
 const csvColumns = [
     '序号', '学校名称', '网址', '国家', '城市', '隶属教育集团', '学校类型', '涵盖学段',
     '幼儿园', '小学', '初中', '高中',
-    'IB（国际文凭课程）PYP', 'IB（国际文凭课程）MYP', 'IB（国际文凭课程）DP', 'IB（国际文凭课程）CP',
-    'A-Level（英国高中课程）', 'AP（美国大学先修课程）', '加拿大课程', '澳大利亚课程', 'IGCSE', '其他课程',
+    'IB PYP国际文凭小学项目', 'IB MYP国际文凭中学项目', 'IB DP国际文凭大学预科项目', 'IB CP国际文凭职业相关课程',
+    'A-Level英国普通高中水平证书', 'AP美国大学先修课程', '加拿大课程', '澳大利亚课程', 'IGCSE国际普通中学教育文凭', '其他课程',
     'AI评估_总分', 'AI评估_课程与融合_得分', 'AI评估_课程与融合_说明',
     'AI评估_学术评估_得分', 'AI评估_学术评估_说明',
     'AI评估_升学成果_得分', 'AI评估_升学成果_说明',
@@ -224,16 +224,17 @@ async function exportSchoolData() {
             }
             
             csvColumns.forEach(column => {
-                // 找到对应的数据库字段
+                // 处理序号字段
+                if (column === '序号') {
+                    row.push(escapeCSVValue(newSequenceNumber));
+                    return;
+                }
+                
+                // 从fieldMapping中找到对应的数据库字段名
                 const dbField = Object.keys(fieldMapping).find(key => fieldMapping[key] === column);
                 
                 if (dbField) {
                     let value = school[dbField];
-                    
-                    // 处理序号字段：使用新的连续序号
-                    if (column === '序号') {
-                        value = newSequenceNumber;
-                    }
                     
                     // 处理空值
                     if (value === null || value === undefined) {
@@ -247,7 +248,15 @@ async function exportSchoolData() {
                     
                     row.push(escapeCSVValue(value));
                 } else {
-                    row.push('');
+                    // 如果没有找到映射，说明是字段名一致的情况（如AI评估字段），直接使用字段名
+                    let value = school[column];
+                    if (value === null || value === undefined) {
+                        value = '';
+                    }
+                    if (column === 'AI评估_最终总结_JSON' && value) {
+                        value = ensureValidJSON(String(value), column);
+                    }
+                    row.push(escapeCSVValue(value));
                 }
             });
             

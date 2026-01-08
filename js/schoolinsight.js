@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showEmptyState('', true); // 显示初始提示
     updateClearButtonVisibility(); // 检查并更新清空按钮显示状态
     setupEventListeners();
+    setupCommentListeners(); // 初始化评论功能
 });
 
 // 设置事件监听器
@@ -111,6 +112,11 @@ function clearSearchResults() {
     allSchools = [];
     schoolsGrid.style.display = 'none';
     clearResultsContainer.style.display = 'none';
+    // 移除适用范围提醒（如果存在）
+    const existingNotice = document.getElementById('searchResultsScopeNotice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
     showEmptyState('', true);
     searchInput.value = '';
     updateClearButtonVisibility();
@@ -143,9 +149,27 @@ async function loadSchools(searchTerm = '') {
         
         allSchools = data.schools || [];
         
-        // 如果有可能的学校名称列表，显示选择界面
+        // 如果有可能的学校名称列表，过滤掉大学相关的学校，然后显示选择界面
         if (data.possibleSchoolNames && data.possibleSchoolNames.length > 0) {
-            showSchoolNameSelection(data.possibleSchoolNames, searchTerm);
+            // 过滤掉大学相关的学校名称（但保留附属学校）
+            const filteredNames = data.possibleSchoolNames.filter(name => {
+                if (!name) return false;
+                const lowerName = name.toLowerCase();
+                // 排除包含大学相关关键词的学校名称
+                const universityKeywords = ['大学', '本科', '硕士', '博士', 'university', 'college', '研究生院', '研究院'];
+                // 但保留附属学校（如"清华大学附属中学"、"清华大学附属小学"）
+                if (lowerName.includes('附属') || lowerName.includes('附属中学') || lowerName.includes('附属小学') || 
+                    lowerName.includes('附中') || lowerName.includes('附小') || lowerName.includes('实验学校')) {
+                    return true;
+                }
+                return !universityKeywords.some(keyword => lowerName.includes(keyword));
+            });
+            
+            if (filteredNames.length > 0) {
+                showSchoolNameSelection(filteredNames, searchTerm);
+            } else {
+                showEmptyState('未找到符合条件的学校（本工具仅支持搜索幼儿园、小学、初中、高中）', false);
+            }
         } else {
             renderSchools(allSchools);
         }
@@ -167,6 +191,7 @@ function handleSearch() {
         clearResultsContainer.style.display = 'none';
         return;
     }
+    
     loadSchools(searchTerm);
 }
 
@@ -176,10 +201,22 @@ function showSchoolNameSelection(possibleSchoolNames, searchTerm) {
     clearResultsContainer.style.display = 'none';
     emptyState.style.display = 'none';
     
+    // 移除旧的适用范围提醒（如果存在）
+    const existingNotice = document.getElementById('searchResultsScopeNotice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
+    
     // 创建选择界面HTML
     let html = '<div class="school-name-selection" style="background: #ffffff; border-radius: 16px; padding: 32px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); max-width: 600px; margin: 0 auto;">';
     html += `<h3 style="font-size: 20px; color: #333333; margin-bottom: 16px;">找到多个可能的学校，请选择正确的学校：</h3>`;
-    html += `<p style="color: #666666; margin-bottom: 24px; font-size: 14px;">搜索词："${escapeHtml(searchTerm)}"</p>`;
+    html += `<p style="color: #666666; margin-bottom: 16px; font-size: 14px;">搜索词："${escapeHtml(searchTerm)}"</p>`;
+    // 添加适用范围提醒
+    html += '<div style="background: #E8F4F8; border: 1px solid #B3D9E6; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px;">';
+    html += '<div style="color: #1E88E5; font-size: 20px; flex-shrink: 0; margin-top: 2px;">ℹ️</div>';
+    html += '<div style="flex: 1; color: #0D47A1; font-size: 14px; line-height: 1.6; font-weight: 500;">';
+    html += '<strong style="color: #1565C0;">适用范围说明：</strong>本工具仅针对大学教育以下的学校，包括幼儿园、小学、初中、高中。大学及以上不在本工具的搜索范围内。';
+    html += '</div></div>';
     html += '<div class="school-name-list" style="display: flex; flex-direction: column; gap: 12px;">';
     
     possibleSchoolNames.forEach((schoolName, index) => {
@@ -295,6 +332,11 @@ function renderSchools(schools) {
     if (schools.length === 0) {
         schoolsGrid.style.display = 'none';
         clearResultsContainer.style.display = 'none';
+        // 移除适用范围提醒（如果存在）
+        const existingNotice = document.getElementById('searchResultsScopeNotice');
+        if (existingNotice) {
+            existingNotice.remove();
+        }
         showEmptyState('未找到相关学校，请尝试其他关键词');
         return;
     }
@@ -302,6 +344,12 @@ function renderSchools(schools) {
     schoolsGrid.style.display = 'grid';
     emptyState.style.display = 'none';
     clearResultsContainer.style.display = 'block'; // 显示清空按钮
+    
+    // 移除旧的适用范围提醒（如果存在）
+    const existingNotice = document.getElementById('searchResultsScopeNotice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
     
     // 同步更新已选中学校的信息（如果它们在新结果中）
     selectedSchoolIds.forEach(id => {
@@ -325,8 +373,18 @@ function renderSchools(schools) {
                        onchange="toggleSchoolSelection('${school._id}')">
                 <label for="checkbox-${school._id}">加入对比</label>
             </div>
+            <div class="comment-section" onclick="event.stopPropagation()">
+                <button class="comment-btn" onclick="showCommentsModal('${school._id}', '${escapeHtml(school.name || '未知学校')}')">
+                    评论 <span class="comment-count" id="comment-count-${school._id}">(0)</span>
+                </button>
+            </div>
         </div>
     `).join('');
+    
+    // 加载每个学校的评论数量
+    schools.forEach(school => {
+        loadCommentCount(school._id);
+    });
 }
 
 // 切换学校选择
@@ -493,31 +551,22 @@ function renderCompareTable(schools) {
             ]
         },
         {
-            name: '学段设置',
-            fields: [
-                { key: 'kindergarten', label: '幼儿园' },
-                { key: 'primary', label: '小学' },
-                { key: 'juniorHigh', label: '初中' },
-                { key: 'seniorHigh', label: '高中' }
-            ]
-        },
-        {
             name: 'IB课程',
             fields: [
-                { key: 'ibPYP', label: 'IB PYP' },
-                { key: 'ibMYP', label: 'IB MYP' },
-                { key: 'ibDP', label: 'IB DP' },
-                { key: 'ibCP', label: 'IB CP' }
+                { key: 'ibPYP', label: 'IB PYP国际文凭小学项目' },
+                { key: 'ibMYP', label: 'IB MYP国际文凭中学项目' },
+                { key: 'ibDP', label: 'IB DP国际文凭大学预科项目' },
+                { key: 'ibCP', label: 'IB CP国际文凭职业相关课程' }
             ]
         },
         {
             name: '其他课程',
             fields: [
-                { key: 'aLevel', label: 'A-Level' },
-                { key: 'ap', label: 'AP' },
+                { key: 'aLevel', label: 'A-Level英国高中水平证书' },
+                { key: 'ap', label: 'AP美国大学先修课程' },
                 { key: 'canadian', label: '加拿大课程' },
                 { key: 'australian', label: '澳大利亚课程' },
-                { key: 'igcse', label: 'IGCSE' },
+                { key: 'igcse', label: 'IGCSE国际普通中学教育文凭' },
                 { key: 'otherCourses', label: '其他课程' }
             ]
         }
@@ -543,6 +592,11 @@ function renderCompareTable(schools) {
             schools.forEach(school => {
                 const value = school[field.key];
                 let displayValue = '';
+                let cellClass = '';
+                
+                // 判断是否为布尔类型字段（学段设置、课程等）
+                const isBooleanField = ['kindergarten', 'primary', 'juniorHigh', 'seniorHigh', 
+                    'ibPYP', 'ibMYP', 'ibDP', 'ibCP', 'aLevel', 'ap', 'canadian', 'australian', 'igcse'].includes(field.key);
                 
                 if (value) {
                     if (field.isLink && value) {
@@ -551,14 +605,29 @@ function renderCompareTable(schools) {
                             ? value 
                             : `https://${value}`;
                         displayValue = `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color: #F75C62; text-decoration: none; word-break: break-all;">${escapeHtml(value)}</a>`;
+                    } else if (isBooleanField) {
+                        // 布尔类型字段：如果值为"有"或包含"有"，显示为绿色勾选
+                        const valueStr = String(value).toLowerCase();
+                        if (valueStr === '有' || valueStr.includes('有') || valueStr === 'yes' || valueStr === 'true') {
+                            displayValue = '有';
+                            cellClass = 'boolean-true';
+                        } else {
+                            displayValue = '无';
+                            cellClass = 'boolean-false';
+                        }
                     } else {
                         displayValue = escapeHtml(String(value));
                     }
                 } else {
-                    displayValue = '—';
+                    if (isBooleanField) {
+                        displayValue = '无';
+                        cellClass = 'boolean-false';
+                    } else {
+                        displayValue = '—';
+                    }
                 }
                 
-                tableHTML += `<td>${displayValue}</td>`;
+                tableHTML += `<td${cellClass ? ` class="${cellClass}"` : ''}>${displayValue}</td>`;
             });
             tableHTML += '</tr>';
         });
@@ -601,7 +670,7 @@ function renderScoringCompare(schools, scoringData, warning) {
     
     // 显示量化对比表
     if (scoringData.comparisonTable && scoringData.comparisonTable.length > 0) {
-        html += '<h2 style="margin-bottom: 24px; color: #333333;">量化对比表（模拟评分，满分100分）</h2>';
+        html += '<h2 style="margin-bottom: 24px; color: #333333;">量化对比表（模拟评分）</h2>';
         html += '<div class="scoring-table-container" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin-bottom: 32px; padding: 24px;">';
         html += '<table class="scoring-table" style="width: 100%; border-collapse: collapse;">';
         html += '<thead><tr>';
@@ -626,7 +695,9 @@ function renderScoringCompare(schools, scoringData, warning) {
             html += `<td style="padding: 12px 16px; border-bottom: 1px solid #E5E7EB; text-align: center;">${row.weight}%</td>`;
             schools.forEach(school => {
                 const score = row.scores && row.scores[school.name] ? row.scores[school.name] : '—';
-                html += `<td style="padding: 12px 16px; border-bottom: 1px solid #E5E7EB; text-align: center; font-weight: 500;">${formatScore(score)}</td>`;
+                // 对于单项指标，使用权重作为满分来计算星级
+                const maxScore = row.weight || 100;
+                html += `<td style="padding: 12px 16px; border-bottom: 1px solid #E5E7EB; text-align: center; font-weight: 500; overflow: visible; position: relative;">${formatScore(score, maxScore)}</td>`;
             });
             let explanationsHtml = '';
             if (row.explanations) {
@@ -674,7 +745,7 @@ function renderScoringCompare(schools, scoringData, warning) {
                 
                 html += `<div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #E5E7EB;">`;
                 html += `<h3 style="color: #F75C62; margin-bottom: 16px; font-size: 20px;">${escapeHtml(school.name)}</h3>`;
-                html += `<div style="margin-bottom: 12px;"><strong style="color: #333333;">总分：</strong><span style="color: #F75C62; font-size: 24px; font-weight: 600;">${formatScore(totalScore)}</span> 分</div>`;
+                html += `<div style="margin-bottom: 12px;"><strong style="color: #333333;">总分：</strong><span style="color: #F75C62; font-size: 24px; font-weight: 600;">${formatScore(totalScore, 100)}</span></div>`;
                 if (schoolSummary.strengths) {
                     html += `<div style="margin-bottom: 12px;"><strong style="color: #333333;">优势：</strong><span style="color: #666666;">${escapeHtml(schoolSummary.strengths)}</span></div>`;
                 }
@@ -689,9 +760,10 @@ function renderScoringCompare(schools, scoringData, warning) {
         });
         
         if (scoringData.summary.conclusion) {
+            const sanitizedConclusion = sanitizeTextRemoveScores(scoringData.summary.conclusion);
             html += `<div style="padding-top: 24px; border-top: 2px solid #F75C62;">`;
             html += `<h4 style="color: #333333; margin-bottom: 16px; font-size: 18px;">核心结论和建议</h4>`;
-            html += `<p style="color: #666666; line-height: 1.8;">${escapeHtml(scoringData.summary.conclusion)}</p>`;
+            html += `<p style="color: #666666; line-height: 1.8;">${escapeHtml(sanitizedConclusion)}</p>`;
             html += `</div>`;
         }
         
@@ -732,9 +804,15 @@ function updateCompareViewButtons() {
 function backToSearch() {
     currentView = 'list';
     schoolsListView.style.display = 'block';
-    if (searchSection) searchSection.style.display = 'block';
+    if (searchSection) searchSection.style.display = 'flex'; // 使用 flex 以保持居中布局
     if (pageTitle) pageTitle.style.display = 'block';
     compareView.classList.remove('active');
+    
+    // 如果有之前的搜索结果，重新渲染学校列表
+    if (allSchools && allSchools.length > 0) {
+        renderSchools(allSchools);
+    }
+    
     // 如果有选中的学校，显示对比栏
     if (selectedSchoolIds.size > 0) {
         updateCompareBar();
@@ -1007,21 +1085,30 @@ function showEmptyState(message, isInitial = false) {
     
     if (emptyStateTitle && emptyStateMessage) {
         if (isInitial) {
-            emptyStateTitle.textContent = '请输入搜索关键词';
-            emptyStateMessage.textContent = '在上方搜索框中输入学校名称进行查询';
+            // 初始状态：隐藏文字，只显示 AI 图标
+            emptyStateTitle.textContent = '';
+            emptyStateMessage.textContent = '';
+            emptyStateTitle.style.display = 'none';
+            emptyStateMessage.style.display = 'none';
         } else {
+            // 搜索结果为空：显示提示文字
+            emptyStateTitle.style.display = 'block';
+            emptyStateMessage.style.display = 'block';
             emptyStateTitle.textContent = message || '未找到相关学校';
             emptyStateMessage.textContent = '请尝试其他关键词或联系管理员添加学校信息';
         }
     } else {
         // 兼容旧版本
+        const titleText = isInitial ? '' : escapeHtml(message || '未找到相关学校');
+        const messageText = isInitial ? '' : '请尝试其他关键词或联系管理员添加学校信息';
         emptyState.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 8v4m0 4h.01"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
+                <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/>
+                <path d="M16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>
             </svg>
-            <h3>${escapeHtml(message || '请输入搜索关键词')}</h3>
-            <p>${isInitial ? '在上方搜索框中输入学校名称进行查询' : '请尝试其他关键词'}</p>
+            ${titleText ? `<h3>${titleText}</h3>` : '<h3 style="display:none;"></h3>'}
+            ${messageText ? `<p>${messageText}</p>` : '<p style="display:none;"></p>'}
         `;
     }
     emptyState.style.display = 'block';
@@ -1042,8 +1129,61 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// 格式化分数，保留一位小数
-function formatScore(score) {
+// 移除文本中的分数字样（如“86.3分”），避免在总结中出现具体分数
+function sanitizeTextRemoveScores(text) {
+    if (!text || typeof text !== 'string') return '';
+    let sanitized = text;
+    // 移除“数字+分”或“数字 分”形式
+    sanitized = sanitized.replace(/\d+(\.\d+)?\s*分/g, '');
+    // 移除空括号
+    sanitized = sanitized.replace(/（\s*）/g, '').replace(/\(\s*\)/g, '');
+    // 合并多余空格
+    sanitized = sanitized.replace(/\s{2,}/g, ' ').trim();
+    return sanitized;
+}
+
+// 将分数转换为星级（Rating）
+// 使用5星制（支持半星），基于总分100分的比例
+function scoreToRating(score, maxScore = 100) {
+    if (score === null || score === undefined || score === '—' || score === '') {
+        return null;
+    }
+    const numScore = typeof score === 'number' ? score : parseFloat(score);
+    if (isNaN(numScore)) {
+        return null;
+    }
+    
+    // 计算相对于满分100的百分比
+    const percentage = (numScore / maxScore) * 100;
+    
+    // 将百分比转换为星级（5星制，支持半星）
+    // 每5分一个等级，支持半星以增加区分度
+    // 5星：95-100分（优秀）
+    // 4.5星：90-94分
+    // 4星：85-89分
+    // 3.5星：80-84分
+    // 3星：75-79分（良好）
+    // 2.5星：70-74分
+    // 2星：65-69分
+    // 1.5星：60-64分（中等）
+    // 1星：55-59分
+    // 0.5星：50-54分
+    // 0星：0-49分（一般及以下）
+    if (percentage >= 95) return 5;
+    if (percentage >= 90) return 4.5;
+    if (percentage >= 85) return 4;
+    if (percentage >= 80) return 3.5;
+    if (percentage >= 75) return 3;
+    if (percentage >= 70) return 2.5;
+    if (percentage >= 65) return 2;
+    if (percentage >= 60) return 1.5;
+    if (percentage >= 55) return 1;
+    if (percentage >= 50) return 0.5;
+    return 0;
+}
+
+// 格式化分数显示为星级（支持半星）
+function formatScore(score, maxScore = 100) {
     if (score === null || score === undefined || score === '—' || score === '') {
         return '—';
     }
@@ -1051,7 +1191,39 @@ function formatScore(score) {
     if (isNaN(numScore)) {
         return '—';
     }
-    return numScore.toFixed(1);
+    
+    // 获取星级（可能包含小数，如4.5）
+    const rating = scoreToRating(numScore, maxScore);
+    if (rating === null) {
+        return '—';
+    }
+    
+    // 生成星级HTML（支持半星）
+    let starsHtml = '<span class="rating-stars" title="' + numScore.toFixed(1) + '分">';
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = (rating % 1) !== 0;
+    
+    // 显示完整星
+    for (let i = 1; i <= fullStars; i++) {
+        starsHtml += '<span class="star star-filled">★</span>';
+    }
+    
+    // 显示半星（使用两个重叠的元素，左边实心，右边空心）
+    if (hasHalfStar) {
+        starsHtml += '<span class="star star-half"><span class="star-half-filled">★</span><span class="star-half-empty">☆</span></span>';
+    }
+    
+    // 显示空星
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    for (let i = 1; i <= emptyStars; i++) {
+        starsHtml += '<span class="star star-empty">☆</span>';
+    }
+    
+    // 显示星级文字（如果是整数则显示整数，否则显示小数）
+    const ratingText = rating % 1 === 0 ? rating : rating.toFixed(1);
+    starsHtml += '<span class="rating-text">' + ratingText + '星</span></span>';
+    
+    return starsHtml;
 }
 
 // 显示学校详情弹窗
@@ -1060,8 +1232,12 @@ async function showSchoolModal(schoolId) {
         // 从已加载的学校列表中查找
         let school = allSchools.find(s => s._id === schoolId);
         
-        // 如果没找到，从API获取
-        if (!school) {
+        // 检查数据是否完整（必须包含课程字段）
+        const requiredFields = ['ibPYP', 'ibMYP', 'ibDP', 'ibCP'];
+        const hasAllFields = school && requiredFields.every(field => school.hasOwnProperty(field));
+        
+        // 如果没找到或数据不完整，从API获取完整数据
+        if (!school || !hasAllFields) {
             const response = await fetch(`${API_BASE}/api/schools/${schoolId}`);
             
             if (!response.ok) {
@@ -1077,6 +1253,12 @@ async function showSchoolModal(schoolId) {
             
             const data = await response.json();
             school = data;
+            
+            // 更新 allSchools 中的学校数据，确保后续使用完整数据
+            const index = allSchools.findIndex(s => s._id === schoolId);
+            if (index !== -1) {
+                allSchools[index] = school;
+            }
         }
         
         if (!school) {
@@ -1140,20 +1322,20 @@ function renderModalContent(school) {
         {
             title: 'IB课程',
             items: [
-                { label: 'IB PYP', key: 'ibPYP' },
-                { label: 'IB MYP', key: 'ibMYP' },
-                { label: 'IB DP', key: 'ibDP' },
-                { label: 'IB CP', key: 'ibCP' }
+                { label: 'IB PYP国际文凭小学项目', key: 'ibPYP' },
+                { label: 'IB MYP国际文凭中学项目', key: 'ibMYP' },
+                { label: 'IB DP国际文凭大学预科项目', key: 'ibDP' },
+                { label: 'IB CP国际文凭职业相关课程', key: 'ibCP' }
             ]
         },
         {
             title: '其他课程',
             items: [
-                { label: 'A-Level', key: 'aLevel' },
-                { label: 'AP', key: 'ap' },
+                { label: 'A-Level英国高中水平证书', key: 'aLevel' },
+                { label: 'AP美国大学先修课程', key: 'ap' },
                 { label: '加拿大课程', key: 'canadian' },
                 { label: '澳大利亚课程', key: 'australian' },
-                { label: 'IGCSE', key: 'igcse' },
+                { label: 'IGCSE国际普通中学教育文凭', key: 'igcse' },
                 { label: '其他课程', key: 'otherCourses' }
             ]
         }
@@ -1190,6 +1372,10 @@ function renderModalContent(school) {
             let displayValue = '';
             let valueClass = '';
             
+            // 判断是否为布尔类型字段（学段设置、课程等）
+            const isBooleanField = ['kindergarten', 'primary', 'juniorHigh', 'seniorHigh', 
+                'ibPYP', 'ibMYP', 'ibDP', 'ibCP', 'aLevel', 'ap', 'canadian', 'australian', 'igcse'].includes(item.key);
+            
             if (value) {
                 if (item.isLink && value) {
                     // 如果是网址，显示为链接
@@ -1200,12 +1386,27 @@ function renderModalContent(school) {
                 } else if (item.isClickable && item.key === 'affiliatedGroup') {
                     // 如果是可点击的教育集团字段，显示为可点击链接
                     displayValue = `<a href="#" class="affiliated-group-link" data-group="${escapeHtml(value)}" style="color: #F75C62; text-decoration: none; cursor: pointer; word-break: break-all;">${escapeHtml(value)}</a>`;
+                } else if (isBooleanField) {
+                    // 布尔类型字段：如果值为"有"或包含"有"，显示为绿色勾选
+                    const valueStr = String(value).toLowerCase();
+                    if (valueStr === '有' || valueStr.includes('有') || valueStr === 'yes' || valueStr === 'true') {
+                        displayValue = '有';
+                        valueClass = 'boolean-true';
+                    } else {
+                        displayValue = '无';
+                        valueClass = 'boolean-false';
+                    }
                 } else {
                     displayValue = escapeHtml(String(value));
                 }
             } else {
-                displayValue = '—';
-                valueClass = 'empty';
+                if (isBooleanField) {
+                    displayValue = '无';
+                    valueClass = 'boolean-false';
+                } else {
+                    displayValue = '—';
+                    valueClass = 'empty';
+                }
             }
             
             html += `
@@ -1279,13 +1480,302 @@ async function loadSchoolsByGroup(groupName) {
     }
 }
 
+// 验证学校类型和学段
+async function validateSchoolsForComparison() {
+    if (selectedSchoolIds.size < 2) {
+        return { valid: false, error: '至少需要选择2所学校进行对比' };
+    }
+    
+    // 获取选中的学校数据
+    let selectedSchools = Array.from(selectedSchoolIds).map(id => {
+        // 优先从selectedSchoolsMap获取，如果没有则从allSchools获取
+        return selectedSchoolsMap.get(id) || allSchools.find(s => s._id === id);
+    }).filter(school => school); // 过滤掉未找到的学校
+    
+    // 如果有学校数据缺失，尝试从API获取
+    const missingIds = Array.from(selectedSchoolIds).filter(id => {
+        return !selectedSchools.find(s => s._id === id);
+    });
+    
+    if (missingIds.length > 0) {
+        try {
+            const fetchPromises = missingIds.map(async (id) => {
+                try {
+                    const response = await fetch(`${API_BASE}/api/schools/${id}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data;
+                    }
+                } catch (e) {
+                    console.error(`获取学校 ${id} 失败:`, e);
+                }
+                return null;
+            });
+            
+            const fetchedSchools = await Promise.all(fetchPromises);
+            selectedSchools = selectedSchools.concat(fetchedSchools.filter(s => s));
+        } catch (error) {
+            console.error('获取学校数据失败:', error);
+        }
+    }
+    
+    if (selectedSchools.length < 2) {
+        return { valid: false, error: '无法获取学校信息，请重新选择' };
+    }
+    
+    // 检查学校类型是否一致
+    const schoolTypes = selectedSchools.map(s => s.schoolType || s.nature || '').filter(t => t);
+    const uniqueTypes = [...new Set(schoolTypes)];
+    
+    if (uniqueTypes.length > 1) {
+        // 学校类型不一致，需要用户确认
+        return {
+            valid: false,
+            needsConfirm: true,
+            type: 'schoolType',
+            message: `您选择的学校类型不一致：\n\n${selectedSchools.map(s => `• ${s.name || '未知学校'}：${s.schoolType || s.nature || '类型未知'}`).join('\n')}\n\n⚠️ 重要提醒：\n本评价体系更适合提供了国际课程的学校，不同类型学校的教育理念、课程体系、培养目标等可能存在较大差异，AI评估对比结果可能不够准确，建议选择相同类型的学校进行对比。\n\n是否仍要继续进行AI评估对比？`,
+            schools: selectedSchools
+        };
+    }
+    
+    // 检查学段是否有重叠
+    const stages = ['kindergarten', 'primary', 'juniorHigh', 'seniorHigh'];
+    const schoolStages = selectedSchools.map(school => {
+        const schoolStageList = [];
+        stages.forEach(stage => {
+            if (school[stage] === '有') {
+                schoolStageList.push(stage);
+            }
+        });
+        return schoolStageList;
+    });
+    
+    // 检查是否有任何重叠
+    let hasOverlap = false;
+    for (let i = 0; i < schoolStages.length; i++) {
+        for (let j = i + 1; j < schoolStages.length; j++) {
+            const stages1 = schoolStages[i];
+            const stages2 = schoolStages[j];
+            // 检查两个学校的学段是否有交集
+            if (stages1.some(s => stages2.includes(s))) {
+                hasOverlap = true;
+                break;
+            }
+        }
+        if (hasOverlap) break;
+    }
+    
+    if (!hasOverlap) {
+        // 学段无重叠，不能进行对比
+        const stageNames = {
+            'kindergarten': '幼儿园',
+            'primary': '小学',
+            'juniorHigh': '初中',
+            'seniorHigh': '高中'
+        };
+        
+        const stageInfo = selectedSchools.map(school => {
+            const schoolStages = [];
+            stages.forEach(stage => {
+                if (school[stage] === '有') {
+                    schoolStages.push(stageNames[stage]);
+                }
+            });
+            return `• ${school.name || '未知学校'}：${schoolStages.length > 0 ? schoolStages.join('、') : '无学段信息'}`;
+        }).join('\n');
+        
+        return {
+            valid: false,
+            needsConfirm: false,
+            type: 'stages',
+            message: `您选择的学校涵盖学段没有任何重叠：\n\n${stageInfo}\n\n❌ 无法进行对比：\n由于所选学校的涵盖学段完全不同（例如：一个是初中和高中，一个是大学），无法进行有效的对比评估。\n\n请重新选择涵盖相同学段的学校进行对比。`,
+            schools: selectedSchools
+        };
+    }
+    
+    return { valid: true };
+}
+
+// 显示确认弹窗
+function showConfirmModal(message, onConfirm, onCancel) {
+    // 创建弹窗HTML
+    const modalHTML = `
+        <div class="modal-overlay active" id="confirmModal" style="z-index: 2000;">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h2 style="margin: 0;">⚠️ 提醒</h2>
+                </div>
+                <div class="modal-body">
+                    <div style="white-space: pre-line; line-height: 1.8; color: #333333; font-size: 15px;">
+                        ${escapeHtml(message)}
+                    </div>
+                </div>
+                <div style="padding: 24px 32px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px;">
+                    <button id="confirmCancelBtn" style="padding: 12px 24px; background: transparent; color: #666666; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s;">
+                        取消
+                    </button>
+                    <button id="confirmOkBtn" style="padding: 12px 24px; background: #F75C62; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background 0.3s;">
+                        继续评估
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 移除已存在的确认弹窗
+    const existingModal = document.getElementById('confirmModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 添加到页面
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = document.getElementById('confirmModal');
+    document.body.style.overflow = 'hidden';
+    
+    // 绑定事件
+    const okBtn = document.getElementById('confirmOkBtn');
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+    
+    const closeModal = () => {
+        modal.remove();
+        document.body.style.overflow = '';
+    };
+    
+    okBtn.addEventListener('click', () => {
+        closeModal();
+        if (onConfirm) onConfirm();
+    });
+    
+    cancelBtn.addEventListener('click', () => {
+        closeModal();
+        if (onCancel) onCancel();
+    });
+    
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+            if (onCancel) onCancel();
+        }
+    });
+    
+    // ESC键关闭
+    const escHandler = (e) => {
+        if (e.key === 'Escape' && document.getElementById('confirmModal')) {
+            closeModal();
+            if (onCancel) onCancel();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
+// 显示错误弹窗
+function showErrorModal(message) {
+    // 创建弹窗HTML
+    const modalHTML = `
+        <div class="modal-overlay active" id="errorModal" style="z-index: 2000;">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h2 style="margin: 0;">❌ 无法进行对比</h2>
+                </div>
+                <div class="modal-body">
+                    <div style="white-space: pre-line; line-height: 1.8; color: #333333; font-size: 15px;">
+                        ${escapeHtml(message)}
+                    </div>
+                </div>
+                <div style="padding: 24px 32px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end;">
+                    <button id="errorOkBtn" style="padding: 12px 24px; background: #F75C62; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background 0.3s;">
+                        我知道了
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 移除已存在的错误弹窗
+    const existingModal = document.getElementById('errorModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 添加到页面
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = document.getElementById('errorModal');
+    document.body.style.overflow = 'hidden';
+    
+    // 绑定事件
+    const okBtn = document.getElementById('errorOkBtn');
+    
+    const closeModal = () => {
+        modal.remove();
+        document.body.style.overflow = '';
+    };
+    
+    okBtn.addEventListener('click', closeModal);
+    
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // ESC键关闭
+    const escHandler = (e) => {
+        if (e.key === 'Escape' && document.getElementById('errorModal')) {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
 // AI评分对比
 async function handleCompareScoring() {
     // 保存按钮原始状态
     const originalText = compareBtn.textContent;
     const wasDisabled = compareBtn.disabled;
     
-    // 更新按钮状态为"评估中..."
+    // 先进行验证
+    const validation = await validateSchoolsForComparison();
+    
+    if (!validation.valid) {
+        if (validation.error) {
+            alert(validation.error);
+            return;
+        }
+        
+        if (validation.needsConfirm) {
+            // 需要用户确认（学校类型不一致）
+            return new Promise((resolve) => {
+                showConfirmModal(validation.message, async () => {
+                    // 用户确认继续
+                    compareBtn.textContent = '评估中...';
+                    compareBtn.disabled = true;
+                    
+                    try {
+                        await handleCompare(true);
+                    } finally {
+                        // 恢复按钮状态
+                        compareBtn.textContent = originalText;
+                        compareBtn.disabled = wasDisabled || selectedSchoolIds.size < 2;
+                    }
+                    resolve();
+                }, () => {
+                    // 用户取消
+                    resolve();
+                });
+            });
+        } else {
+            // 不能进行对比（学段无重叠）
+            showErrorModal(validation.message);
+            return;
+        }
+    }
+    
+    // 验证通过，继续评估
     compareBtn.textContent = '评估中...';
     compareBtn.disabled = true;
     
@@ -1316,6 +1806,645 @@ async function switchToBasicCompare() {
     }
 }
 
+// ==================== 评论功能 ====================
+
+// 评论相关 DOM 元素（延迟初始化，在 DOMContentLoaded 后获取）
+let commentsModal, commentsModalCloseBtn, commentsModalTitle, commentsModalSubtitle;
+let commentsList, addCommentBtn, commentInputModal, commentInputModalCloseBtn;
+let commentInputModalTitle, commentContent, commentAuthor, commentCharCount;
+let commentSubmitBtn, commentCancelBtn;
+
+// 当前查看评论的学校ID
+let currentCommentSchoolId = null;
+let currentCommentSchoolName = null;
+
+// 初始化评论功能事件监听
+function setupCommentListeners() {
+    // 获取评论相关 DOM 元素
+    commentsModal = document.getElementById('commentsModal');
+    commentsModalCloseBtn = document.getElementById('commentsModalCloseBtn');
+    commentsModalTitle = document.getElementById('commentsModalTitle');
+    commentsModalSubtitle = document.getElementById('commentsModalSubtitle');
+    commentsList = document.getElementById('commentsList');
+    addCommentBtn = document.getElementById('addCommentBtn');
+    commentInputModal = document.getElementById('commentInputModal');
+    commentInputModalCloseBtn = document.getElementById('commentInputModalCloseBtn');
+    commentInputModalTitle = document.getElementById('commentInputModalTitle');
+    commentContent = document.getElementById('commentContent');
+    commentAuthor = document.getElementById('commentAuthor');
+    commentCharCount = document.getElementById('commentCharCount');
+    commentSubmitBtn = document.getElementById('commentSubmitBtn');
+    commentCancelBtn = document.getElementById('commentCancelBtn');
+    
+    // 设置事件监听
+    if (commentsModalCloseBtn) {
+        commentsModalCloseBtn.addEventListener('click', closeCommentsModal);
+    }
+    if (commentInputModalCloseBtn) {
+        commentInputModalCloseBtn.addEventListener('click', closeCommentInputModal);
+    }
+    if (commentCancelBtn) {
+        commentCancelBtn.addEventListener('click', closeCommentInputModal);
+    }
+    if (addCommentBtn) {
+        addCommentBtn.addEventListener('click', () => {
+            if (currentCommentSchoolId) {
+                showCommentInputModal(currentCommentSchoolId, currentCommentSchoolName);
+            }
+        });
+    }
+    if (commentContent) {
+        commentContent.addEventListener('input', updateCommentCharCount);
+        commentContent.addEventListener('input', validateCommentInput);
+    }
+    if (commentSubmitBtn) {
+        commentSubmitBtn.addEventListener('click', submitComment);
+    }
+    if (commentsModal) {
+        commentsModal.addEventListener('click', (e) => {
+            if (e.target === commentsModal) {
+                closeCommentsModal();
+            }
+        });
+    }
+    if (commentInputModal) {
+        commentInputModal.addEventListener('click', (e) => {
+            if (e.target === commentInputModal) {
+                closeCommentInputModal();
+            }
+        });
+    }
+    
+    // ESC键关闭评论弹窗
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (commentsModal && commentsModal.classList.contains('active')) {
+                closeCommentsModal();
+            }
+            if (commentInputModal && commentInputModal.classList.contains('active')) {
+                closeCommentInputModal();
+            }
+        }
+    });
+}
+
+// 加载学校评论数量
+async function loadCommentCount(schoolId) {
+    try {
+        const url = `${API_BASE}/api/schools/${schoolId}/comments/count`;
+        const response = await fetch(url);
+        
+        if (response.ok) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                const countElement = document.getElementById(`comment-count-${schoolId}`);
+                if (countElement) {
+                    countElement.textContent = `(${data.count})`;
+                }
+            } else {
+                console.warn('评论数量API返回非JSON格式');
+            }
+        } else {
+            console.warn('加载评论数量失败:', response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error('加载评论数量失败:', error);
+    }
+}
+
+// 显示评论弹窗
+async function showCommentsModal(schoolId, schoolName) {
+    currentCommentSchoolId = schoolId;
+    currentCommentSchoolName = schoolName;
+    
+    if (commentsModalTitle) {
+        commentsModalTitle.textContent = '评论';
+    }
+    if (commentsModalSubtitle) {
+        commentsModalSubtitle.textContent = schoolName;
+    }
+    
+    // 重置评论数量显示
+    const commentsCountElement = document.getElementById('commentsCount');
+    if (commentsCountElement) {
+        commentsCountElement.textContent = '评论 · 加载中...';
+    }
+    
+    commentsModal.classList.add('active');
+    commentsList.innerHTML = '<div class="comments-loading">加载中...</div>';
+    
+    await loadComments(schoolId);
+}
+
+// 关闭评论弹窗
+function closeCommentsModal() {
+    commentsModal.classList.remove('active');
+    currentCommentSchoolId = null;
+    currentCommentSchoolName = null;
+}
+
+// 加载评论列表
+async function loadComments(schoolId) {
+    try {
+        const url = `${API_BASE}/api/schools/${schoolId}/comments`;
+        console.log('加载评论，URL:', url);
+        
+        const response = await fetch(url);
+        
+        console.log('评论API响应状态:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            let errorMessage = '加载评论失败';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                const text = await response.text();
+                console.error('服务器返回错误:', text);
+                errorMessage = `加载评论失败: ${response.status} ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('服务器返回非JSON响应:', text.substring(0, 200));
+            throw new Error('服务器返回格式错误');
+        }
+        
+        const comments = await response.json();
+        console.log('成功加载评论，数量:', comments.length);
+        
+        // 更新评论数量显示
+        const commentsCountElement = document.getElementById('commentsCount');
+        if (commentsCountElement) {
+            commentsCountElement.textContent = `评论 · ${comments.length}`;
+        }
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div class="comments-empty">暂无评论，快来发表第一条评论吧！</div>';
+            return;
+        }
+        
+        commentsList.innerHTML = comments.map(comment => {
+            const time = formatCommentTime(comment.createdAt);
+            const author = comment.author || '匿名用户';
+            const avatarText = getAvatarText(author);
+            const avatarClass = author === '匿名用户' ? 'default' : '';
+            const likes = comment.likes || 0;
+            const commentId = comment._id;
+            const replies = comment.replies || [];
+            
+            // 生成回复HTML
+            const repliesHtml = replies.length > 0 ? `
+                <div class="comment-replies">
+                    ${replies.map(reply => {
+                        const replyTime = formatCommentTime(reply.createdAt);
+                        const replyAuthor = reply.author || '匿名用户';
+                        const replyAvatarText = getAvatarText(replyAuthor);
+                        const replyLikes = reply.likes || 0;
+                        return `
+                            <div class="comment-reply-item" data-reply-id="${reply._id}">
+                                <div class="comment-reply-avatar">${replyAvatarText}</div>
+                                <div class="comment-reply-main">
+                                    <div class="comment-reply-header">
+                                        <span class="comment-reply-author">${escapeHtml(replyAuthor)}</span>
+                                    </div>
+                                    <div class="comment-reply-meta">
+                                        <span class="comment-time">${replyTime}</span>
+                                    </div>
+                                    <div class="comment-reply-content">${escapeHtml(reply.content)}</div>
+                                    <div class="comment-reply-actions">
+                                        <button class="comment-reply-action-btn like-reply-btn" data-reply-id="${reply._id}">
+                                            <span class="icon">${replyLikes > 0 ? '❤️' : '🤍'}</span>
+                                            <span class="like-count">${replyLikes > 0 ? replyLikes : ''}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            ` : '';
+            
+            return `
+                <div class="comment-item" data-comment-id="${commentId}">
+                    <div class="comment-avatar ${avatarClass}">${avatarText}</div>
+                    <div class="comment-main">
+                        <div class="comment-header">
+                            <span class="comment-author">${escapeHtml(author)}</span>
+                        </div>
+                        <div class="comment-meta">
+                            <span class="comment-time">${time}</span>
+                        </div>
+                        <div class="comment-content">${escapeHtml(comment.content)}</div>
+                        <div class="comment-actions">
+                            <button class="comment-action-btn like-comment-btn" data-comment-id="${commentId}">
+                                <span class="icon">${likes > 0 ? '❤️' : '🤍'}</span>
+                                <span class="like-count">${likes > 0 ? likes : ''}</span>
+                            </button>
+                            <button class="comment-action-btn reply-comment-btn" data-comment-id="${commentId}">
+                                回复
+                            </button>
+                        </div>
+                        ${repliesHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // 绑定点赞和回复事件
+        attachCommentEventListeners();
+        
+        // 更新评论数量
+        if (currentCommentSchoolId === schoolId) {
+            loadCommentCount(schoolId);
+        }
+    } catch (error) {
+        console.error('加载评论失败:', error);
+        console.error('错误详情:', error.message, error.stack);
+        commentsList.innerHTML = `<div class="comments-empty">加载评论失败，请稍后重试<br><small style="color: #999; margin-top: 8px; display: block;">${escapeHtml(error.message)}</small></div>`;
+    }
+}
+
+// 格式化评论时间
+function formatCommentTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+    
+    if (years > 0) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    } else if (months > 0 || days > 7) {
+        return `${date.getMonth() + 1}-${String(date.getDate()).padStart(2, '0')}`;
+    } else if (days > 0) {
+        return `${days}天前`;
+    } else if (hours > 0) {
+        return `${hours}小时前`;
+    } else if (minutes > 0) {
+        return `${minutes}分钟前`;
+    } else {
+        return '刚刚';
+    }
+}
+
+// 获取头像文字（取昵称的第一个字符或前两个字符）
+function getAvatarText(author) {
+    if (!author || author === '匿名用户') {
+        return '匿';
+    }
+    // 如果是中文，取第一个字符；如果是英文，取前两个字符
+    const firstChar = author.charAt(0);
+    if (/[\u4e00-\u9fa5]/.test(firstChar)) {
+        return firstChar;
+    } else {
+        return author.substring(0, 2).toUpperCase();
+    }
+}
+
+// 绑定评论事件监听器（点赞、回复）
+function attachCommentEventListeners() {
+    // 点赞评论
+    document.querySelectorAll('.like-comment-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const commentId = btn.getAttribute('data-comment-id');
+            await toggleLikeComment(commentId, btn);
+        });
+    });
+    
+    // 点赞回复
+    document.querySelectorAll('.like-reply-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const replyId = btn.getAttribute('data-reply-id');
+            await toggleLikeReply(replyId, btn);
+        });
+    });
+    
+    // 回复评论
+    document.querySelectorAll('.reply-comment-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const commentId = btn.getAttribute('data-comment-id');
+            showReplyModal(commentId);
+        });
+    });
+}
+
+// 切换评论点赞
+async function toggleLikeComment(commentId, buttonElement) {
+    try {
+        const response = await fetch(`${API_BASE}/api/comments/${commentId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userIdentifier: getUserId() // 使用localStorage存储的用户标识
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('点赞失败');
+        }
+        
+        const data = await response.json();
+        
+        // 更新按钮显示
+        const icon = buttonElement.querySelector('.icon');
+        const countSpan = buttonElement.querySelector('.like-count');
+        
+        if (data.hasLiked) {
+            icon.textContent = '❤️';
+            buttonElement.classList.add('liked');
+            countSpan.textContent = data.likes > 0 ? data.likes : '';
+        } else {
+            icon.textContent = '🤍';
+            buttonElement.classList.remove('liked');
+            countSpan.textContent = data.likes > 0 ? data.likes : '';
+        }
+    } catch (error) {
+        console.error('点赞失败:', error);
+        alert('点赞失败，请稍后重试');
+    }
+}
+
+// 切换回复点赞
+async function toggleLikeReply(replyId, buttonElement) {
+    try {
+        const response = await fetch(`${API_BASE}/api/comments/${replyId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userIdentifier: getUserId()
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('点赞失败');
+        }
+        
+        const data = await response.json();
+        
+        // 更新按钮显示
+        const icon = buttonElement.querySelector('.icon');
+        const countSpan = buttonElement.querySelector('.like-count');
+        
+        if (data.hasLiked) {
+            icon.textContent = '❤️';
+            buttonElement.classList.add('liked');
+            countSpan.textContent = data.likes > 0 ? data.likes : '';
+        } else {
+            icon.textContent = '🤍';
+            buttonElement.classList.remove('liked');
+            countSpan.textContent = data.likes > 0 ? data.likes : '';
+        }
+    } catch (error) {
+        console.error('点赞失败:', error);
+    }
+}
+
+// 获取用户标识（用于点赞去重）
+function getUserId() {
+    let userId = localStorage.getItem('commentUserId');
+    if (!userId) {
+        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('commentUserId', userId);
+    }
+    return userId;
+}
+
+// 显示回复弹窗
+function showReplyModal(commentId) {
+    if (!currentCommentSchoolId) {
+        alert('无法获取学校信息');
+        return;
+    }
+    
+    // 使用现有的评论输入弹窗，但修改标题和提交逻辑
+    if (commentInputModalTitle) {
+        commentInputModalTitle.textContent = '回复评论';
+    }
+    
+    // 保存当前回复的评论ID
+    commentInputModal.setAttribute('data-reply-to-comment-id', commentId);
+    
+    // 清空输入
+    if (commentContent) {
+        commentContent.value = '';
+    }
+    if (commentAuthor) {
+        const savedAuthor = localStorage.getItem('commentAuthor');
+        commentAuthor.value = savedAuthor || '';
+    }
+    
+    updateCommentCharCount();
+    validateCommentInput();
+    
+    commentInputModal.classList.add('active');
+    
+    if (commentContent) {
+        setTimeout(() => commentContent.focus(), 100);
+    }
+}
+
+// 显示发表评论弹窗
+function showCommentInputModal(schoolId, schoolName) {
+    currentCommentSchoolId = schoolId;
+    currentCommentSchoolName = schoolName;
+    
+    if (commentInputModalTitle) {
+        // schoolName 已经在调用时转义过了，这里直接使用
+        commentInputModalTitle.textContent = `为"${schoolName}"发表评论`;
+    }
+    
+    // 恢复用户昵称（如果有）
+    const savedAuthor = localStorage.getItem('commentAuthor');
+    if (savedAuthor && commentAuthor) {
+        commentAuthor.value = savedAuthor;
+    }
+    
+    // 清空评论内容
+    if (commentContent) {
+        commentContent.value = '';
+    }
+    
+    updateCommentCharCount();
+    validateCommentInput();
+    
+    commentInputModal.classList.add('active');
+    
+    // 聚焦到评论输入框
+    if (commentContent) {
+        setTimeout(() => commentContent.focus(), 100);
+    }
+}
+
+// 关闭发表评论弹窗
+function closeCommentInputModal() {
+    commentInputModal.classList.remove('active');
+    // 清除回复标记
+    commentInputModal.removeAttribute('data-reply-to-comment-id');
+    // 恢复标题
+    if (commentInputModalTitle) {
+        commentInputModalTitle.textContent = '发表评论';
+    }
+}
+
+// 更新字数统计
+function updateCommentCharCount() {
+    if (!commentContent || !commentCharCount) return;
+    
+    const length = commentContent.value.length;
+    commentCharCount.textContent = length;
+    
+    const charCountElement = commentCharCount.parentElement;
+    if (length > 180) {
+        charCountElement.classList.add('warning');
+    } else {
+        charCountElement.classList.remove('warning');
+    }
+}
+
+// 验证评论输入
+function validateCommentInput() {
+    if (!commentContent || !commentSubmitBtn) return;
+    
+    const content = commentContent.value.trim();
+    const isValid = content.length >= 1 && content.length <= 200;
+    
+    commentSubmitBtn.disabled = !isValid;
+}
+
+// 提交评论
+async function submitComment() {
+    if (!commentContent) return;
+    
+    const content = commentContent.value.trim();
+    const author = commentAuthor ? commentAuthor.value.trim() : '';
+    
+    if (content.length < 1 || content.length > 200) {
+        alert('评论内容必须在1-200字之间');
+        return;
+    }
+    
+    // 保存用户昵称
+    if (author && commentAuthor) {
+        localStorage.setItem('commentAuthor', author);
+    }
+    
+    // 禁用提交按钮
+    commentSubmitBtn.disabled = true;
+    commentSubmitBtn.textContent = '提交中...';
+    
+    try {
+        // 检查是否是回复
+        const replyToCommentId = commentInputModal.getAttribute('data-reply-to-comment-id');
+        
+        let url, requestBody;
+        
+        if (replyToCommentId) {
+            // 回复评论
+            if (!currentCommentSchoolId) {
+                throw new Error('无法获取学校信息');
+            }
+            url = `${API_BASE}/api/comments/${replyToCommentId}/reply`;
+            requestBody = {
+                content: content,
+                author: author || undefined,
+                schoolId: currentCommentSchoolId
+            };
+        } else {
+            // 发表新评论
+            if (!currentCommentSchoolId) {
+                throw new Error('无法获取学校信息');
+            }
+            url = `${API_BASE}/api/schools/${currentCommentSchoolId}/comments`;
+            requestBody = {
+                content: content,
+                author: author || undefined
+            };
+        }
+        
+        console.log('提交评论，URL:', url);
+        console.log('请求体:', requestBody);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('提交评论响应状态:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            let errorMessage = '提交失败';
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorData.errors?.[0]?.msg || errorMessage;
+                } else {
+                    const text = await response.text();
+                    console.error('服务器返回错误:', text);
+                    errorMessage = `提交失败: ${response.status} ${response.statusText}`;
+                }
+            } catch (e) {
+                console.error('解析错误响应失败:', e);
+                errorMessage = `提交失败: ${response.status} ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('服务器返回非JSON响应:', text.substring(0, 200));
+            throw new Error('服务器返回格式错误');
+        }
+        
+        const result = await response.json();
+        console.log('提交成功:', result);
+        
+        // 提交成功
+        closeCommentInputModal();
+        
+        // 清除回复标记
+        commentInputModal.removeAttribute('data-reply-to-comment-id');
+        
+        // 刷新评论列表（会自动更新评论数量显示）
+        if (commentsModal && commentsModal.classList.contains('active')) {
+            await loadComments(currentCommentSchoolId);
+        } else {
+            // 如果评论弹窗没有打开，只更新评论数量
+            loadCommentCount(currentCommentSchoolId);
+        }
+        
+    } catch (error) {
+        console.error('提交失败:', error);
+        console.error('错误详情:', error.message, error.stack);
+        alert(`提交失败: ${error.message}\n请检查网络连接或稍后重试`);
+    } finally {
+        // 恢复提交按钮
+        commentSubmitBtn.disabled = false;
+        commentSubmitBtn.textContent = '提交';
+    }
+}
+
 // 全局函数（供 HTML 调用）
 window.toggleSchoolSelection = toggleSchoolSelection;
 window.removeSchoolFromCompare = removeSchoolFromCompare;
@@ -1325,4 +2454,5 @@ window.handleCompare = handleCompare;
 window.switchToBasicCompare = switchToBasicCompare;
 window.selectSchoolName = selectSchoolName;
 window.hideSchoolNameSelection = hideSchoolNameSelection;
+window.showCommentsModal = showCommentsModal;
 

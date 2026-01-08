@@ -9,10 +9,12 @@
 #   ./update-website.sh --clear-db    # 更新前后端，并删除所有学校数据
 #   ./update-website.sh --migrate-db   # 更新前后端，并执行数据库迁移
 #   ./update-website.sh --update-db    # 更新前后端，并执行数据库清理和迁移
+#   ./update-website.sh --replace-db   # 更新前后端，并用本地数据库完全替换服务器数据库
 
 # 解析命令行参数
 CLEAR_DB=false
 MIGRATE_DB=false
+REPLACE_DB=false
 
 for arg in "$@"; do
     case $arg in
@@ -29,9 +31,13 @@ for arg in "$@"; do
             MIGRATE_DB=true
             shift
             ;;
+        --replace-db)
+            REPLACE_DB=true
+            shift
+            ;;
         *)
             echo "未知参数: $arg"
-            echo "使用方法: $0 [--clear-db] [--migrate-db] [--update-db]"
+            echo "使用方法: $0 [--clear-db] [--migrate-db] [--update-db] [--replace-db]"
             exit 1
             ;;
     esac
@@ -39,12 +45,13 @@ done
 
 echo "=== MooYu 网站更新脚本（前后端） ==="
 echo "时间: $(date)"
-if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ]; then
+if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ] || [ "$REPLACE_DB" = true ]; then
     echo "数据库操作:"
     [ "$CLEAR_DB" = true ] && echo "  - 将删除所有学校数据"
     [ "$MIGRATE_DB" = true ] && echo "  - 将执行数据库迁移"
+    [ "$REPLACE_DB" = true ] && echo "  - ⚠️  将用本地数据库完全替换服务器数据库（删除所有服务器学校数据）"
 else
-    echo "数据库操作: 跳过（如需执行数据库操作，请使用 --clear-db 或 --migrate-db 参数）"
+    echo "数据库操作: 跳过（如需执行数据库操作，请使用 --clear-db、--migrate-db 或 --replace-db 参数）"
 fi
 echo ""
 
@@ -98,81 +105,142 @@ else
 fi
 
 # ========== 数据库更新（可选） ==========
-if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ]; then
+if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ] || [ "$REPLACE_DB" = true ]; then
     echo ""
     echo "=== 数据库更新 ==="
     
-    # 删除学校数据
-    if [ "$CLEAR_DB" = true ]; then
-        echo "10. 上传数据库清理脚本..."
-        if [ -f "$LOCAL_DIR/clear-db.js" ]; then
-            scp "$LOCAL_DIR/clear-db.js" root@122.51.133.41:/root/Mooyu/
-            echo "  已上传: clear-db.js"
-        fi
-        
-        echo "11. 删除服务器上的所有学校数据..."
-        if [ -f "$LOCAL_DIR/clear-db.js" ]; then
-            echo "  执行: clear-db.js（删除所有学校数据）"
-            ssh root@122.51.133.41 "cd /root/Mooyu && node clear-db.js"
-            echo "  ✓ 所有学校数据已删除"
+    # 完全替换数据库（优先级最高）
+    if [ "$REPLACE_DB" = true ]; then
+        echo "10. 上传数据库替换脚本..."
+        if [ -f "$LOCAL_DIR/replace-server-db.js" ]; then
+            scp "$LOCAL_DIR/replace-server-db.js" root@122.51.133.41:/root/Mooyu/
+            echo "  已上传: replace-server-db.js"
         else
-            echo "  ⚠ 警告: clear-db.js 不存在，跳过删除学校数据步骤"
-        fi
-    fi
-    
-    # 数据库迁移
-    if [ "$MIGRATE_DB" = true ]; then
-        echo "12. 上传数据库迁移脚本..."
-        # 上传所有迁移脚本
-        if [ -f "$LOCAL_DIR/migrate-nature-to-schooltype.js" ]; then
-            scp "$LOCAL_DIR/migrate-nature-to-schooltype.js" root@122.51.133.41:/root/Mooyu/
-            echo "  已上传: migrate-nature-to-schooltype.js"
-        fi
-        if [ -f "$LOCAL_DIR/unify-school-nature.js" ]; then
-            scp "$LOCAL_DIR/unify-school-nature.js" root@122.51.133.41:/root/Mooyu/
-            echo "  已上传: unify-school-nature.js"
+            echo "  ✗ 错误: replace-server-db.js 不存在！"
+            exit 1
         fi
         
-        echo "13. 执行数据库迁移脚本..."
-        # 执行迁移脚本（按顺序执行）
-        if [ -f "$LOCAL_DIR/migrate-nature-to-schooltype.js" ]; then
-            echo "  执行: migrate-nature-to-schooltype.js"
-            ssh root@122.51.133.41 "cd /root/Mooyu && node migrate-nature-to-schooltype.js"
+        echo "11. 获取服务器数据库连接信息..."
+        # 从服务器获取数据库 URI（支持多种格式）
+        SERVER_DB_URI=$(ssh root@122.51.133.41 "cd /root/Mooyu && (grep -E '^MONGODB_URI=' .env 2>/dev/null | sed 's/^MONGODB_URI=//' | sed 's/^[\"'\'']//' | sed 's/[\"'\'']$//' || echo '')" || echo "")
+        
+        if [ -z "$SERVER_DB_URI" ]; then
+            echo "  ⚠ 警告: 无法从服务器 .env 文件获取数据库 URI"
+            echo "  请手动输入服务器数据库 URI（格式: mongodb://username:password@host:port/database?authSource=admin）"
+            read -p "  服务器数据库 URI: " SERVER_DB_URI
+            if [ -z "$SERVER_DB_URI" ]; then
+                echo "  ✗ 错误: 未提供服务器数据库 URI，无法继续"
+                exit 1
+            fi
+        else
+            echo "  ✓ 已获取服务器数据库 URI"
         fi
-        # 注意：unify-school-nature.js 可能需要手动确认，暂时注释
-        # if [ -f "$LOCAL_DIR/unify-school-nature.js" ]; then
-        #     echo "  执行: unify-school-nature.js"
-        #     ssh root@122.51.133.41 "cd /root/Mooyu && node unify-school-nature.js"
-        # fi
+        
+        echo "12. 执行数据库完全替换（本地 → 服务器）..."
+        echo "  ⚠️  警告: 此操作将删除服务器上的所有学校数据，并用本地数据库完全替换！"
+        cd "$LOCAL_DIR" || exit 1
+        if [ -f "$LOCAL_DIR/replace-server-db.js" ]; then
+            echo "  执行: replace-server-db.js"
+            node replace-server-db.js "$SERVER_DB_URI"
+            if [ $? -eq 0 ]; then
+                echo "  ✓ 数据库替换完成"
+            else
+                echo "  ✗ 数据库替换失败"
+                exit 1
+            fi
+        else
+            echo "  ✗ 错误: replace-server-db.js 不存在！"
+            exit 1
+        fi
+    else
+        # 删除学校数据
+        if [ "$CLEAR_DB" = true ]; then
+            echo "10. 上传数据库清理脚本..."
+            if [ -f "$LOCAL_DIR/clear-db.js" ]; then
+                scp "$LOCAL_DIR/clear-db.js" root@122.51.133.41:/root/Mooyu/
+                echo "  已上传: clear-db.js"
+            fi
+            
+            echo "11. 删除服务器上的所有学校数据..."
+            if [ -f "$LOCAL_DIR/clear-db.js" ]; then
+                echo "  执行: clear-db.js（删除所有学校数据）"
+                ssh root@122.51.133.41 "cd /root/Mooyu && node clear-db.js"
+                echo "  ✓ 所有学校数据已删除"
+            else
+                echo "  ⚠ 警告: clear-db.js 不存在，跳过删除学校数据步骤"
+            fi
+        fi
+        
+        # 数据库迁移
+        if [ "$MIGRATE_DB" = true ]; then
+            echo "12. 上传数据库迁移脚本..."
+            # 上传所有迁移脚本
+            if [ -f "$LOCAL_DIR/migrate-nature-to-schooltype.js" ]; then
+                scp "$LOCAL_DIR/migrate-nature-to-schooltype.js" root@122.51.133.41:/root/Mooyu/
+                echo "  已上传: migrate-nature-to-schooltype.js"
+            fi
+            if [ -f "$LOCAL_DIR/unify-school-nature.js" ]; then
+                scp "$LOCAL_DIR/unify-school-nature.js" root@122.51.133.41:/root/Mooyu/
+                echo "  已上传: unify-school-nature.js"
+            fi
+            
+            echo "13. 执行数据库迁移脚本..."
+            # 执行迁移脚本（按顺序执行）
+            if [ -f "$LOCAL_DIR/migrate-nature-to-schooltype.js" ]; then
+                echo "  执行: migrate-nature-to-schooltype.js"
+                ssh root@122.51.133.41 "cd /root/Mooyu && node migrate-nature-to-schooltype.js"
+            fi
+            # 注意：unify-school-nature.js 可能需要手动确认，暂时注释
+            # if [ -f "$LOCAL_DIR/unify-school-nature.js" ]; then
+            #     echo "  执行: unify-school-nature.js"
+            #     ssh root@122.51.133.41 "cd /root/Mooyu && node unify-school-nature.js"
+            # fi
+        fi
     fi
 fi
 
-echo "14. 检查后端服务状态..."
+# 调整步骤编号
+STEP_NUM=14
+if [ "$REPLACE_DB" = true ]; then
+    STEP_NUM=13
+elif [ "$CLEAR_DB" = true ] && [ "$MIGRATE_DB" = true ]; then
+    STEP_NUM=14
+elif [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ]; then
+    STEP_NUM=13
+fi
+
+echo "${STEP_NUM}. 检查后端服务状态..."
 ssh root@122.51.133.41 "pm2 status mooyu"
 
-echo "15. 重启后端服务..."
+STEP_NUM=$((STEP_NUM + 1))
+echo "${STEP_NUM}. 重启后端服务..."
 ssh root@122.51.133.41 "pm2 restart mooyu"
 
-echo "16. 等待服务启动..."
+STEP_NUM=$((STEP_NUM + 1))
+echo "${STEP_NUM}. 等待服务启动..."
 sleep 3
 
-echo "17. 检查后端服务状态..."
+STEP_NUM=$((STEP_NUM + 1))
+echo "${STEP_NUM}. 检查后端服务状态..."
 ssh root@122.51.133.41 "pm2 status mooyu"
 
-echo "18. 检查端口 3000 是否正常监听..."
+STEP_NUM=$((STEP_NUM + 1))
+echo "${STEP_NUM}. 检查端口 3000 是否正常监听..."
 ssh root@122.51.133.41 "ss -tlnp | grep :3000"
 
-echo "19. 测试后端API响应..."
+STEP_NUM=$((STEP_NUM + 1))
+echo "${STEP_NUM}. 测试后端API响应..."
 ssh root@122.51.133.41 "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/schools"
 
 echo ""
 echo "=== 更新完成 ==="
 echo "前端已更新到: https://mooyu.cc"
 echo "后端服务已重启"
-if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ]; then
+if [ "$CLEAR_DB" = true ] || [ "$MIGRATE_DB" = true ] || [ "$REPLACE_DB" = true ]; then
     echo "数据库操作:"
     [ "$CLEAR_DB" = true ] && echo "  - 所有旧学校数据已删除"
     [ "$MIGRATE_DB" = true ] && echo "  - 数据库结构已更新"
+    [ "$REPLACE_DB" = true ] && echo "  - ✓ 服务器数据库已用本地数据库完全替换"
 else
     echo "数据库: 未执行任何操作"
 fi

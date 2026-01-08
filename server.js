@@ -49,15 +49,15 @@ const SchoolSchema = new mongoose.Schema({
     primary: { type: String }, // 小学 (有/无)
     juniorHigh: { type: String }, // 初中 (有/无)
     seniorHigh: { type: String }, // 高中 (有/无)
-    ibPYP: { type: String }, // IB（国际文凭课程）PYP (有/无)
-    ibMYP: { type: String }, // IB（国际文凭课程）MYP (有/无)
-    ibDP: { type: String }, // IB（国际文凭课程）DP (有/无)
-    ibCP: { type: String }, // IB（国际文凭课程）CP (有/无)
-    aLevel: { type: String }, // A-Level（英国高中课程）(有/无)
-    ap: { type: String }, // AP（美国大学先修课程）(有/无)
+    ibPYP: { type: String }, // IB PYP国际文凭小学项目 (有/无)
+    ibMYP: { type: String }, // IB MYP国际文凭中学项目 (有/无)
+    ibDP: { type: String }, // IB DP国际文凭大学预科项目 (有/无)
+    ibCP: { type: String }, // IB CP国际文凭职业相关课程 (有/无)
+    aLevel: { type: String }, // A-Level英国普通高中水平证书 (有/无)
+    ap: { type: String }, // AP美国大学先修课程 (有/无)
     canadian: { type: String }, // 加拿大课程 (有/无)
     australian: { type: String }, // 澳大利亚课程 (有/无)
-    igcse: { type: String }, // IGCSE (有/无)
+    igcse: { type: String }, // IGCSE国际普通中学教育文凭 (有/无)
     otherCourses: { type: String }, // 其他课程
     
     // AI评估字段
@@ -82,11 +82,29 @@ const SchoolSchema = new mongoose.Schema({
     'AI评估_品牌与社区影响力_说明': { type: String }, // 品牌与社区影响力说明
     'AI评估_最终总结_JSON': { type: String }, // 最终总结（JSON格式）
     
+    searchCount: { type: Number, default: 0 }, // 搜索次数
+    
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 }, { strict: false }); // 使用strict: false以支持动态字段（如CSV导入时可能包含的额外字段）
 
 const School = mongoose.model('School', SchoolSchema);
+
+// 评论数据模型
+const CommentSchema = new mongoose.Schema({
+    schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School', required: true, index: true },
+    schoolName: { type: String, required: true }, // 冗余存储学校名称，便于查询
+    content: { type: String, required: true, maxlength: 200 },
+    author: { type: String, default: '匿名用户' },
+    parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: null, index: true }, // 父评论ID，用于回复
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: String }], // 存储点赞用户的标识（可以用IP或用户ID）
+    isVisible: { type: Boolean, default: true }
+});
+
+const Comment = mongoose.model('Comment', CommentSchema);
 
 // 创建默认管理员账户
 async function createDefaultAdmin() {
@@ -251,6 +269,38 @@ app.post('/api/login', [
 
 // ==================== School Insight API ====================
 
+// 辅助函数：判断学校是否符合条件（仅保留幼儿园、小学、初中、高中，排除大学）
+function isSchoolForK12Only(school) {
+    // 排除大学：如果coveredStages包含"本科"、"硕士"、"博士"、"大学"等关键词，则排除
+    if (school.coveredStages) {
+        const stages = school.coveredStages;
+        if (stages.includes('本科') || stages.includes('硕士') || stages.includes('博士') || stages.includes('大学')) {
+            return false;
+        }
+    }
+    
+    // 保留条件：coveredStages包含"幼儿园"、"小学"、"初中"、"高中"，或者对应的布尔字段为"有"
+    const hasK12Stage = school.coveredStages && (
+        school.coveredStages.includes('幼儿园') ||
+        school.coveredStages.includes('小学') ||
+        school.coveredStages.includes('初中') ||
+        school.coveredStages.includes('高中')
+    );
+    
+    const hasK12Fields = 
+        (school.kindergarten && school.kindergarten === '有') ||
+        (school.primary && school.primary === '有') ||
+        (school.juniorHigh && school.juniorHigh === '有') ||
+        (school.seniorHigh && school.seniorHigh === '有');
+    
+    // 如果既没有K12学段标识，也没有K12字段，则排除
+    if (!hasK12Stage && !hasK12Fields) {
+        return false;
+    }
+    
+    return true;
+}
+
 // 获取所有学校列表（支持搜索）
 app.get('/api/schools', async (req, res) => {
     try {
@@ -268,10 +318,26 @@ app.get('/api/schools', async (req, res) => {
             .skip(skip)
             .limit(parseInt(limit));
         
-        let total = await School.countDocuments(query);
+        // 过滤：仅保留幼儿园、小学、初中、高中，排除大学
+        schools = schools.filter(school => isSchoolForK12Only(school));
         
-        // 如果找到学校，检查字段完整性，缺失的字段通过AI补充
+        let total = await School.countDocuments(query);
+        // 计算符合条件的总数（需要查询后过滤，所以先获取所有符合搜索条件的数量，然后过滤）
+        // 注意：这里total可能不完全准确，因为需要在应用层过滤，但为了性能，我们先返回过滤后的结果
+        
+        // 如果找到学校，检查字段完整性，缺失的字段通过AI补充，并增加搜索次数
         if (search && schools.length > 0) {
+            // 批量增加搜索次数
+            const schoolIds = schools.map(s => s._id);
+            await School.updateMany(
+                { _id: { $in: schoolIds } },
+                { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
+            );
+            // 更新内存中的学校对象，确保返回的数据包含最新的搜索次数
+            schools.forEach(school => {
+                school.searchCount = (school.searchCount || 0) + 1;
+            });
+            
             for (let i = 0; i < schools.length; i++) {
                 const school = schools[i];
                 const missingFields = checkBasicInfoCompleteness(school);
@@ -328,10 +394,13 @@ app.get('/api/schools', async (req, res) => {
             const isTooBroad = isTooBroadKeyword(search);
             
             // 只有在是学校名称且不是范围太大的关键字时，才调用AI
+            // 注意：不再阻止包含"大学"的搜索词，因为可能是附属学校（如"清华大学附属中学"）
+            // AI搜索和过滤会在后端处理，确保只返回K12学校
             if (isSchoolName && !isTooBroad) {
                 try {
                     console.log(`数据库中未找到学校 "${search}"，尝试通过AI搜索可能的学校名称...`);
                     possibleSchoolNames = await searchPossibleSchoolNames(search);
+                    // AI返回的结果已经经过过滤，确保只包含K12学校
                 } catch (aiError) {
                     console.error('AI搜索学校名称失败:', aiError);
                     // AI搜索失败不影响正常返回空结果
@@ -359,6 +428,68 @@ app.get('/api/schools', async (req, res) => {
     }
 });
 
+// 获取搜索排名（按搜索次数排序）
+app.get('/api/schools/search-ranking', async (req, res) => {
+    try {
+        const { limit = 100 } = req.query;
+        
+        // 查询条件：searchCount 存在且大于 0
+        // 使用 $exists 和 $ne 确保处理 null/undefined 的情况
+        const query = {
+            searchCount: { 
+                $exists: true, 
+                $ne: null, 
+                $gt: 0 
+            }
+        };
+        
+        // 按搜索次数降序排列，如果搜索次数相同，则按学校名称排序
+        // 使用 lean() 提高性能
+        // 注意：如果 name 字段为 null，MongoDB 会将其排在最后
+        let schools = await School.find(query)
+            .sort({ 
+                searchCount: -1, 
+                name: 1 
+            })
+            .limit(parseInt(limit) * 2) // 增加查询数量，因为后续会过滤掉大学
+            .lean();
+        
+        // 双重保险：过滤掉 searchCount 为 null、undefined 或非数字的记录
+        schools = schools.filter(school => {
+            const count = school.searchCount;
+            return count !== null && count !== undefined && typeof count === 'number' && count > 0;
+        });
+        
+        // 过滤：仅保留幼儿园、小学、初中、高中，排除大学
+        schools = schools.filter(school => isSchoolForK12Only(school));
+        
+        // 限制返回数量
+        schools = schools.slice(0, parseInt(limit));
+        
+        // 确保所有学校的 searchCount 都是有效的数字
+        schools.forEach(school => {
+            if (typeof school.searchCount !== 'number' || isNaN(school.searchCount)) {
+                school.searchCount = 0;
+            }
+        });
+        
+        const total = schools.length;
+        
+        res.json({
+            schools,
+            total,
+            limit: parseInt(limit)
+        });
+    } catch (error) {
+        console.error('获取搜索排名错误:', error);
+        console.error('错误详情:', error.stack);
+        res.status(500).json({ 
+            message: '服务器错误',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+
 // 根据教育集团获取学校列表
 app.get('/api/schools/by-group/:groupName', async (req, res) => {
     try {
@@ -376,8 +507,11 @@ app.get('/api/schools/by-group/:groupName', async (req, res) => {
         
         // 查询同属该教育集团的所有学校
         const query = { affiliatedGroup: decodedGroupName };
-        const schools = await School.find(query)
+        let schools = await School.find(query)
             .sort({ sequenceNumber: 1, createdAt: 1 });
+        
+        // 过滤：仅保留幼儿园、小学、初中、高中，排除大学
+        schools = schools.filter(school => isSchoolForK12Only(school));
         
         const total = schools.length;
         
@@ -403,6 +537,221 @@ app.get('/api/schools/:id', async (req, res) => {
     } catch (error) {
         console.error('获取学校详情错误:', error);
         res.status(500).json({ message: '服务器错误' });
+    }
+});
+
+// ==================== 评论相关 API ====================
+
+// 获取学校的评论列表
+app.get('/api/schools/:schoolId/comments', async (req, res) => {
+    try {
+        const { schoolId } = req.params;
+        
+        // 验证 schoolId 格式
+        if (!mongoose.Types.ObjectId.isValid(schoolId)) {
+            return res.status(400).json({ message: '无效的学校ID格式' });
+        }
+        
+        // 验证学校是否存在
+        const school = await School.findById(schoolId);
+        if (!school) {
+            return res.status(404).json({ message: '学校不存在' });
+        }
+        
+        // 获取可见的评论（只获取顶级评论，不包含回复）
+        const topLevelComments = await Comment.find({ 
+            schoolId: new mongoose.Types.ObjectId(schoolId),
+            parentId: null, // 只获取顶级评论
+            isVisible: true 
+        })
+        .sort({ createdAt: -1 })
+        .limit(100); // 限制最多返回100条评论
+        
+        // 获取每条评论的回复
+        const commentIds = topLevelComments.map(c => c._id);
+        const replies = await Comment.find({
+            parentId: { $in: commentIds },
+            isVisible: true
+        })
+        .sort({ createdAt: 1 }); // 回复按时间正序排列
+        
+        // 将回复关联到对应的评论
+        const commentsWithReplies = topLevelComments.map(comment => {
+            const commentObj = comment.toObject();
+            commentObj.replies = replies.filter(reply => 
+                reply.parentId && reply.parentId.toString() === comment._id.toString()
+            );
+            return commentObj;
+        });
+        
+        res.json(commentsWithReplies);
+    } catch (error) {
+        console.error('获取评论列表错误:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+});
+
+// 获取学校的评论数量
+app.get('/api/schools/:schoolId/comments/count', async (req, res) => {
+    try {
+        const { schoolId } = req.params;
+        
+        // 验证 schoolId 格式
+        if (!mongoose.Types.ObjectId.isValid(schoolId)) {
+            return res.status(400).json({ message: '无效的学校ID格式', count: 0 });
+        }
+        
+        const count = await Comment.countDocuments({ 
+            schoolId: new mongoose.Types.ObjectId(schoolId),
+            isVisible: true 
+        });
+        
+        res.json({ count });
+    } catch (error) {
+        console.error('获取评论数量错误:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+});
+
+// 提交新评论
+app.post('/api/schools/:schoolId/comments', [
+    body('content').trim().isLength({ min: 1, max: 200 }).withMessage('评论内容必须在1-200字之间'),
+    body('author').optional().trim().isLength({ max: 50 }).withMessage('昵称不能超过50个字符')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        
+        const { schoolId } = req.params;
+        const { content, author } = req.body;
+        
+        // 验证 schoolId 格式
+        if (!mongoose.Types.ObjectId.isValid(schoolId)) {
+            return res.status(400).json({ message: '无效的学校ID格式' });
+        }
+        
+        // 验证学校是否存在
+        const school = await School.findById(schoolId);
+        if (!school) {
+            return res.status(404).json({ message: '学校不存在' });
+        }
+        
+        // 创建评论
+        const comment = new Comment({
+            schoolId: new mongoose.Types.ObjectId(schoolId),
+            schoolName: school.name,
+            content: content.trim(),
+            author: author && author.trim() ? author.trim() : '匿名用户',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+        
+        await comment.save();
+        
+        res.status(201).json(comment);
+    } catch (error) {
+        console.error('提交评论错误:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+});
+
+// 点赞评论
+app.post('/api/comments/:commentId/like', async (req, res) => {
+    try {
+        const { commentId } = req.params;
+        const { userIdentifier } = req.body; // 可以是IP地址或用户ID
+        
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ message: '无效的评论ID格式' });
+        }
+        
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ message: '评论不存在' });
+        }
+        
+        // 检查用户是否已经点赞
+        const userKey = userIdentifier || req.ip || 'anonymous';
+        const hasLiked = comment.likedBy && comment.likedBy.includes(userKey);
+        
+        if (hasLiked) {
+            // 取消点赞
+            comment.likes = Math.max(0, comment.likes - 1);
+            comment.likedBy = comment.likedBy.filter(id => id !== userKey);
+        } else {
+            // 点赞
+            comment.likes = (comment.likes || 0) + 1;
+            if (!comment.likedBy) {
+                comment.likedBy = [];
+            }
+            comment.likedBy.push(userKey);
+        }
+        
+        await comment.save();
+        
+        res.json({ 
+            likes: comment.likes,
+            hasLiked: !hasLiked 
+        });
+    } catch (error) {
+        console.error('点赞评论错误:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+});
+
+// 回复评论
+app.post('/api/comments/:commentId/reply', [
+    body('content').trim().isLength({ min: 1, max: 200 }).withMessage('回复内容必须在1-200字之间'),
+    body('author').optional().trim().isLength({ max: 50 }).withMessage('昵称不能超过50个字符')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        
+        const { commentId } = req.params;
+        const { content, author, schoolId } = req.body;
+        
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ message: '无效的评论ID格式' });
+        }
+        
+        // 验证父评论是否存在
+        const parentComment = await Comment.findById(commentId);
+        if (!parentComment) {
+            return res.status(404).json({ message: '父评论不存在' });
+        }
+        
+        // 验证学校是否存在
+        if (!mongoose.Types.ObjectId.isValid(schoolId)) {
+            return res.status(400).json({ message: '无效的学校ID格式' });
+        }
+        
+        const school = await School.findById(schoolId);
+        if (!school) {
+            return res.status(404).json({ message: '学校不存在' });
+        }
+        
+        // 创建回复
+        const reply = new Comment({
+            schoolId: new mongoose.Types.ObjectId(schoolId),
+            schoolName: school.name,
+            content: content.trim(),
+            author: author && author.trim() ? author.trim() : '匿名用户',
+            parentId: new mongoose.Types.ObjectId(commentId),
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+        
+        await reply.save();
+        
+        res.status(201).json(reply);
+    } catch (error) {
+        console.error('回复评论错误:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
     }
 });
 
@@ -433,6 +782,13 @@ app.post('/api/schools/create-from-name', async (req, res) => {
         // 检查学校是否已存在
         const existingSchool = await School.findOne({ name: schoolName.trim() });
         if (existingSchool) {
+            // 如果学校已存在，但用户是通过AI搜索找到的，也应该计入搜索次数
+            await School.updateOne(
+                { _id: existingSchool._id },
+                { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
+            );
+            existingSchool.searchCount = (existingSchool.searchCount || 0) + 1;
+            console.log(`学校 "${schoolName}" 已存在，搜索次数已增加`);
             return res.json({ 
                 message: '学校已存在',
                 school: existingSchool 
@@ -450,6 +806,13 @@ app.post('/api/schools/create-from-name', async (req, res) => {
         // 再次检查（AI返回的名称可能与用户选择的不同）
         const existingSchoolByAIName = await School.findOne({ name: aiSchoolData.name });
         if (existingSchoolByAIName) {
+            // 如果AI返回的学校名称对应的学校已存在，也应该计入搜索次数
+            await School.updateOne(
+                { _id: existingSchoolByAIName._id },
+                { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
+            );
+            existingSchoolByAIName.searchCount = (existingSchoolByAIName.searchCount || 0) + 1;
+            console.log(`学校 "${aiSchoolData.name}" 已存在（通过AI搜索找到），搜索次数已增加`);
             return res.json({ 
                 message: '学校已存在',
                 school: existingSchoolByAIName 
@@ -461,11 +824,14 @@ app.post('/api/schools/create-from-name', async (req, res) => {
             aiSchoolData.sequenceNumber = await getNextSequenceNumber();
         }
         
+        // AI搜索到的学校创建时，初始化搜索次数为1（因为创建行为本身是一次搜索）
+        aiSchoolData.searchCount = 1;
+        
         // 创建新学校
         const newSchool = new School(aiSchoolData);
         await newSchool.save();
         
-        console.log(`学校 "${aiSchoolData.name}" 已创建，序号: ${aiSchoolData.sequenceNumber}`);
+        console.log(`学校 "${aiSchoolData.name}" 已创建，序号: ${aiSchoolData.sequenceNumber}，搜索次数已初始化为1`);
         
         res.json({
             message: '学校创建成功',
@@ -1981,7 +2347,15 @@ async function generateComparisonConclusion(schools, scoringData) {
 async function searchPossibleSchoolNames(searchTerm) {
     const prompt = `你是一位专业的学校信息查询专家。用户输入了"${searchTerm}"，这可能是一个不完整的学校名称。
 
+**重要限制：本工具仅支持大学教育以下的学校，包括幼儿园、小学、初中、高中。请严格排除所有大学（本科、硕士、博士）、研究生院、研究院等高等教育机构。**
+
 请根据这个搜索词，搜索并返回可能的完整学校名称列表。请尽可能多地列出相关的学校名称（最多10个），按相关性排序。
+
+**必须遵守以下规则：**
+1. 只返回幼儿园、小学、初中、高中等K12阶段的学校
+2. 严格排除大学、本科、硕士、博士、研究生院、研究院等高等教育机构
+3. 如果搜索词明确指向大学（如"清华大学"、"北京大学"等），请返回其附属的K12学校（如"清华大学附属中学"、"清华大学附属小学"等），而不是大学本身
+4. 如果无法找到符合条件的K12学校，请返回空数组
 
 请使用JSON格式返回，结构如下：
 {
@@ -1994,16 +2368,30 @@ async function searchPossibleSchoolNames(searchTerm) {
 }
 
 注意：
-- 只返回学校名称数组，不要返回其他信息
-- 如果搜索词已经很完整，可能只返回1个结果
-- 如果无法确定，请返回多个可能的选项
+- 只返回K12阶段的学校名称数组，不要返回任何大学或高等教育机构
+- 如果搜索词已经很完整，且指向K12学校，可能只返回1个结果
+- 如果无法找到符合条件的K12学校，请返回空数组 []
 - 确保返回的JSON格式正确`;
 
     try {
         const result = await callDeepseekAPI(prompt);
         
         if (result && result.schoolNames && Array.isArray(result.schoolNames) && result.schoolNames.length > 0) {
-            return result.schoolNames;
+            // 过滤掉大学相关的学校名称
+            const filteredNames = result.schoolNames.filter(name => {
+                if (!name) return false;
+                const lowerName = name.toLowerCase();
+                // 排除包含大学相关关键词的学校名称
+                const universityKeywords = ['大学', '本科', '硕士', '博士', 'university', 'college', '研究生院', '研究院'];
+                // 但保留附属学校（如"清华大学附属中学"）
+                if (lowerName.includes('附属') || lowerName.includes('附属中学') || lowerName.includes('附属小学') || 
+                    lowerName.includes('附中') || lowerName.includes('附小') || lowerName.includes('实验学校')) {
+                    return true;
+                }
+                return !universityKeywords.some(keyword => lowerName.includes(keyword));
+            });
+            
+            return filteredNames;
         }
         
         return [];
@@ -2043,7 +2431,7 @@ function unifyNature(nature, schoolName, schoolData) {
   }
   
   // 检查是否有国际课程
-  // 注意：课程字段可能是"有"、"无"，也可能是具体课程名称（如"IB（国际文凭课程）PYP"）
+  // 注意：课程字段只允许"有"或"无"
   const hasInternationalCourse = schoolData && (
     (schoolData.ibPYP && schoolData.ibPYP !== '无' && schoolData.ibPYP !== '') ||
     (schoolData.ibMYP && schoolData.ibMYP !== '无' && schoolData.ibMYP !== '') ||
@@ -2338,6 +2726,10 @@ async function verifySchoolNameFromWebsite(url, userInputName) {
 async function querySchoolBasicInfoFromAI(schoolName) {
     const prompt = `你是一位专业的学校信息查询专家。请根据学校名称"${schoolName}"，查询并返回该学校的基础信息。
 
+**重要限制：本工具仅支持大学教育以下的学校，包括幼儿园、小学、初中、高中。如果你发现该学校是大学（本科、硕士、博士）、研究生院、研究院等高等教育机构，请直接返回 {"error": "该学校是大学，不在服务范围内"}，不要查询任何信息。**
+
+**如果学校名称中包含大学名称但实际是附属学校（如"清华大学附属中学"、"北京大学附属小学"），则属于K12学校，可以正常查询。**
+
 **重要：请务必查询准确的官方网址**
 
 **搜索方法：请严格按照三步搜索法进行信息查询**
@@ -2377,18 +2769,18 @@ async function querySchoolBasicInfoFromAI(schoolName) {
    - 小学（有/无）
    - 初中（有/无）
    - 高中（有/无）
-6. IB课程：
-   - IB PYP（有/无，如果有请填写"IB（国际文凭课程）PYP"，否则填"无"）
-   - IB MYP（有/无，如果有请填写"IB（国际文凭课程）MYP"，否则填"无"）
-   - IB DP（有/无，如果有请填写"IB（国际文凭课程）DP"，否则填"无"）
-   - IB CP（有/无，如果有请填写"IB（国际文凭课程）CP"，否则填"无"）
-7. 其他课程：
-   - A-Level（有/无，如果有请填写"A-Level（英国高中课程）"，否则填"无"）
-   - AP（有/无，如果有请填写"AP（美国大学先修课程）"，否则填"无"）
-   - 加拿大课程（有/无）
-   - 澳大利亚课程（有/无）
-   - IGCSE（有/无）
-   - 其他课程（如有，请详细列出）
+6. IB课程（**重要：必须填写"有"或"无"，不能填写其他内容**）：
+   - IB PYP：如果学校提供IB PYP课程，填写"有"；否则填写"无"
+   - IB MYP：如果学校提供IB MYP课程，填写"有"；否则填写"无"
+   - IB DP：如果学校提供IB DP课程，填写"有"；否则填写"无"
+   - IB CP：如果学校提供IB CP课程，填写"有"；否则填写"无"
+7. 其他课程（**重要：必须填写"有"或"无"，不能填写其他内容**）：
+   - A-Level：如果学校提供A-Level课程，填写"有"；否则填写"无"
+   - AP：如果学校提供AP课程，填写"有"；否则填写"无"
+   - 加拿大课程：如果学校提供加拿大课程，填写"有"；否则填写"无"
+   - 澳大利亚课程：如果学校提供澳大利亚课程，填写"有"；否则填写"无"
+   - IGCSE：如果学校提供IGCSE课程，填写"有"；否则填写"无"
+   - 其他课程：如有其他课程，请详细列出课程名称；如果没有，填写"无"
 
 请使用JSON格式返回，结构如下：
 {
@@ -2403,15 +2795,15 @@ async function querySchoolBasicInfoFromAI(schoolName) {
   "primary": "小学（有/无）",
   "juniorHigh": "初中（有/无）",
   "seniorHigh": "高中（有/无）",
-  "ibPYP": "IB（国际文凭课程）PYP 或 无",
-  "ibMYP": "IB（国际文凭课程）MYP 或 无",
-  "ibDP": "IB（国际文凭课程）DP 或 无",
-  "ibCP": "IB（国际文凭课程）CP 或 无",
-  "aLevel": "A-Level（英国高中课程） 或 无",
-  "ap": "AP（美国大学先修课程） 或 无",
-  "canadian": "加拿大课程（有/无）",
-  "australian": "澳大利亚课程（有/无）",
-  "igcse": "IGCSE（有/无）",
+  "ibPYP": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "ibMYP": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "ibDP": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "ibCP": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "aLevel": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "ap": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "canadian": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "australian": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
+  "igcse": "有" 或 "无"（**必须严格填写这两个字之一，不能填写其他内容**）,
   "otherCourses": "其他课程（如有，请详细列出，否则填"无"）"
 }
 
@@ -2421,13 +2813,37 @@ async function querySchoolBasicInfoFromAI(schoolName) {
 - 如果不确定准确的官方网址，请留空，不要猜测
 - 不要返回不相关或错误的网址
 
+**特别重要：课程字段（ibPYP、ibMYP、ibDP、ibCP、aLevel、ap、canadian、australian、igcse）必须严格填写"有"或"无"，不能填写课程名称、描述或其他任何内容。如果学校提供该课程，填写"有"；如果不提供，填写"无"。**
+
 注意：
 - 如果某个信息无法查询到，请填写"未知"或"无"
 - 请确保返回的JSON格式正确
-- 学校名称必须准确完整`;
+- 学校名称必须准确完整
+- 所有课程字段必须严格填写"有"或"无"，不能填写其他内容`;
 
     try {
         const result = await callDeepseekAPI(prompt);
+        
+        // 检查AI是否返回错误（如学校是大学）
+        if (result && result.error) {
+            console.log(`AI返回错误: ${result.error}`);
+            return null;
+        }
+        
+        // 记录AI返回的原始课程字段值（用于调试）
+        if (result) {
+            console.log('\n========== AI返回的原始课程字段 ==========');
+            console.log(`ibPYP: "${result.ibPYP}"`);
+            console.log(`ibMYP: "${result.ibMYP}"`);
+            console.log(`ibDP: "${result.ibDP}"`);
+            console.log(`ibCP: "${result.ibCP}"`);
+            console.log(`aLevel: "${result.aLevel}"`);
+            console.log(`ap: "${result.ap}"`);
+            console.log(`canadian: "${result.canadian}"`);
+            console.log(`australian: "${result.australian}"`);
+            console.log(`igcse: "${result.igcse}"`);
+            console.log('========================================\n');
+        }
         
         // 验证返回的数据结构
         if (result && result.name) {
@@ -2504,6 +2920,58 @@ async function querySchoolBasicInfoFromAI(schoolName) {
                 ? affiliatedGroup 
                 : '无';
             
+            // 转换课程字段：将完整课程名称转换为"有"或"无"
+            // 如果值不是"有"或"无"，且不为空，则转换为"有"（兼容旧格式）
+            function normalizeCourseField(value, fieldName) {
+                const originalValue = value;
+                if (!value || value === '' || value === '无' || value === '未知') {
+                    return '无';
+                }
+                // 如果已经是"有"，直接返回
+                if (value === '有' || value.toLowerCase() === 'yes' || value.toLowerCase() === 'true') {
+                    return '有';
+                }
+                // 如果包含课程名称（如"IB（国际文凭课程）PYP"），说明有该课程，转换为"有"
+                if (value.includes('IB') || value.includes('PYP') || value.includes('MYP') || 
+                    value.includes('DP') || value.includes('CP') || value.includes('A-Level') || 
+                    value.includes('AP') || value.includes('加拿大') || value.includes('澳大利亚') || 
+                    value.includes('IGCSE')) {
+                    if (originalValue !== '有') {
+                        console.log(`⚠ ${fieldName}: AI返回了 "${originalValue}"，已转换为 "有"`);
+                    }
+                    return '有';
+                }
+                // 其他情况返回"无"
+                if (originalValue && originalValue !== '无') {
+                    console.log(`⚠ ${fieldName}: AI返回了 "${originalValue}"，已转换为 "无"`);
+                }
+                return '无';
+            }
+            
+            // 规范化所有课程字段
+            const normalizedIbPYP = normalizeCourseField(result.ibPYP, 'ibPYP');
+            const normalizedIbMYP = normalizeCourseField(result.ibMYP, 'ibMYP');
+            const normalizedIbDP = normalizeCourseField(result.ibDP, 'ibDP');
+            const normalizedIbCP = normalizeCourseField(result.ibCP, 'ibCP');
+            const normalizedALevel = normalizeCourseField(result.aLevel, 'aLevel');
+            const normalizedAp = normalizeCourseField(result.ap, 'ap');
+            const normalizedCanadian = normalizeCourseField(result.canadian, 'canadian');
+            const normalizedAustralian = normalizeCourseField(result.australian, 'australian');
+            const normalizedIgcse = normalizeCourseField(result.igcse, 'igcse');
+            
+            // 记录转换后的值
+            console.log('\n========== 转换后的课程字段 ==========');
+            console.log(`ibPYP: "${normalizedIbPYP}"`);
+            console.log(`ibMYP: "${normalizedIbMYP}"`);
+            console.log(`ibDP: "${normalizedIbDP}"`);
+            console.log(`ibCP: "${normalizedIbCP}"`);
+            console.log(`aLevel: "${normalizedALevel}"`);
+            console.log(`ap: "${normalizedAp}"`);
+            console.log(`canadian: "${normalizedCanadian}"`);
+            console.log(`australian: "${normalizedAustralian}"`);
+            console.log(`igcse: "${normalizedIgcse}"`);
+            console.log('========================================\n');
+            
             return {
                 name: finalSchoolName, // 使用验证后的学校名称
                 website: validatedWebsite, // 使用验证后的网址
@@ -2516,15 +2984,15 @@ async function querySchoolBasicInfoFromAI(schoolName) {
                 primary: result.primary || '无',
                 juniorHigh: result.juniorHigh || '无',
                 seniorHigh: result.seniorHigh || '无',
-                ibPYP: result.ibPYP || '无',
-                ibMYP: result.ibMYP || '无',
-                ibDP: result.ibDP || '无',
-                ibCP: result.ibCP || '无',
-                aLevel: result.aLevel || '无',
-                ap: result.ap || '无',
-                canadian: result.canadian || '无',
-                australian: result.australian || '无',
-                igcse: result.igcse || '无',
+                ibPYP: normalizedIbPYP,
+                ibMYP: normalizedIbMYP,
+                ibDP: normalizedIbDP,
+                ibCP: normalizedIbCP,
+                aLevel: normalizedALevel,
+                ap: normalizedAp,
+                canadian: normalizedCanadian,
+                australian: normalizedAustralian,
+                igcse: normalizedIgcse,
                 otherCourses: result.otherCourses || '无'
             };
         }

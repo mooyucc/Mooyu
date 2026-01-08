@@ -55,42 +55,80 @@
 
         /* 搜索区域 */
         .search-section {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 32px;
+            background: transparent;
+            padding: 0;
             margin-bottom: 32px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
         }
 
         .search-box {
             display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            max-width: 584px;
+            width: 100%;
+        }
+
+        .search-buttons-wrapper {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
         }
 
         .search-input-wrapper {
-            flex: 1;
+            width: 100%;
             position: relative;
+            max-width: 584px;
         }
 
         .search-input {
             width: 100%;
-            padding: 14px 50px 14px 20px;
-            border: 2px solid #E5E7EB;
-            border-radius: 12px;
+            padding: 14px 50px 14px 50px;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: all 0.2s ease;
             box-sizing: border-box;
+            background: #ffffff;
+            box-shadow: none;
+        }
+
+        .search-input:hover {
+            box-shadow: 0 2px 5px 1px rgba(64, 60, 67, 0.16);
+            border-color: rgba(223, 225, 229, 0);
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #F75C62;
+            border-color: rgba(223, 225, 229, 0);
+            box-shadow: 0 2px 5px 1px rgba(64, 60, 67, 0.16), 0 2px 10px 0 rgba(64, 60, 67, 0.1);
+        }
+
+        .search-input:focus:hover {
+            box-shadow: 0 2px 5px 1px rgba(64, 60, 67, 0.16), 0 2px 10px 0 rgba(64, 60, 67, 0.1);
+        }
+
+        .search-input-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            opacity: 0.5;
         }
 
         .clear-search-btn {
             position: absolute;
-            right: 12px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -125,7 +163,7 @@
             background: transparent;
             color: #666666;
             border: 2px solid #E5E7EB;
-            border-radius: 12px;
+            border-radius: 9999px;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
@@ -139,19 +177,28 @@
         }
 
         .search-btn {
-            padding: 14px 32px;
+            padding: 10px 18px;
             background: #F75C62;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 9999px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.28s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(247, 92, 98, 0.3);
         }
 
         .search-btn:hover {
             background: #e54a50;
+            box-shadow: 0 4px 12px rgba(247, 92, 98, 0.4);
+        }
+
+        .search-btn:active {
+            box-shadow: 0 1px 4px rgba(247, 92, 98, 0.3);
         }
 
         /* 学校列表 */
@@ -164,54 +211,64 @@
 
         .school-card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
             cursor: pointer;
-            border: 2px solid transparent;
         }
 
         .school-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-color: #F75C62;
+            transform: translateY(-6px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .school-card.selected {
-            border-color: #F75C62;
             background: #FFF5F5;
+            box-shadow: 0 6px 20px rgba(247, 92, 98, 0.2);
         }
 
         .school-card h3 {
             font-size: 20px;
             color: #333333;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            font-weight: 600;
+            line-height: 1.4;
         }
 
         .school-card .school-info {
             font-size: 14px;
             color: #666666;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
 
         .school-card .compare-checkbox {
-            margin-top: 16px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .school-card .compare-checkbox input {
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: #F75C62;
         }
 
         .school-card .compare-checkbox label {
             font-size: 14px;
             color: #666666;
             cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .school-card .compare-checkbox:hover label {
+            color: #333333;
         }
 
         /* 对比按钮 */
@@ -278,12 +335,12 @@
         }
 
         .compare-btn {
-            padding: 12px 32px;
+            padding: 10px 32px;
             background: #F75C62;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 9999px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.3s;
@@ -299,12 +356,12 @@
         }
 
         .clear-btn {
-            padding: 12px 24px;
+            padding: 10px 24px;
             background: transparent;
             color: #666666;
             border: 2px solid #E5E7EB;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 9999px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
@@ -363,6 +420,21 @@
             color: #333333;
         }
 
+        .compare-table td.boolean-true {
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .compare-table td.boolean-true::before {
+            content: '✓ ';
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        .compare-table td.boolean-false {
+            color: #999999;
+        }
+
         .back-to-search {
             margin-bottom: 24px;
         }
@@ -419,7 +491,16 @@
             }
 
             .search-box {
-                flex-direction: column;
+                gap: 20px;
+            }
+
+            .search-input-wrapper {
+                max-width: 100%;
+            }
+
+            .search-input {
+                padding: 12px 45px 12px 45px;
+                font-size: 16px;
             }
 
             .schools-grid {
@@ -631,6 +712,12 @@
             font-weight: 600;
         }
 
+        .info-item-value.boolean-true::before {
+            content: '✓ ';
+            color: #10B981;
+            font-weight: bold;
+        }
+
         .info-item-value.boolean-false {
             color: #999999;
         }
@@ -638,17 +725,6 @@
         .info-item-value.empty {
             color: #999999;
             font-style: italic;
-        }
-
-        .info-item-value.boolean-true::before {
-            content: '✓ ';
-            color: #10B981;
-            font-weight: bold;
-        }
-
-        .info-item-value.boolean-false::before {
-            content: '— ';
-            color: #999999;
         }
 
         .badge-list {
@@ -702,8 +778,558 @@
             margin: 0 0 6px 0;
         }
 
+        /* 星级显示样式 */
+        .rating-stars {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .star {
+            color: #F75C62;
+            font-size: 18px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .star-filled {
+            color: #F75C62;
+        }
+
+        .star-empty {
+            color: #E5E7EB;
+        }
+
+        .star-half {
+            position: relative;
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            overflow: hidden;
+        }
+
+        .star-half-filled {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: #F75C62;
+            font-size: 18px;
+            line-height: 1;
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            overflow: hidden;
+        }
+
+        .star-half-empty {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: #E5E7EB;
+            font-size: 18px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .rating-text {
+            margin-left: 6px;
+            font-size: 14px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        /* 在表格中显示星级时，居中显示 */
+        .scoring-table .rating-stars {
+            justify-content: center;
+        }
+
+        /* 确保表格单元格中的半颗星能正确显示 */
+        .scoring-table td {
+            overflow: visible;
+            position: relative;
+        }
+
+        .scoring-table .star-half {
+            position: relative;
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            overflow: visible;
+            vertical-align: middle;
+        }
+
+        .scoring-table .star-half-filled {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: #F75C62;
+            font-size: 18px;
+            line-height: 1;
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .scoring-table .star-half-empty {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: #E5E7EB;
+            font-size: 18px;
+            line-height: 1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .disclaimer-content p:last-child {
             margin-bottom: 0;
+        }
+
+        /* 适用范围说明样式 */
+        .scope-notice {
+            background: #E8F4F8;
+            border: 1px solid #B3D9E6;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .scope-notice-icon {
+            color: #1E88E5;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .scope-notice-content {
+            flex: 1;
+            color: #0D47A1;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .scope-notice-content strong {
+            color: #1565C0;
+        }
+
+        /* 评论功能样式 */
+        .comment-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .comment-btn {
+            padding: 10px 18px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.28s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(247, 92, 98, 0.3);
+        }
+
+        .comment-btn:hover {
+            background: #e54a50;
+            box-shadow: 0 4px 12px rgba(247, 92, 98, 0.4);
+        }
+
+        .comment-btn:active {
+            box-shadow: 0 1px 4px rgba(247, 92, 98, 0.3);
+        }
+
+        .comment-count {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* 评论弹窗样式 */
+        .comments-modal-container {
+            max-width: 700px;
+        }
+
+        .comments-modal-body {
+            display: flex;
+            flex-direction: column;
+            max-height: 70vh;
+        }
+
+        .comments-header-info {
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E7EB;
+            margin-bottom: 16px;
+        }
+
+        .comments-count {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .comments-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        .comments-loading,
+        .comments-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999999;
+            font-size: 14px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F75C62 0%, #e54a50 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .comment-avatar.default {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .comment-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #333333;
+            font-size: 15px;
+        }
+
+        .comment-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 8px;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .comment-location {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .comment-content {
+            color: #333333;
+            font-size: 15px;
+            line-height: 1.6;
+            word-break: break-word;
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .comment-action-btn {
+            background: none;
+            border: none;
+            color: #999999;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-action-btn:hover {
+            color: #F75C62;
+        }
+
+        .comment-action-btn.liked {
+            color: #F75C62;
+        }
+
+        .comment-action-btn .icon {
+            font-size: 14px;
+        }
+
+        .comment-replies {
+            margin-top: 12px;
+            padding-left: 52px;
+            border-left: 2px solid #F0F0F0;
+        }
+
+        .comment-reply-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .comment-reply-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-reply-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .comment-reply-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .comment-reply-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-reply-author {
+            font-weight: 600;
+            color: #333333;
+            font-size: 14px;
+        }
+
+        .comment-reply-meta {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 4px;
+        }
+
+        .comment-reply-content {
+            color: #333333;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .comment-reply-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .comment-reply-action-btn {
+            background: none;
+            border: none;
+            color: #999999;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 2px 6px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .comment-reply-action-btn:hover {
+            color: #F75C62;
+        }
+
+        .comment-reply-action-btn.liked {
+            color: #F75C62;
+        }
+
+        .comments-actions {
+            padding-top: 16px;
+            border-top: 1px solid #E5E7EB;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+
+        .add-comment-btn {
+            width: 100%;
+            padding: 12px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .add-comment-btn:hover {
+            background: #e54a50;
+        }
+
+        /* 发表评论弹窗样式 */
+        .comment-input-modal-container {
+            max-width: 600px;
+        }
+
+        .comment-input-section {
+            margin-bottom: 20px;
+        }
+
+        .comment-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .comment-author-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .comment-author-input:focus {
+            outline: none;
+            border-color: #F75C62;
+        }
+
+        .comment-content-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            line-height: 1.6;
+            min-height: 100px;
+        }
+
+        .comment-content-input:focus {
+            outline: none;
+            border-color: #F75C62;
+        }
+
+        .comment-content-input::placeholder {
+            color: #999999;
+            font-style: italic;
+        }
+
+        .comment-char-count {
+            text-align: right;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .comment-char-count.warning {
+            color: #F75C62;
+        }
+
+        .comment-input-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .comment-cancel-btn {
+            padding: 10px 24px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .comment-cancel-btn:hover {
+            border-color: #999999;
+            color: #333333;
+        }
+
+        .comment-submit-btn {
+            padding: 10px 24px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .comment-submit-btn:hover:not(:disabled) {
+            background: #e54a50;
+        }
+
+        .comment-submit-btn:disabled {
+            background: #CCCCCC;
+            cursor: not-allowed;
         }
 
         @media (max-width: 768px) {
@@ -729,6 +1355,28 @@
             .info-grid {
                 grid-template-columns: 1fr;
             }
+
+            .comment-item {
+                padding: 12px 0;
+            }
+
+            .comment-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .comment-author {
+                font-size: 14px;
+            }
+
+            .comment-content {
+                font-size: 14px;
+            }
+
+            .comments-modal-body {
+                max-height: 80vh;
+            }
         }
     </style>
 </head>
@@ -741,6 +1389,7 @@
                 </div>
                 <nav>
                     <a href="schoolinsight-intro.html" class="login-btn">关于 School Insight</a>
+                    <a href="search-ranking.html" class="ranking-btn">搜索排名</a>
                     <a href="download.html" class="download-btn">MooApp Family</a>
                 </nav>
             </div>
@@ -748,7 +1397,7 @@
         <main class="schoolinsight-main">
             <div class="page-title">
                 <h1>School Insight</h1>
-                <p>AI大模型评价工具，用数据定义卓越，让择校回归理性</p>
+                <p>AI大模型评价工具，用数据定义卓越</p>
             </div>
 
             <!-- 搜索区域 -->
@@ -780,9 +1429,10 @@
                     <button class="clear-results-btn" id="clearResultsBtn">清空搜索结果</button>
                 </div>
                 <div id="emptyState" class="empty-state" style="display: none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 8v4m0 4h.01"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
+                        <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/>
+                        <path d="M16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>
                     </svg>
                     <h3 id="emptyStateTitle">请输入搜索关键词</h3>
                     <p id="emptyStateMessage">在上方搜索框中输入学校名称进行查询</p>
@@ -870,6 +1520,56 @@
             </div>
         </div>
     </div>
+
+    <!-- 评论弹窗 -->
+    <div class="modal-overlay" id="commentsModal">
+        <div class="modal-container comments-modal-container">
+            <div class="modal-header">
+                <button class="modal-close" id="commentsModalCloseBtn">×</button>
+                <h2 id="commentsModalTitle">评论</h2>
+                <div class="school-subtitle" id="commentsModalSubtitle"></div>
+            </div>
+            <div class="modal-body comments-modal-body">
+                <div class="comments-header-info">
+                    <div class="comments-count" id="commentsCount">评论 · 0</div>
+                </div>
+                <div class="comments-list" id="commentsList">
+                    <div class="comments-loading">加载中...</div>
+                </div>
+                <div class="comments-actions">
+                    <button class="add-comment-btn" id="addCommentBtn">发表评论</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发表评论弹窗 -->
+    <div class="modal-overlay" id="commentInputModal">
+        <div class="modal-container comment-input-modal-container">
+            <div class="modal-header">
+                <button class="modal-close" id="commentInputModalCloseBtn">×</button>
+                <h2 id="commentInputModalTitle">发表评论</h2>
+            </div>
+            <div class="modal-body comment-input-modal-body">
+                <div class="comment-input-section">
+                    <label for="commentAuthor" class="comment-label">昵称（可选）</label>
+                    <input type="text" id="commentAuthor" class="comment-author-input" placeholder="匿名用户" maxlength="50">
+                </div>
+                <div class="comment-input-section">
+                    <label for="commentContent" class="comment-label">评论内容</label>
+                    <textarea id="commentContent" class="comment-content-input" placeholder="真实发声，言之有物（最多200字）" maxlength="200" rows="6"></textarea>
+                    <div class="comment-char-count">
+                        <span id="commentCharCount">0</span>/200 字
+                    </div>
+                </div>
+                <div class="comment-input-actions">
+                    <button class="comment-cancel-btn" id="commentCancelBtn">取消</button>
+                    <button class="comment-submit-btn" id="commentSubmitBtn" disabled>提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/schoolinsight.js"></script>
 </body>
 </html>

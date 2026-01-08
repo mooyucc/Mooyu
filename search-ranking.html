@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索排名 - 学校热门搜索统计 | MooYu</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        #page-search-ranking {
+            background: linear-gradient(135deg, 
+                #F5F7FA 0%, 
+                #E8ECF1 50%, 
+                #F0F4F8 100%);
+            min-height: 100vh;
+            color: #333333;
+            padding-top: 80px;
+        }
+
+        #page-search-ranking .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .ranking-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 120px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title h1 {
+            font-size: 48px;
+            color: #333333;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .page-title p {
+            font-size: 18px;
+            color: #666666;
+        }
+
+        .stats-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #F75C62;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .ranking-table-container {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table thead {
+            background: #F9FAFB;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .ranking-table th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333333;
+            font-size: 14px;
+        }
+
+        .ranking-table tbody tr {
+            border-bottom: 1px solid #E5E7EB;
+            transition: background-color 0.2s;
+        }
+
+        .ranking-table tbody tr:hover {
+            background-color: #F9FAFB;
+        }
+
+        .ranking-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: #333333;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+
+        .rank-badge.rank-1 {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #ffffff;
+        }
+
+        .rank-badge.rank-2 {
+            background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+            color: #ffffff;
+        }
+
+        .rank-badge.rank-3 {
+            background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+            color: #ffffff;
+        }
+
+        .rank-badge.rank-other {
+            background: #E5E7EB;
+            color: #666666;
+        }
+
+        .school-name {
+            font-weight: 600;
+            color: #333333;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .school-name:hover {
+            color: #F75C62;
+        }
+
+        .school-info {
+            font-size: 13px;
+            color: #666666;
+            margin-top: 4px;
+        }
+
+        .search-count {
+            font-weight: 600;
+            color: #F75C62;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666666;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #E5E7EB;
+            border-top-color: #F75C62;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #F75C62;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 适用范围说明样式 */
+        .scope-notice {
+            background: #E8F4F8;
+            border: 1px solid #B3D9E6;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .scope-notice-icon {
+            color: #1E88E5;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .scope-notice-content {
+            flex: 1;
+            color: #0D47A1;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .scope-notice-content strong {
+            color: #1565C0;
+        }
+
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 32px;
+            }
+
+            .ranking-table-container {
+                padding: 16px;
+            }
+
+            .ranking-table th,
+            .ranking-table td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+
+            .rank-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #F75C62 0%, #e54a50 100%);
+            color: white;
+            padding: 32px;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .modal-header .school-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 32px;
+            overflow-y: auto;
+            flex: 1;
+            background: #ffffff;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #F0F0F0;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #CCCCCC;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #999999;
+        }
+
+        .info-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: #F75C62;
+            border-radius: 2px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .info-item {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            border-bottom: 2px solid #E5E7EB;
+            transition: all 0.2s;
+        }
+
+        .info-item:hover {
+            border-color: #F75C62;
+            box-shadow: 0 2px 8px rgba(247, 92, 98, 0.1);
+        }
+
+        .info-item-label {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item-value {
+            font-size: 15px;
+            color: #333333;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .info-item-value.boolean-true {
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .info-item-value.boolean-true::before {
+            content: '✓ ';
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        .info-item-value.boolean-false {
+            color: #999999;
+        }
+
+        .info-item-value.empty {
+            color: #999999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .modal-container {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-header {
+                padding: 24px;
+            }
+
+            .modal-header h2 {
+                font-size: 22px;
+                padding-right: 50px;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="page-search-ranking" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable" id="logo-to-home">
+                    <a href="index.html"><img src="images/Mooyu.png" alt="MooYu" style="height: 48px;width:auto;vertical-align:middle;"></a>
+                </div>
+                <nav>
+                    <a href="schoolinsight-intro.html" class="login-btn">关于 School Insight</a>
+                    <a href="schoolinsight.html" class="ranking-btn">AI 搜索</a>
+                    <a href="download.html" class="download-btn">MooApp Family</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="ranking-main">
+            <div class="page-title">
+                <h1>搜索排名</h1>
+                <p>展示学校搜索统计</p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-card" id="statsCard">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSchools">0</div>
+                    <div class="stat-label">上榜学校</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSearches">0</div>
+                    <div class="stat-label">总搜索次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgSearches">0</div>
+                    <div class="stat-label">平均搜索次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="topSearchCount">0</div>
+                    <div class="stat-label">最高搜索次数</div>
+                </div>
+            </div>
+
+            <!-- Ranking Table -->
+            <div class="ranking-table-container">
+                <div id="loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>加载中...</div>
+                </div>
+
+                <div id="error" class="error" style="display: none;">
+                    加载失败，请稍后重试
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📊</div>
+                    <div>暂无搜索数据</div>
+                </div>
+
+                <table class="ranking-table" id="rankingTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">搜索次数排名</th>
+                            <th>学校名称</th>
+                            <th style="width: 150px;">城市</th>
+                            <th style="width: 150px;">学校类型</th>
+                            <th style="width: 120px; text-align: center;">搜索次数</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 学校详情弹窗 -->
+    <div class="modal-overlay" id="schoolModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-close" id="modalCloseBtn">×</button>
+                <h2 id="modalSchoolName">学校名称</h2>
+                <div class="school-subtitle" id="modalSchoolSubtitle"></div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // 加载搜索排名数据
+        async function loadSearchRanking() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const emptyStateEl = document.getElementById('emptyState');
+            const tableEl = document.getElementById('rankingTable');
+            const tableBodyEl = document.getElementById('rankingTableBody');
+            
+            try {
+                loadingEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                emptyStateEl.style.display = 'none';
+                tableEl.style.display = 'none';
+
+                const response = await fetch(`${API_BASE}/api/schools/search-ranking?limit=100`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const schools = data.schools || [];
+                
+                // 保存已加载的学校数据，供弹窗使用
+                loadedSchools = schools;
+
+                loadingEl.style.display = 'none';
+
+                if (schools.length === 0) {
+                    emptyStateEl.style.display = 'block';
+                    updateStats({ schools: [], total: 0 });
+                    return;
+                }
+
+                // 更新统计数据
+                updateStats(data);
+
+                // 渲染排名表格
+                tableBodyEl.innerHTML = '';
+                schools.forEach((school, index) => {
+                    const row = document.createElement('tr');
+                    const rank = index + 1;
+                    
+                    let rankClass = 'rank-other';
+                    if (rank === 1) rankClass = 'rank-1';
+                    else if (rank === 2) rankClass = 'rank-2';
+                    else if (rank === 3) rankClass = 'rank-3';
+
+                    row.innerHTML = `
+                        <td>
+                            <span class="rank-badge ${rankClass}">${rank}</span>
+                        </td>
+                        <td>
+                            <div class="school-name" onclick="openSchoolDetail('${school._id}')">
+                                ${escapeHtml(school.name || '未知')}
+                            </div>
+                            ${school.affiliatedGroup && school.affiliatedGroup !== '无' 
+                                ? `<div class="school-info">${escapeHtml(school.affiliatedGroup)}</div>` 
+                                : ''}
+                        </td>
+                        <td>${escapeHtml(school.city || '未知')}</td>
+                        <td>${escapeHtml(school.schoolType || '未知')}</td>
+                        <td style="text-align: center;">
+                            <span class="search-count">${school.searchCount || 0}</span>
+                        </td>
+                    `;
+                    
+                    tableBodyEl.appendChild(row);
+                });
+
+                tableEl.style.display = 'table';
+
+            } catch (error) {
+                console.error('加载搜索排名失败:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                updateStats({ schools: [], total: 0 });
+            }
+        }
+
+        // 更新统计数据
+        function updateStats(data) {
+            const schools = data.schools || [];
+            const totalSchools = schools.length;
+            const totalSearches = schools.reduce((sum, school) => sum + (school.searchCount || 0), 0);
+            const avgSearches = totalSchools > 0 ? Math.round(totalSearches / totalSchools) : 0;
+            const topSearchCount = schools.length > 0 ? (schools[0].searchCount || 0) : 0;
+
+            document.getElementById('totalSchools').textContent = totalSchools;
+            document.getElementById('totalSearches').textContent = totalSearches;
+            document.getElementById('avgSearches').textContent = avgSearches;
+            document.getElementById('topSearchCount').textContent = topSearchCount;
+        }
+
+        // 存储已加载的学校数据
+        let loadedSchools = [];
+
+        // 显示学校详情弹窗
+        async function openSchoolDetail(schoolId) {
+            try {
+                // 先从已加载的学校列表中查找
+                let school = loadedSchools.find(s => s._id === schoolId);
+                
+                // 如果没找到，从API获取
+                if (!school) {
+                    const response = await fetch(`${API_BASE}/api/schools/${schoolId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await response.text();
+                        console.error('服务器返回非JSON响应:', text.substring(0, 200));
+                        throw new Error('服务器返回格式错误');
+                    }
+                    
+                    const data = await response.json();
+                    school = data;
+                }
+                
+                if (!school) {
+                    alert('无法加载学校信息');
+                    return;
+                }
+                
+                renderModalContent(school);
+                const schoolModal = document.getElementById('schoolModal');
+                schoolModal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            } catch (error) {
+                console.error('加载学校详情失败:', error);
+                alert('加载学校详情失败，请稍后重试');
+            }
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            const schoolModal = document.getElementById('schoolModal');
+            schoolModal.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复滚动
+        }
+
+        // 渲染弹窗内容
+        function renderModalContent(school) {
+            const modalSchoolName = document.getElementById('modalSchoolName');
+            const modalSchoolSubtitle = document.getElementById('modalSchoolSubtitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalSchoolName.textContent = school.name || '未知学校';
+            
+            // 设置副标题
+            const subtitleParts = [];
+            if (school.schoolType || school.nature) subtitleParts.push(school.schoolType || school.nature);
+            if (school.coveredStages) subtitleParts.push(school.coveredStages);
+            modalSchoolSubtitle.textContent = subtitleParts.join(' · ') || '';
+            
+            // 定义信息分类
+            const categories = [
+                {
+                    title: '基本信息',
+                    items: [
+                        { label: '学校名称', key: 'name' },
+                        { label: '网址', key: 'website', isLink: true, alwaysShow: true },
+                        { label: '学校类型', key: 'schoolType' },
+                        { label: '涵盖学段', key: 'coveredStages' },
+                        { label: '隶属教育集团', key: 'affiliatedGroup', alwaysShow: true }
+                    ]
+                },
+                {
+                    title: '地理位置',
+                    items: [
+                        { label: '国家', key: 'country' },
+                        { label: '城市', key: 'city' }
+                    ]
+                },
+                {
+                    title: '学段设置',
+                    items: [
+                        { label: '幼儿园', key: 'kindergarten' },
+                        { label: '小学', key: 'primary' },
+                        { label: '初中', key: 'juniorHigh' },
+                        { label: '高中', key: 'seniorHigh' }
+                    ]
+                },
+                {
+                    title: 'IB课程',
+                    items: [
+                        { label: 'IB PYP国际文凭小学项目', key: 'ibPYP' },
+                        { label: 'IB MYP国际文凭中学项目', key: 'ibMYP' },
+                        { label: 'IB DP国际文凭大学预科项目', key: 'ibDP' },
+                        { label: 'IB CP国际文凭职业相关课程', key: 'ibCP' }
+                    ]
+                },
+                {
+                    title: '其他课程',
+                    items: [
+                        { label: 'A-Level英国高中水平证书', key: 'aLevel' },
+                        { label: 'AP美国大学先修课程', key: 'ap' },
+                        { label: '加拿大课程', key: 'canadian' },
+                        { label: '澳大利亚课程', key: 'australian' },
+                        { label: 'IGCSE国际普通中学教育文凭', key: 'igcse' },
+                        { label: '其他课程', key: 'otherCourses' }
+                    ]
+                }
+            ];
+            
+            // 生成HTML
+            let html = '';
+            categories.forEach(category => {
+                const items = category.items.filter(item => {
+                    // 如果设置了alwaysShow，即使值为空也显示
+                    if (item.alwaysShow) {
+                        return true;
+                    }
+                    // 兼容旧字段：如果 key 是 schoolType，优先读取 schoolType，如果不存在则读取 nature
+                    let value = school[item.key];
+                    if (item.key === 'schoolType' && !value) {
+                        value = school.nature;
+                    }
+                    return value !== undefined && value !== null && value !== '';
+                });
+                
+                if (items.length === 0) return; // 跳过没有数据的分类
+                
+                html += `<div class="info-section">`;
+                html += `<div class="section-title">${escapeHtml(category.title)}</div>`;
+                html += `<div class="info-grid">`;
+                
+                items.forEach(item => {
+                    // 兼容旧字段：如果 key 是 schoolType，优先读取 schoolType，如果不存在则读取 nature
+                    let value = school[item.key];
+                    if (item.key === 'schoolType' && !value) {
+                        value = school.nature;
+                    }
+                    let displayValue = '';
+                    let valueClass = '';
+                    
+                    // 判断是否为布尔类型字段（学段设置、课程等）
+                    const isBooleanField = ['kindergarten', 'primary', 'juniorHigh', 'seniorHigh', 
+                        'ibPYP', 'ibMYP', 'ibDP', 'ibCP', 'aLevel', 'ap', 'canadian', 'australian', 'igcse'].includes(item.key);
+                    
+                    if (value) {
+                        if (item.isLink && value) {
+                            // 如果是网址，显示为链接
+                            const url = value.startsWith('http://') || value.startsWith('https://') 
+                                ? value 
+                                : `https://${value}`;
+                            displayValue = `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color: #F75C62; text-decoration: none; word-break: break-all;">${escapeHtml(value)}</a>`;
+                        } else if (isBooleanField) {
+                            // 布尔类型字段：如果值为"有"或包含"有"，显示为绿色勾选
+                            const valueStr = String(value).toLowerCase();
+                            if (valueStr === '有' || valueStr.includes('有') || valueStr === 'yes' || valueStr === 'true') {
+                                displayValue = '有';
+                                valueClass = 'boolean-true';
+                            } else {
+                                displayValue = '无';
+                                valueClass = 'boolean-false';
+                            }
+                        } else {
+                            displayValue = escapeHtml(String(value));
+                        }
+                    } else {
+                        if (isBooleanField) {
+                            displayValue = '无';
+                            valueClass = 'boolean-false';
+                        } else {
+                            displayValue = '—';
+                            valueClass = 'empty';
+                        }
+                    }
+                    
+                    html += `
+                        <div class="info-item">
+                            <div class="info-item-label">${escapeHtml(item.label)}</div>
+                            <div class="info-item-value ${valueClass}">${displayValue}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+            });
+            
+            modalBody.innerHTML = html || '<div class="info-section"><p style="text-align:center;color:#999;">暂无详细信息</p></div>';
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 页面加载时获取数据
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSearchRanking();
+            
+            // 绑定弹窗关闭事件
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const schoolModal = document.getElementById('schoolModal');
+            
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeModal);
+            }
+            
+            if (schoolModal) {
+                schoolModal.addEventListener('click', (e) => {
+                    if (e.target === schoolModal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            // ESC键关闭弹窗
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && schoolModal && schoolModal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
