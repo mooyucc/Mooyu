@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const path = require('path');
 const evaluationSystem = require('./evaluation-system');
+const tencentcloud = require('tencentcloud-sdk-nodejs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,7 @@ const SchoolSchema = new mongoose.Schema({
     australian: { type: String }, // 澳大利亚课程 (有/无)
     igcse: { type: String }, // IGCSE国际普通中学教育文凭 (有/无)
     otherCourses: { type: String }, // 其他课程
+    affiliatedGroup: { type: String }, // 隶属教育集团
     
     // AI评估字段
     'AI评估_总分': { type: Number }, // AI评估总分
@@ -81,6 +83,16 @@ const SchoolSchema = new mongoose.Schema({
     'AI评估_品牌与社区影响力_得分': { type: Number }, // 品牌与社区影响力得分
     'AI评估_品牌与社区影响力_说明': { type: String }, // 品牌与社区影响力说明
     'AI评估_最终总结_JSON': { type: String }, // 最终总结（JSON格式）
+    
+    // 历史评估记录（用于分数稳定性优化）
+    'AI评估_历史记录': [{ 
+        timestamp: { type: Date },
+        totalScore: { type: Number },
+        indicatorScores: { type: Object }, // 各指标得分
+        comparisonGroup: [{ type: String }] // 对比组学校名称
+    }],
+    'AI评估_评估次数': { type: Number, default: 0 }, // 评估次数
+    'AI评估_分数稳定性': { type: Number }, // 分数标准差（越小越稳定，0-100）
     
     searchCount: { type: Number, default: 0 }, // 搜索次数
     
@@ -307,16 +319,76 @@ app.get('/api/schools', async (req, res) => {
         const { search, page = 1, limit = 20 } = req.query;
         const query = {};
         
+        let searchLower = ''; // 在外部定义，确保在后续代码中可以访问
         if (search) {
-            // 仅对学校名称进行模糊搜索
-            query.name = { $regex: search, $options: 'i' };
+            // 使用更智能的模糊搜索
+            const trimmedSearch = search.trim();
+            searchLower = trimmedSearch.toLowerCase();
+            
+            // 如果搜索词长度较短（少于3个字符），直接使用简单正则匹配
+            // 否则，使用更灵活的匹配方式（字符之间可以包含其他字符）
+            if (trimmedSearch.length < 3) {
+                query.name = { $regex: trimmedSearch, $options: 'i' };
+            } else {
+                // 对于较长的搜索词，构建更灵活的正则表达式
+                // 将搜索词中的字符转换为可选的正则模式（字符之间可以包含其他字符）
+                // 例如："浦东万科" 可以匹配 "上海浦东新区民办万科学校"
+                const regexPattern = trimmedSearch.split('').join('.*?');
+                query.name = { $regex: regexPattern, $options: 'i' };
+            }
         }
         
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-        let schools = await School.find(query)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(parseInt(limit));
+        // 对于搜索，先查询所有匹配结果（限制最大数量以避免性能问题），然后排序，最后分页
+        // 对于非搜索，使用正常的分页逻辑
+        let schools;
+        if (search) {
+            // 先查询所有匹配的结果（限制最大数量为100，避免性能问题）
+            schools = await School.find(query).limit(100);
+            
+            // 对结果进行匹配度排序
+            if (schools.length > 0) {
+                schools = schools.map(school => {
+                    const schoolNameLower = school.name.toLowerCase();
+                    let score = 0;
+                    
+                    // 如果学校名称包含完整的搜索词，得分最高
+                    if (schoolNameLower.includes(searchLower)) {
+                        score += 100;
+                    }
+                    
+                    // 检查搜索词中的关键词（连续2-3个字符）是否出现在学校名称中
+                    const keywords = [];
+                    for (let i = 0; i < searchLower.length - 1; i++) {
+                        if (searchLower.length >= 2) {
+                            keywords.push(searchLower.substr(i, 2));
+                        }
+                        if (searchLower.length >= 3 && i < searchLower.length - 2) {
+                            keywords.push(searchLower.substr(i, 3));
+                        }
+                    }
+                    
+                    keywords.forEach(keyword => {
+                        if (schoolNameLower.includes(keyword)) {
+                            score += keyword.length * 5; // 更长的关键词得分更高
+                        }
+                    });
+                    
+                    return { school, score };
+                }).sort((a, b) => b.score - a.score) // 按匹配度降序排序
+                  .map(item => item.school); // 提取学校对象
+            }
+            
+            // 应用分页
+            const skip = (parseInt(page) - 1) * parseInt(limit);
+            schools = schools.slice(skip, skip + parseInt(limit));
+        } else {
+            // 非搜索情况，使用正常的分页逻辑
+            const skip = (parseInt(page) - 1) * parseInt(limit);
+            schools = await School.find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit));
+        }
         
         // 过滤：仅保留幼儿园、小学、初中、高中，排除大学
         schools = schools.filter(school => isSchoolForK12Only(school));
@@ -326,7 +398,11 @@ app.get('/api/schools', async (req, res) => {
         // 注意：这里total可能不完全准确，因为需要在应用层过滤，但为了性能，我们先返回过滤后的结果
         
         // 如果找到学校，检查字段完整性，缺失的字段通过AI补充，并增加搜索次数
+        // 注意：如果搜索词是范围太大的关键字（如"上海"），则跳过AI补充，直接从数据库返回数据
         if (search && schools.length > 0) {
+            // 判断搜索词是否是范围太大的关键字
+            const isTooBroad = isTooBroadKeyword(search);
+            
             // 批量增加搜索次数
             const schoolIds = schools.map(s => s._id);
             await School.updateMany(
@@ -338,50 +414,55 @@ app.get('/api/schools', async (req, res) => {
                 school.searchCount = (school.searchCount || 0) + 1;
             });
             
-            for (let i = 0; i < schools.length; i++) {
-                const school = schools[i];
-                const missingFields = checkBasicInfoCompleteness(school);
-                
-                if (missingFields.length > 0) {
-                    try {
-                        console.log(`学校 "${school.name}" 缺少字段: ${missingFields.join(', ')}，尝试通过AI补充...`);
-                        const aiSchoolData = await querySchoolBasicInfoFromAI(school.name);
-                        
-                        if (aiSchoolData && aiSchoolData.name) {
-                            // 只更新缺失的字段
-                            const updateData = {};
-                            missingFields.forEach(field => {
-                                if (field === 'affiliatedGroup') {
-                                    // 对于隶属教育集团字段，如果 AI 返回空值或未找到，设置为"无"
-                                    const value = aiSchoolData[field];
-                                    updateData[field] = (value && value !== '' && value !== '未知') ? value : '无';
-                                } else if (aiSchoolData[field] && aiSchoolData[field] !== '' && aiSchoolData[field] !== '未知') {
-                                    // 如果是网址字段，需要验证和清理
-                                    if (field === 'website') {
-                                        const validatedWebsite = validateAndCleanWebsite(aiSchoolData[field]);
-                                        if (validatedWebsite) {
-                                            updateData[field] = validatedWebsite;
-                                        }
-                                    } else {
-                                        updateData[field] = aiSchoolData[field];
-                                    }
-                                }
-                            });
+            // 如果搜索词不是范围太大的关键字，才进行AI补充信息
+            if (!isTooBroad) {
+                for (let i = 0; i < schools.length; i++) {
+                    const school = schools[i];
+                    const missingFields = checkBasicInfoCompleteness(school);
+                    
+                    if (missingFields.length > 0) {
+                        try {
+                            console.log(`学校 "${school.name}" 缺少字段: ${missingFields.join(', ')}，尝试通过AI补充...`);
+                            const aiSchoolData = await querySchoolBasicInfoFromAI(school.name);
                             
-                            if (Object.keys(updateData).length > 0) {
-                                updateData.updatedAt = new Date();
-                                await School.updateOne({ _id: school._id }, { $set: updateData });
-                                console.log(`学校 "${school.name}" 已补充字段: ${Object.keys(updateData).join(', ')}`);
+                            if (aiSchoolData && aiSchoolData.name) {
+                                // 只更新缺失的字段
+                                const updateData = {};
+                                missingFields.forEach(field => {
+                                    if (field === 'affiliatedGroup') {
+                                        // 对于隶属教育集团字段，如果 AI 返回空值或未找到，设置为"无"
+                                        const value = aiSchoolData[field];
+                                        updateData[field] = (value && value !== '' && value !== '未知') ? value : '无';
+                                    } else if (aiSchoolData[field] && aiSchoolData[field] !== '' && aiSchoolData[field] !== '未知') {
+                                        // 如果是网址字段，需要验证和清理
+                                        if (field === 'website') {
+                                            const validatedWebsite = validateAndCleanWebsite(aiSchoolData[field]);
+                                            if (validatedWebsite) {
+                                                updateData[field] = validatedWebsite;
+                                            }
+                                        } else {
+                                            updateData[field] = aiSchoolData[field];
+                                        }
+                                    }
+                                });
                                 
-                                // 更新内存中的学校对象
-                                Object.assign(school, updateData);
+                                if (Object.keys(updateData).length > 0) {
+                                    updateData.updatedAt = new Date();
+                                    await School.updateOne({ _id: school._id }, { $set: updateData });
+                                    console.log(`学校 "${school.name}" 已补充字段: ${Object.keys(updateData).join(', ')}`);
+                                    
+                                    // 更新内存中的学校对象
+                                    Object.assign(school, updateData);
+                                }
                             }
+                        } catch (aiError) {
+                            console.error(`AI补充学校 "${school.name}" 信息失败:`, aiError);
+                            // AI查询失败不影响正常返回结果
                         }
-                    } catch (aiError) {
-                        console.error(`AI补充学校 "${school.name}" 信息失败:`, aiError);
-                        // AI查询失败不影响正常返回结果
                     }
                 }
+            } else {
+                console.log(`搜索词 "${search}" 范围太大，跳过AI补充信息，直接从数据库返回数据`);
             }
         }
         
@@ -522,6 +603,38 @@ app.get('/api/schools/by-group/:groupName', async (req, res) => {
         });
     } catch (error) {
         console.error('根据教育集团获取学校列表错误:', error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+});
+
+// 公开API：更新学校网址（必须在 /api/schools/:id 之前定义，确保更具体的路由优先匹配）
+app.put('/api/schools/:id/website', async (req, res) => {
+    try {
+        const { website } = req.body;
+        
+        if (!website || typeof website !== 'string') {
+            return res.status(400).json({ message: '网址不能为空' });
+        }
+        
+        // 验证和清理网址
+        const validatedWebsite = validateAndCleanWebsite(website);
+        if (!validatedWebsite) {
+            return res.status(400).json({ message: '网址格式无效' });
+        }
+        
+        const school = await School.findByIdAndUpdate(
+            req.params.id,
+            { website: validatedWebsite, updatedAt: Date.now() },
+            { new: true }
+        );
+        
+        if (!school) {
+            return res.status(404).json({ message: '学校不存在' });
+        }
+        
+        res.json({ message: '网址更新成功', school });
+    } catch (error) {
+        console.error('更新学校网址错误:', error);
         res.status(500).json({ message: '服务器错误' });
     }
 });
@@ -773,38 +886,224 @@ async function getNextSequenceNumber() {
 // 根据用户选择的学校名称创建学校记录
 app.post('/api/schools/create-from-name', async (req, res) => {
     try {
-        const { schoolName } = req.body;
+        const { schoolName, forceRefresh, focusFields, schoolId } = req.body;
         
         if (!schoolName || !schoolName.trim()) {
             return res.status(400).json({ message: '学校名称不能为空' });
         }
         
-        // 检查学校是否已存在
-        const existingSchool = await School.findOne({ name: schoolName.trim() });
-        if (existingSchool) {
-            // 如果学校已存在，但用户是通过AI搜索找到的，也应该计入搜索次数
-            await School.updateOne(
-                { _id: existingSchool._id },
-                { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
-            );
-            existingSchool.searchCount = (existingSchool.searchCount || 0) + 1;
-            console.log(`学校 "${schoolName}" 已存在，搜索次数已增加`);
-            return res.json({ 
-                message: '学校已存在',
-                school: existingSchool 
-            });
+        // 检查学校是否已存在（使用模糊查询）
+        const trimmedSchoolName = schoolName.trim();
+        
+        // 如果 forceRefresh 为 true，跳过检查，直接调用 AI 重新搜索
+        let existingSchool = null;
+        let existingSchoolId = null;
+        
+        if (!forceRefresh) {
+            // 首先尝试精确匹配
+            existingSchool = await School.findOne({ name: trimmedSchoolName });
+            
+            // 如果精确匹配失败，使用模糊查询
+            if (!existingSchool) {
+                // 使用正则表达式进行模糊匹配（不区分大小写）
+                const fuzzyQuery = { name: { $regex: trimmedSchoolName, $options: 'i' } };
+                const fuzzyResults = await School.find(fuzzyQuery).limit(10);
+                
+                if (fuzzyResults.length > 0) {
+                    // 计算每个结果的匹配度分数
+                    const searchLower = trimmedSchoolName.toLowerCase();
+                    const scoredResults = fuzzyResults.map(school => {
+                        const schoolNameLower = school.name.toLowerCase();
+                        let score = 0;
+                        
+                        // 如果学校名称包含完整的搜索词，得分最高
+                        if (schoolNameLower.includes(searchLower)) {
+                            score += 100;
+                        }
+                        
+                        // 如果学校名称和搜索词有较多相同字符，增加分数
+                        // 检查搜索词中的主要关键词（连续2-3个字符）是否出现在学校名称中
+                        const keywords = [];
+                        for (let i = 0; i < searchLower.length - 1; i++) {
+                            if (searchLower.length >= 2) {
+                                keywords.push(searchLower.substr(i, 2));
+                            }
+                            if (searchLower.length >= 3 && i < searchLower.length - 2) {
+                                keywords.push(searchLower.substr(i, 3));
+                            }
+                        }
+                        
+                        keywords.forEach(keyword => {
+                            if (schoolNameLower.includes(keyword)) {
+                                score += keyword.length * 5; // 更长的关键词得分更高
+                            }
+                        });
+                        
+                        return { school, score };
+                    });
+                    
+                    // 按分数排序，选择最高分的
+                    scoredResults.sort((a, b) => b.score - a.score);
+                    existingSchool = scoredResults[0].school;
+                    console.log(`通过模糊查询找到匹配的学校: "${existingSchool.name}" (搜索词: "${trimmedSchoolName}", 匹配分数: ${scoredResults[0].score})`);
+                }
+            }
+            
+            if (existingSchool) {
+                // 如果学校已存在，但用户是通过AI搜索找到的，也应该计入搜索次数
+                await School.updateOne(
+                    { _id: existingSchool._id },
+                    { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
+                );
+                existingSchool.searchCount = (existingSchool.searchCount || 0) + 1;
+                console.log(`学校 "${existingSchool.name}" 已存在（匹配搜索词: "${trimmedSchoolName}"），搜索次数已增加`);
+                return res.json({ 
+                    message: '学校已存在',
+                    school: existingSchool 
+                });
+            }
+        } else {
+            // 如果是强制刷新，先查找现有学校ID（如果存在）
+            existingSchool = await School.findOne({ name: trimmedSchoolName });
+            if (!existingSchool) {
+                const fuzzyQuery = { name: { $regex: trimmedSchoolName, $options: 'i' } };
+                const fuzzyResults = await School.find(fuzzyQuery).limit(1);
+                if (fuzzyResults.length > 0) {
+                    existingSchool = fuzzyResults[0];
+                }
+            }
+            if (existingSchool) {
+                existingSchoolId = existingSchool._id;
+                console.log(`强制重新搜索：找到现有学校 "${existingSchool.name}"，将使用 AI 重新搜索并更新数据`);
+            }
+        }
+        
+        // 如果提供了schoolId，获取现有学校的网址
+        let existingWebsite = null;
+        if (schoolId && forceRefresh) {
+            const existingSchool = await School.findById(schoolId);
+            if (existingSchool && existingSchool.website) {
+                existingWebsite = existingSchool.website;
+                console.log(`重新搜索：使用现有网址 "${existingWebsite}" 作为信息来源`);
+            }
         }
         
         // 通过AI查询学校基础信息
-        console.log(`正在通过AI查询学校 "${schoolName}" 的基础信息...`);
-        const aiSchoolData = await querySchoolBasicInfoFromAI(schoolName.trim());
+        const focusMessage = focusFields && focusFields.length > 0 
+            ? `（重点搜索字段: ${focusFields.join(', ')}）` 
+            : '';
+        const websiteMessage = existingWebsite 
+            ? `（使用现有网址: ${existingWebsite}）` 
+            : '';
+        console.log(`正在通过AI查询学校 "${trimmedSchoolName}" 的基础信息${focusMessage}${websiteMessage}...`);
+        const aiSchoolData = await querySchoolBasicInfoFromAI(trimmedSchoolName, focusFields, existingWebsite);
         
         if (!aiSchoolData || !aiSchoolData.name) {
             return res.status(404).json({ message: '无法查询到该学校的信息' });
         }
         
-        // 再次检查（AI返回的名称可能与用户选择的不同）
-        const existingSchoolByAIName = await School.findOne({ name: aiSchoolData.name });
+        // 再次检查（AI返回的名称可能与用户选择的不同，使用模糊查询）
+        let existingSchoolByAIName = await School.findOne({ name: aiSchoolData.name });
+        
+        // 如果精确匹配失败，使用模糊查询
+        if (!existingSchoolByAIName) {
+            // 使用正则表达式进行模糊匹配（不区分大小写）
+            const fuzzyQuery = { name: { $regex: aiSchoolData.name, $options: 'i' } };
+            const fuzzyResults = await School.find(fuzzyQuery).limit(10);
+            
+            if (fuzzyResults.length > 0) {
+                // 计算每个结果的匹配度分数
+                const aiNameLower = aiSchoolData.name.toLowerCase();
+                const scoredResults = fuzzyResults.map(school => {
+                    const schoolNameLower = school.name.toLowerCase();
+                    let score = 0;
+                    
+                    // 如果学校名称包含完整的AI返回名称，得分最高
+                    if (schoolNameLower.includes(aiNameLower)) {
+                        score += 100;
+                    }
+                    
+                    // 如果学校名称和AI返回名称有较多相同字符，增加分数
+                    const keywords = [];
+                    for (let i = 0; i < aiNameLower.length - 1; i++) {
+                        if (aiNameLower.length >= 2) {
+                            keywords.push(aiNameLower.substr(i, 2));
+                        }
+                        if (aiNameLower.length >= 3 && i < aiNameLower.length - 2) {
+                            keywords.push(aiNameLower.substr(i, 3));
+                        }
+                    }
+                    
+                    keywords.forEach(keyword => {
+                        if (schoolNameLower.includes(keyword)) {
+                            score += keyword.length * 5; // 更长的关键词得分更高
+                        }
+                    });
+                    
+                    return { school, score };
+                });
+                
+                // 按分数排序，选择最高分的
+                scoredResults.sort((a, b) => b.score - a.score);
+                existingSchoolByAIName = scoredResults[0].school;
+                console.log(`通过模糊查询找到匹配的学校: "${existingSchoolByAIName.name}" (AI返回: "${aiSchoolData.name}", 匹配分数: ${scoredResults[0].score})`);
+            }
+        }
+        
+        // 如果是强制刷新且找到了现有学校，更新该学校
+        if (forceRefresh && existingSchoolId) {
+            // 保留原有的序号，搜索次数增加1（因为重新搜索本身是一次搜索）
+            const originalSchool = await School.findById(existingSchoolId);
+            if (!originalSchool) {
+                return res.status(404).json({ message: '未找到要更新的学校' });
+            }
+            
+            // 如果有重点字段，只更新这些字段；否则更新全部字段
+            // 注意：无论什么情况，都不更新网址字段（保留原有网址）
+            let updateData = {};
+            
+            if (focusFields && focusFields.length > 0) {
+                // 只更新选中的重点字段（排除网址字段）
+                focusFields.forEach(field => {
+                    if (field !== 'website' && aiSchoolData[field] !== undefined) {
+                        updateData[field] = aiSchoolData[field];
+                    }
+                });
+                console.log(`重点更新字段: ${focusFields.join(', ')}（已排除网址字段）`);
+            } else {
+                // 更新全部字段（排除网址字段）
+                updateData = { ...aiSchoolData };
+                // 移除 _id 字段，避免更新冲突
+                delete updateData._id;
+                // 移除 website 字段，保留原有网址
+                delete updateData.website;
+                console.log('更新全部字段（已排除网址字段）');
+            }
+            
+            // 保留原有的序号，增加搜索次数，更新更新时间
+            updateData.sequenceNumber = originalSchool.sequenceNumber;
+            updateData.searchCount = (originalSchool.searchCount || 0) + 1;
+            updateData.updatedAt = new Date();
+            
+            const updatedSchool = await School.findByIdAndUpdate(
+                existingSchoolId,
+                { $set: updateData },
+                { new: true, runValidators: true }
+            );
+            
+            const updatedFieldsMsg = focusFields && focusFields.length > 0 
+                ? `（重点更新字段: ${focusFields.join(', ')}）` 
+                : '（全部字段）';
+            console.log(`学校 "${aiSchoolData.name}" 已通过 AI 重新搜索并更新数据${updatedFieldsMsg}，序号: ${aiSchoolData.sequenceNumber}，搜索次数: ${updateData.searchCount}`);
+            
+            return res.json({
+                message: focusFields && focusFields.length > 0 
+                    ? `学校数据已通过 AI 重新搜索并更新（重点更新了 ${focusFields.length} 个字段）`
+                    : '学校数据已通过 AI 重新搜索并更新',
+                school: updatedSchool
+            });
+        }
+        
         if (existingSchoolByAIName) {
             // 如果AI返回的学校名称对应的学校已存在，也应该计入搜索次数
             await School.updateOne(
@@ -812,7 +1111,7 @@ app.post('/api/schools/create-from-name', async (req, res) => {
                 { $inc: { searchCount: 1 }, $set: { updatedAt: new Date() } }
             );
             existingSchoolByAIName.searchCount = (existingSchoolByAIName.searchCount || 0) + 1;
-            console.log(`学校 "${aiSchoolData.name}" 已存在（通过AI搜索找到），搜索次数已增加`);
+            console.log(`学校 "${existingSchoolByAIName.name}" 已存在（通过AI搜索找到，AI返回: "${aiSchoolData.name}"），搜索次数已增加`);
             return res.json({ 
                 message: '学校已存在',
                 school: existingSchoolByAIName 
@@ -1539,6 +1838,82 @@ async function saveAIScoringToDB(schools, aiResult, evaluationSystem) {
             console.warn(`⚠ AI返回结果中没有summary字段`);
         }
         
+        // 历史分数聚合（用于提高分数稳定性）
+        if (updateData['AI评估_总分'] !== undefined) {
+            try {
+                // 获取当前学校的最新数据（包括历史记录）
+                const currentSchool = await School.findById(school._id);
+                const currentTotalScore = updateData['AI评估_总分'];
+                
+                // 收集当前评估的各指标得分
+                const currentIndicatorScores = {};
+                if (aiResult.comparisonTable) {
+                    aiResult.comparisonTable.forEach(row => {
+                        const indicator = row.indicator;
+                        const fieldBase = indicatorToFieldMap[indicator];
+                        if (fieldBase && row.scores && row.scores[schoolName] !== undefined) {
+                            const score = parseFloat(row.scores[schoolName]);
+                            if (!isNaN(score)) {
+                                currentIndicatorScores[indicator] = score;
+                            }
+                        }
+                    });
+                }
+                
+                // 记录当前评估到历史记录
+                const historyRecord = {
+                    timestamp: new Date(),
+                    totalScore: currentTotalScore,
+                    indicatorScores: currentIndicatorScores,
+                    comparisonGroup: schools.map(s => s.name)
+                };
+                
+                // 获取历史记录
+                const historicalRecords = currentSchool['AI评估_历史记录'] || [];
+                const evaluationCount = (currentSchool['AI评估_评估次数'] || 0) + 1;
+                
+                // 添加新记录（保留最近20条记录）
+                const updatedHistory = [...historicalRecords, historyRecord].slice(-20);
+                
+                // 计算加权平均分数（新评估权重0.6，历史平均权重0.4）
+                let weightedAverageScore = currentTotalScore;
+                if (historicalRecords.length > 0) {
+                    const historicalAverage = historicalRecords.reduce((sum, record) => sum + (record.totalScore || 0), 0) / historicalRecords.length;
+                    weightedAverageScore = currentTotalScore * 0.6 + historicalAverage * 0.4;
+                    // 四舍五入到1位小数
+                    weightedAverageScore = Math.round(weightedAverageScore * 10) / 10;
+                }
+                
+                // 计算分数稳定性（标准差）
+                let scoreStability = null;
+                if (updatedHistory.length >= 2) {
+                    const scores = updatedHistory.map(r => r.totalScore).filter(s => !isNaN(s));
+                    if (scores.length >= 2) {
+                        const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+                        const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
+                        const stdDev = Math.sqrt(variance);
+                        // 标准化到0-100范围（标准差越小，稳定性越高，分数越高）
+                        scoreStability = Math.max(0, Math.min(100, 100 - stdDev * 10));
+                        scoreStability = Math.round(scoreStability * 10) / 10;
+                    }
+                }
+                
+                // 更新历史记录、评估次数和分数稳定性
+                updateData['AI评估_历史记录'] = updatedHistory;
+                updateData['AI评估_评估次数'] = evaluationCount;
+                if (scoreStability !== null) {
+                    updateData['AI评估_分数稳定性'] = scoreStability;
+                }
+                
+                // 使用加权平均分数作为最终显示分数（可选：如果希望显示聚合分数）
+                // updateData['AI评估_总分'] = weightedAverageScore;
+                
+                console.log(`✓ 学校 "${schoolName}" 历史分数聚合: 当前=${currentTotalScore}, 加权平均=${weightedAverageScore}, 评估次数=${evaluationCount}, 稳定性=${scoreStability !== null ? scoreStability.toFixed(1) : 'N/A'}`);
+            } catch (historyError) {
+                console.error(`✗ 学校 "${schoolName}" 历史分数聚合失败: ${historyError.message}`);
+            }
+        }
+        
         // 更新数据库
         if (Object.keys(updateData).length > 0) {
             updateData.updatedAt = new Date();
@@ -1726,7 +2101,10 @@ app.post('/api/schools/compare-scoring-stream', async (req, res) => {
                 });
             }
             
-            const scoringResult = await callDeepseekAPI(prompt);
+            // 对比评估任务：使用 DeepSeek API（更稳定，适合复杂任务）
+            const scoringResult = await callDeepSeekAPI(prompt, {
+                timeout: 180000 // 180秒（3分钟）超时，适合复杂的对比评估任务
+            });
             
             sendProgress('step', '正在保存评估结果到数据库...');
             
@@ -1772,7 +2150,7 @@ app.post('/api/schools/compare-scoring-stream', async (req, res) => {
     }
 });
 
-// AI评分对比（调用Deepseek API）
+// AI评分对比（调用腾讯云混元大模型API）
 app.post('/api/schools/compare-scoring', async (req, res) => {
     try {
         const { schoolIds } = req.body;
@@ -1906,7 +2284,10 @@ app.post('/api/schools/compare-scoring', async (req, res) => {
                     try {
                         console.log(`调用AI API生成最终总结（学校: ${schoolsForSummary.map(s => s.name).join(', ')}）`);
                         const prompt = buildScoringPrompt(allSchoolsForSummary, evaluationSystem);
-                        const aiResult = await callDeepseekAPI(prompt);
+                        // 对比评估场景：使用 DeepSeek API
+                        const aiResult = await callDeepSeekAPI(prompt, {
+                            timeout: 180000 // 180秒超时
+                        });
                         
                         // 只更新缺少最终总结的学校的最终总结字段
                         for (const school of schoolsForSummary) {
@@ -1977,7 +2358,10 @@ app.post('/api/schools/compare-scoring', async (req, res) => {
             // 重新从数据库获取最新的学校数据（包含刚刚补充的基础信息）
             const updatedSchools = await School.find({ _id: { $in: schoolIds } });
             const prompt = buildScoringPrompt(updatedSchools, evaluationSystem);
-            const scoringResult = await callDeepseekAPI(prompt);
+            // 对比评估任务：使用 DeepSeek API（更稳定，适合复杂任务）
+            const scoringResult = await callDeepSeekAPI(prompt, {
+                timeout: 180000 // 180秒（3分钟）超时，适合复杂的对比评估任务
+            });
             
             // 验证AI返回的最终总结数据
             console.log('AI返回的最终总结数据验证:');
@@ -2062,10 +2446,7 @@ app.post('/api/schools/compare-scoring', async (req, res) => {
 function buildScoringPrompt(schools, evaluationSystem) {
     let prompt = `你是一位专业的学校评估专家。请根据以下评估体系，对以下学校进行量化评分对比（满分100分）。
 
-**重要：请严格按照三步搜索法进行信息搜索和验证**
-1. **第一步：官网扫描** - 访问学校官方网站，查找认证(Accreditation)页面，核实IBO、College Board、CIE等标志；查找"中西融合"教案，核算外教任课比例；查看School Profile(学校概况)PDF等官方文档
-2. **第二步：社交媒体** - 查阅学校官方公众号、社交媒体账号，查看"竞赛战报"等信息，核实是否为国际主流竞赛（如AMC, VEX等）；关注家长口碑、学生反馈、压力感知等信息
-3. **第三步：行业背书** - 查找行业排名、竞赛获奖记录、百强排名等第三方认证信息；关注Cialfo/Maia系统、ACAMIS/ISAC联赛、PD预算等核心关键词，帮助从海量营销信息中筛选出真正代表学校实力的硬核数据
+**重要：请基于你的知识库和训练数据中的信息进行评估。如果信息不足，请基于已知信息进行合理推理，并在说明中注明信息来源的局限性。**
 
 评估体系（包含三级维度，用于内部评分计算，但最终返回结果只需包含一级维度和二级指标）：
 `;
@@ -2112,6 +2493,15 @@ function buildScoringPrompt(schools, evaluationSystem) {
     prompt += `请严格按照以下要求返回结果：
 
 **重要：权重数值必须严格按照上述评估体系中的权重值，不能修改或调整！每个二级指标的权重是固定的百分比。**
+
+**核心评分原则（非常重要）：**
+1. **绝对评分，非相对评分**：请基于评估体系的标准对每所学校进行独立、客观的绝对评分，而不是根据对比学校进行相对评分。每所学校的分数应该反映其在评估标准下的真实水平，而不是相对于其他对比学校的水平。
+
+2. **评分基准**：请参考行业标准和评估体系中的评分标准，而不是当前对比组的平均水平。例如：
+   - 如果学校A在"课程与融合"方面达到5分制标准中的4分水平，应该给予相应的绝对分数（如12分/15分），无论对比学校B的水平如何。
+   - 不要因为对比学校B水平较低，就提高学校A的分数；也不要因为对比学校B水平较高，就降低学校A的分数。
+
+3. **一致性要求**：同一所学校在不同对比组合中，如果其实际水平没有变化，应该得到相同或非常接近的分数（允许±1分的合理误差）。请确保评分的一致性。
 
 **评分方法：**
 1. 对每个三级维度按照5分制评分标准进行评分（1-5分）
@@ -2329,8 +2719,11 @@ async function generateComparisonConclusion(schools, scoringData) {
   "conclusion": "核心结论和建议（纯文本，不使用任何Markdown格式）"
 }`;
         
-        const result = await callDeepseekAPI(prompt);
-        
+        // 生成对比结论：使用 DeepSeek API
+        const result = await callDeepSeekAPI(prompt, {
+            timeout: 120000 // 120秒超时
+        });
+
         if (result && result.conclusion) {
             return result.conclusion;
         } else {
@@ -2374,7 +2767,7 @@ async function searchPossibleSchoolNames(searchTerm) {
 - 确保返回的JSON格式正确`;
 
     try {
-        const result = await callDeepseekAPI(prompt);
+        const result = await callHunyuanAPI(prompt);
         
         if (result && result.schoolNames && Array.isArray(result.schoolNames) && result.schoolNames.length > 0) {
             // 过滤掉大学相关的学校名称
@@ -2692,7 +3085,7 @@ async function verifySchoolNameFromWebsite(url, userInputName) {
 - isMatch表示网站名称与用户输入名称是否一致（允许有轻微差异，如"学校"vs"School"）
 - confidence表示匹配的置信度：high(完全一致), medium(基本一致但有细微差异), low(差异较大)`;
 
-        const result = await callDeepseekAPI(prompt);
+        const result = await callHunyuanAPI(prompt);
         
         if (!result) {
             return { verified: false, websiteName: null, reason: 'AI返回结果为空' };
@@ -2723,23 +3116,75 @@ async function verifySchoolNameFromWebsite(url, userInputName) {
 }
 
 // 通过AI查询学校基础信息
-async function querySchoolBasicInfoFromAI(schoolName) {
-    const prompt = `你是一位专业的学校信息查询专家。请根据学校名称"${schoolName}"，查询并返回该学校的基础信息。
+async function querySchoolBasicInfoFromAI(schoolName, focusFields = [], existingWebsite = null) {
+    // 字段映射：前端字段名 -> 提示词中的字段名
+    const fieldMapping = {
+        'website': '学校网址',
+        'schoolType': '学校类型',
+        'nature': '学校类型',
+        'coveredStages': '涵盖学段',
+        'country': '国家',
+        'city': '城市',
+        'affiliatedGroup': '隶属教育集团',
+        'kindergarten': '幼儿园',
+        'primary': '小学',
+        'juniorHigh': '初中',
+        'seniorHigh': '高中',
+        'ibPYP': 'IB PYP国际文凭小学项目',
+        'ibMYP': 'IB MYP国际文凭中学项目',
+        'ibDP': 'IB DP国际文凭大学预科项目',
+        'ibCP': 'IB CP国际文凭职业相关课程',
+        'aLevel': 'A-Level英国高中水平证书',
+        'ap': 'AP美国大学先修课程',
+        'canadian': '加拿大课程',
+        'australian': '澳大利亚课程',
+        'igcse': 'IGCSE国际普通中学教育文凭',
+        'otherCourses': '其他课程'
+    };
+    
+    // 构建重点字段说明
+    let focusFieldsNote = '';
+    if (focusFields && focusFields.length > 0) {
+        const focusFieldLabels = focusFields.map(field => fieldMapping[field] || field).join('、');
+        focusFieldsNote = `
+
+**⚠️ 重点搜索要求：用户特别要求重点搜索以下字段，请务必对这些字段进行详细、准确的查询和验证：**
+${focusFields.map(field => {
+    const label = fieldMapping[field] || field;
+    return `- ${label}（字段名：${field}）`;
+}).join('\n')}
+
+**对于上述重点字段，请：**
+1. 投入更多时间和精力进行查询
+2. 访问学校官网的相关页面，仔细查找认证信息、课程介绍等
+3. 如果信息不确定，请多方验证后再返回结果
+4. 确保这些重点字段的信息准确、完整
+
+**对于非重点字段，可以按常规方式进行查询。**
+`;
+    }
+    
+    // 如果有现有网址，在提示词中告诉AI使用这个网址
+    const websiteNote = existingWebsite 
+        ? `\n\n**⚠️ 重要：该学校已有官方网站：${existingWebsite}**\n\n**关键要求：该网站是学校官方信息的权威来源。请基于该网站的信息来查询学校信息，特别是课程信息。**\n\n**对于课程字段（IB PYP、IB MYP、IB DP、IB CP、A-Level、AP、IGCSE等），请基于该网站的信息进行判断：**\n- 如果该网站明确提到或展示了某项课程（如"IB PYP认证"、"提供A-Level课程"等），请填写"有"\n- 如果该网站没有提到某项课程，但提到了其他相关课程，请基于网站信息进行合理判断\n- 如果该网站完全没有课程信息，再基于你的知识库进行判断\n\n**请特别注意：**\n- 该网站上的课程信息是最新、最准确的\n- 如果网站提到某项课程，即使你的知识库中没有相关信息，也应该填写"有"\n- 如果网站明确显示某项课程认证（如"IB PYP认证"、"IB MYP认证"），必须填写"有"\n- 请仔细分析网站内容，包括学校简介、课程设置、招生信息、认证信息等页面\n\n**如果网站信息与学校名称不完全匹配，请以网站上的信息为准。**\n`
+        : '';
+    
+    const prompt = `你是一位专业的学校信息查询专家。请根据学校名称"${schoolName}"，查询并返回该学校的基础信息。${websiteNote}${focusFieldsNote}
 
 **重要限制：本工具仅支持大学教育以下的学校，包括幼儿园、小学、初中、高中。如果你发现该学校是大学（本科、硕士、博士）、研究生院、研究院等高等教育机构，请直接返回 {"error": "该学校是大学，不在服务范围内"}，不要查询任何信息。**
 
 **如果学校名称中包含大学名称但实际是附属学校（如"清华大学附属中学"、"北京大学附属小学"），则属于K12学校，可以正常查询。**
 
-**重要：请务必查询准确的官方网址**
+**重要：请基于你的知识库和训练数据中的信息进行查询。如果信息不足，请基于已知信息进行合理推理，并在返回结果中注明信息来源的局限性。**
 
-**搜索方法：请严格按照三步搜索法进行信息查询**
-1. **第一步：官网扫描** - 访问学校官方网站，查找认证(Accreditation)页面，核实IBO、College Board、CIE等标志；查找"中西融合"教案，核算外教任课比例；查看School Profile(学校概况)PDF等官方文档
-2. **第二步：社交媒体** - 查阅学校官方公众号、社交媒体账号，查看"竞赛战报"等信息，核实是否为国际主流竞赛（如AMC, VEX等）
-3. **第三步：行业背书** - 查找行业排名、竞赛获奖记录、百强排名等第三方认证信息
+**查询要求：**
+- 请尽可能提供准确、完整的信息
+- 如果无法确定某些信息，请明确标注为"未知"或"无法查询"
+- 对于课程信息，请基于你的知识库进行判断，如果无法确定，请填写"无"而不是猜测
 
 请查询以下信息：
 1. 学校名称（完整准确的全称）
-2. **学校网址（非常重要！请务必查询该学校的官方网站，确保网址准确无误。网址格式应为完整的URL，如：https://example.com 或 https://www.example.com。如果无法确定准确的官方网址，请留空）**
+2. **学校网址（请基于你的知识库提供学校官方网站。如果无法确定准确的官方网址，请留空，不要猜测。网址格式应为完整的URL，如：https://example.com 或 https://www.example.com）**
 3. 国家（学校所在的国家，如：中国、美国、英国等）
 4. 城市（学校所在的城市，如：上海、北京、纽约等）
 5. 学校类型（**重要：必须从以下四类中选择一类，不能使用其他描述**）：
@@ -2769,18 +3214,18 @@ async function querySchoolBasicInfoFromAI(schoolName) {
    - 小学（有/无）
    - 初中（有/无）
    - 高中（有/无）
-6. IB课程（**重要：必须填写"有"或"无"，不能填写其他内容**）：
-   - IB PYP：如果学校提供IB PYP课程，填写"有"；否则填写"无"
-   - IB MYP：如果学校提供IB MYP课程，填写"有"；否则填写"无"
-   - IB DP：如果学校提供IB DP课程，填写"有"；否则填写"无"
-   - IB CP：如果学校提供IB CP课程，填写"有"；否则填写"无"
-7. 其他课程（**重要：必须填写"有"或"无"，不能填写其他内容**）：
-   - A-Level：如果学校提供A-Level课程，填写"有"；否则填写"无"
-   - AP：如果学校提供AP课程，填写"有"；否则填写"无"
-   - 加拿大课程：如果学校提供加拿大课程，填写"有"；否则填写"无"
-   - 澳大利亚课程：如果学校提供澳大利亚课程，填写"有"；否则填写"无"
-   - IGCSE：如果学校提供IGCSE课程，填写"有"；否则填写"无"
-   - 其他课程：如有其他课程，请详细列出课程名称；如果没有，填写"无"
+9. IB课程（**重要：必须填写"有"或"无"，不能填写其他内容。${existingWebsite ? '请优先基于提供的网站信息进行判断。' : '请基于你的知识库进行判断。'}**）：
+   - IB PYP：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供IB PYP课程。如果网站提到"IB PYP"、"PYP认证"、"Primary Years Programme"等，必须填写"有"。` : '基于你的知识库判断学校是否提供IB PYP课程。'}如果明确知道学校有IB PYP认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - IB MYP：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供IB MYP课程。如果网站提到"IB MYP"、"MYP认证"、"Middle Years Programme"等，必须填写"有"。` : '基于你的知识库判断学校是否提供IB MYP课程。'}如果明确知道学校有IB MYP认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - IB DP：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供IB DP课程。如果网站提到"IB DP"、"DP认证"、"Diploma Programme"等，必须填写"有"。` : '基于你的知识库判断学校是否提供IB DP课程。'}如果明确知道学校有IB DP认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - IB CP：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供IB CP课程。如果网站提到"IB CP"、"CP认证"、"Career-related Programme"等，必须填写"有"。` : '基于你的知识库判断学校是否提供IB CP课程。'}如果明确知道学校有IB CP认证或提供该课程，填写"有"；如果无法确定，填写"无"
+10. 其他课程（**重要：必须填写"有"或"无"，不能填写其他内容。${existingWebsite ? '请优先基于提供的网站信息进行判断。' : '请基于你的知识库进行判断。'}**）：
+   - A-Level：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供A-Level课程。如果网站提到"A-Level"、"A Level"、"英国课程"、"剑桥课程"等，必须填写"有"。` : '基于你的知识库判断学校是否提供A-Level课程。'}如果明确知道学校有相关认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - AP：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供AP课程。如果网站提到"AP"、"Advanced Placement"、"美国大学先修课程"等，必须填写"有"。` : '基于你的知识库判断学校是否提供AP课程。'}如果明确知道学校有College Board认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - 加拿大课程：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供加拿大课程。如果网站提到"加拿大课程"、"BC课程"、"安省课程"等，必须填写"有"。` : '基于你的知识库判断学校是否提供加拿大课程（如BC省课程、安省课程等）。'}如果明确知道学校提供该课程，填写"有"；如果无法确定，填写"无"
+   - 澳大利亚课程：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供澳大利亚课程。如果网站提到"澳大利亚课程"、"WACE"、"VCE"等，必须填写"有"。` : '基于你的知识库判断学校是否提供澳大利亚课程（如WACE、VCE等）。'}如果明确知道学校提供该课程，填写"有"；如果无法确定，填写"无"
+   - IGCSE：${existingWebsite ? `请基于网站 ${existingWebsite} 的信息判断学校是否提供IGCSE课程。如果网站提到"IGCSE"、"International General Certificate"等，必须填写"有"。` : '基于你的知识库判断学校是否提供IGCSE课程。'}如果明确知道学校有相关认证或提供该课程，填写"有"；如果无法确定，填写"无"
+   - 其他课程：如有其他课程，请详细列出课程名称；如果没有其他课程，填写"无"
 
 请使用JSON格式返回，结构如下：
 {
@@ -2808,21 +3253,29 @@ async function querySchoolBasicInfoFromAI(schoolName) {
 }
 
 **特别注意网址字段：**
-- 网址必须是该学校的官方网站
+- ${existingWebsite ? `**重要：该学校已有网址 ${existingWebsite}，请使用该网址，不要修改或更新。**` : '网址必须是该学校的官方网站'}
 - 网址格式必须完整，包含协议（https://或http://）
 - 如果不确定准确的官方网址，请留空，不要猜测
 - 不要返回不相关或错误的网址
+- ${existingWebsite ? '**如果提供了现有网址，请直接使用该网址，不要返回其他网址。**' : ''}
 
-**特别重要：课程字段（ibPYP、ibMYP、ibDP、ibCP、aLevel、ap、canadian、australian、igcse）必须严格填写"有"或"无"，不能填写课程名称、描述或其他任何内容。如果学校提供该课程，填写"有"；如果不提供，填写"无"。**
+**特别重要：课程字段（ibPYP、ibMYP、ibDP、ibCP、aLevel、ap、canadian、australian、igcse）必须严格填写"有"或"无"，不能填写课程名称、描述或其他任何内容。**
+
+**课程字段查询要求：**
+${existingWebsite ? `- **优先基于提供的网站 ${existingWebsite} 的信息进行判断**\n- 如果网站明确提到某项课程（包括认证信息、课程介绍等），必须填写"有"\n- 如果网站没有提到某项课程，再基于你的知识库进行判断\n- 对于重点搜索的课程字段，请特别仔细地检查网站内容\n` : '- 对于课程字段，请基于你的知识库进行判断\n'}
+- 如果明确知道学校提供该课程，填写"有"
+- 如果无法确定或不知道，填写"无"
+- 不要猜测或编造信息
 
 注意：
-- 如果某个信息无法查询到，请填写"未知"或"无"
+- 对于基础信息字段（国家、城市等），如果无法确定，可以填写"未知"或"无"
+- 对于课程字段，如果无法确定，请填写"无"
 - 请确保返回的JSON格式正确
 - 学校名称必须准确完整
 - 所有课程字段必须严格填写"有"或"无"，不能填写其他内容`;
 
     try {
-        const result = await callDeepseekAPI(prompt);
+        const result = await callHunyuanAPI(prompt);
         
         // 检查AI是否返回错误（如学校是大学）
         if (result && result.error) {
@@ -2843,53 +3296,16 @@ async function querySchoolBasicInfoFromAI(schoolName) {
             console.log(`australian: "${result.australian}"`);
             console.log(`igcse: "${result.igcse}"`);
             console.log('========================================\n');
+            
         }
         
         // 验证返回的数据结构
         if (result && result.name) {
-            // 验证和清理网址
-            let validatedWebsite = validateAndCleanWebsite(result.website);
-            let finalSchoolName = result.name;
-            
-            // 测试网站是否可以访问
-            if (validatedWebsite) {
-                console.log(`\n========== 开始验证学校网站 ==========`);
-                console.log(`用户输入的学校名称: ${schoolName}`);
-                console.log(`AI返回的学校名称: ${result.name}`);
-                console.log(`AI返回的网站地址: ${validatedWebsite}`);
-                
-                const accessTest = await testWebsiteAccess(validatedWebsite);
-                console.log(`网站访问测试结果: ${JSON.stringify(accessTest)}`);
-                
-                if (accessTest.accessible) {
-                    console.log(`✓ 网站可以正常访问`);
-                    
-                    // 如果网站可访问，验证学校名称
-                    const nameVerification = await verifySchoolNameFromWebsite(validatedWebsite, schoolName);
-                    console.log(`学校名称验证结果: ${JSON.stringify(nameVerification)}`);
-                    
-                    if (nameVerification.verified && nameVerification.websiteName) {
-                        if (!nameVerification.isMatch || nameVerification.confidence === 'low') {
-                            // 名称不匹配或置信度低，使用网站上的名称
-                            console.log(`⚠ 学校名称不一致，使用网站名称: ${nameVerification.websiteName}`);
-                            console.log(`  原名称: ${result.name}`);
-                            console.log(`  新名称: ${nameVerification.websiteName}`);
-                            console.log(`  备注: ${nameVerification.notes}`);
-                            finalSchoolName = nameVerification.websiteName;
-                        } else {
-                            console.log(`✓ 学校名称验证一致 (置信度: ${nameVerification.confidence})`);
-                        }
-                    } else {
-                        console.log(`✗ 无法从网站提取学校名称: ${nameVerification.reason}`);
-                    }
-                } else {
-                    console.log(`✗ 网站无法访问: ${accessTest.error}`);
-                    console.log(`将清空网站地址字段`);
-                    validatedWebsite = ''; // 如果网站无法访问，清空网站地址
-                }
-                
-                console.log(`========== 验证完成 ==========\n`);
-            }
+            // 如果有现有网址，使用现有网址；否则验证和清理AI返回的网址
+            const validatedWebsite = existingWebsite 
+                ? existingWebsite 
+                : validateAndCleanWebsite(result.website);
+            const finalSchoolName = result.name;
             
             // 统一处理学校类型
             const unifiedSchoolType = unifyNature(result.nature, finalSchoolName, {
@@ -3004,91 +3420,309 @@ async function querySchoolBasicInfoFromAI(schoolName) {
     }
 }
 
-// 调用Deepseek API
-async function callDeepseekAPI(prompt) {
-    const DEEPSEEK_API_KEY = 'sk-d78c307ad1a84e488f19e87d59107c2e';
+// 初始化腾讯云混元大模型客户端
+const HunyuanClient = tencentcloud.hunyuan.v20230901.Client;
+
+// 从环境变量读取腾讯云密钥
+const tencentSecretId = process.env.TENCENT_CLOUD_SECRET_ID;
+const tencentSecretKey = process.env.TENCENT_CLOUD_SECRET_KEY;
+const tencentRegion = process.env.TENCENT_CLOUD_REGION || 'ap-shanghai';
+
+// 检查环境变量是否设置
+if (!tencentSecretId || !tencentSecretKey) {
+    console.error('❌ 错误：未检测到环境变量 TENCENT_CLOUD_SECRET_ID 或 TENCENT_CLOUD_SECRET_KEY');
+    console.error('❌ 请创建 .env 文件并设置这些环境变量');
+    console.error('❌ 示例：TENCENT_CLOUD_SECRET_ID=your_secret_id');
+    console.error('❌ 示例：TENCENT_CLOUD_SECRET_KEY=your_secret_key');
+    // 如果密钥未设置，将无法使用腾讯云服务，但不阻止服务器启动
+}
+
+const hunyuanClient = new HunyuanClient({
+    credential: {
+        secretId: tencentSecretId,
+        secretKey: tencentSecretKey
+    },
+    region: tencentRegion,
+    profile: {
+        httpProfile: {
+            endpoint: 'hunyuan.tencentcloudapi.com'
+        }
+    }
+});
+
+// 调用 DeepSeek API（用于对比评估等复杂任务）
+// options: { retries, timeout } - 可选的配置项
+async function callDeepSeekAPI(prompt, options = {}) {
+    const { retries = 2, timeout = 180000 } = options; // 默认180秒超时
+    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-d78c307ad1a84e488f19e87d59107c2e';
     const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
     
-    try {
-        const response = await fetch(DEEPSEEK_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'deepseek-chat',
-                messages: [
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
+            try {
+                const response = await fetch(DEEPSEEK_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: '你是一位专业的学校评估专家，擅长根据评估体系对学校进行量化评分和对比分析。'
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        temperature: 0.3,
+                        max_tokens: 4000
+                    }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`DeepSeek API错误: ${response.status} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    throw new Error('DeepSeek API返回格式错误');
+                }
+                
+                const content = data.choices[0].message.content;
+                
+                // 尝试从返回内容中提取JSON
+                let jsonContent = content.trim();
+                jsonContent = jsonContent.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+                
+                const jsonMatch = jsonContent.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    jsonContent = jsonMatch[0];
+                }
+                
+                // 替换中文引号为英文引号
+                jsonContent = jsonContent
+                    .replace(/"/g, '"')
+                    .replace(/"/g, '"')
+                    .replace(/'/g, "'")
+                    .replace(/'/g, "'");
+                
+                try {
+                    return JSON.parse(jsonContent);
+                } catch (parseError) {
+                    try {
+                        let cleanedJson = jsonContent
+                            .replace(/[\u2018\u2019]/g, "'")
+                            .replace(/[\u201C\u201D]/g, '"');
+                        return JSON.parse(cleanedJson);
+                    } catch (secondParseError) {
+                        console.error('JSON解析失败，返回原始内容:', parseError);
+                        console.error('清理后仍然失败:', secondParseError);
+                        console.error('JSON内容预览:', jsonContent.substring(0, 500));
+                        return {
+                            rawContent: content,
+                            error: '无法解析为JSON格式'
+                        };
+                    }
+                }
+            } catch (fetchError) {
+                clearTimeout(timeoutId);
+                
+                if ((fetchError.name === 'AbortError' || 
+                     fetchError.message.includes('timeout') || 
+                     fetchError.message.includes('Connect Timeout') ||
+                     fetchError.code === 'UND_ERR_CONNECT_TIMEOUT') && 
+                    attempt < retries) {
+                    const waitTime = (attempt + 1) * 1000;
+                    console.warn(`DeepSeek API调用超时/连接失败，${waitTime}ms后重试 (${attempt + 1}/${retries})...`);
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    continue;
+                }
+                
+                throw fetchError;
+            }
+        } catch (error) {
+            if (attempt === retries) {
+                console.error(`调用DeepSeek API失败（已重试${retries}次）:`, error);
+            }
+            throw error;
+        }
+    }
+}
+
+// 调用腾讯云混元大模型 API（用于查询学校信息等需要联网搜索的场景）
+// options: { retries, timeout, enableSearch } - 可选的配置项
+//   - retries: 重试次数，默认2次
+//   - timeout: 超时时间（毫秒），默认30秒
+//   - enableSearch: 是否启用联网搜索，默认true
+async function callHunyuanAPI(prompt, options = {}) {
+    const { retries = 2, timeout = 30000, enableSearch = true } = options;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const params = {
+                Model: 'hunyuan-turbo', // 使用混元大模型
+                Messages: [
                     {
-                        role: 'system',
-                        content: '你是一位专业的学校评估专家，擅长根据评估体系对学校进行量化评分和对比分析。'
+                        Role: 'system',
+                        Content: '你是一位专业的学校评估专家，擅长根据评估体系对学校进行量化评分和对比分析。'
                     },
                     {
-                        role: 'user',
-                        content: prompt
+                        Role: 'user',
+                        Content: prompt
                     }
                 ],
-                temperature: 0.3,
-                max_tokens: 4000
-            })
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Deepseek API错误: ${response.status} - ${errorText}`);
-        }
-        
-        const data = await response.json();
-        
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            throw new Error('Deepseek API返回格式错误');
-        }
-        
-        const content = data.choices[0].message.content;
-        
-        // 尝试从返回内容中提取JSON
-        let jsonContent = content.trim();
-        
-        // 移除markdown代码块标记
-        jsonContent = jsonContent.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
-        
-        // 提取JSON对象（匹配第一个{到最后一个}）
-        const jsonMatch = jsonContent.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            jsonContent = jsonMatch[0];
-        }
-        
-        // 替换中文引号为英文引号
-        jsonContent = jsonContent
-            .replace(/"/g, '"')  // 中文左双引号
-            .replace(/"/g, '"')  // 中文右双引号
-            .replace(/'/g, "'")  // 中文左单引号
-            .replace(/'/g, "'"); // 中文右单引号
-        
-        try {
-            return JSON.parse(jsonContent);
-        } catch (parseError) {
-            // 如果解析失败，尝试更激进的清理
-            try {
-                // 移除所有可能的非标准字符，但保留JSON结构
-                let cleanedJson = jsonContent
-                    .replace(/[\u2018\u2019]/g, "'")  // 其他单引号变体
-                    .replace(/[\u201C\u201D]/g, '"'); // 其他双引号变体
-                return JSON.parse(cleanedJson);
-            } catch (secondParseError) {
-                // 如果还是失败，返回原始内容
-                console.error('JSON解析失败，返回原始内容:', parseError);
-                console.error('清理后仍然失败:', secondParseError);
-                console.error('JSON内容预览:', jsonContent.substring(0, 500));
-                return {
-                    rawContent: content,
-                    error: '无法解析为JSON格式'
-                };
+                Stream: false, // 非流式输出
+                Temperature: 0.3, // 控制输出多样性，取值范围 [0.0, 2.0]
+                EnableEnhancement: enableSearch, // 启用功能增强（包括联网搜索）
+                SearchInfo: enableSearch, // 返回搜索信息（仅在启用搜索时有效）
+                Citation: enableSearch, // 搜索引文角标开关（仅在启用搜索时有效）
+                // 注意：ChatCompletions 接口不支持 MaxCompletionTokens 参数
+                // 如需控制输出长度，请在提示词中明确要求
+            };
+            
+            // 使用 Promise 包装 SDK 调用
+            const response = await new Promise((resolve, reject) => {
+                // 设置超时
+                const timeoutId = setTimeout(() => {
+                    reject(new Error('API调用超时'));
+                }, timeout);
+                
+                hunyuanClient.ChatCompletions(params)
+                    .then((data) => {
+                        clearTimeout(timeoutId);
+                        resolve(data);
+                    })
+                    .catch((err) => {
+                        clearTimeout(timeoutId);
+                        reject(err);
+                    });
+            });
+            
+            // 调试：打印返回数据的结构（仅前500字符，避免日志过长）
+            if (!response) {
+                console.error('API返回为空');
+                throw new Error('腾讯云混元大模型API返回为空');
             }
+            
+            // SDK可能返回 { Response: {...} } 格式，也可能直接返回响应对象
+            let responseData = response;
+            if (response.Response) {
+                responseData = response.Response;
+            }
+            
+            // 调试：打印响应结构（仅用于调试，生产环境可注释）
+            // console.log('API响应结构:', JSON.stringify(response, null, 2).substring(0, 500));
+            
+            // 检查响应格式
+            if (!responseData.Choices || !Array.isArray(responseData.Choices) || responseData.Choices.length === 0) {
+                console.error('响应中没有Choices数组或数组为空');
+                console.error('响应结构:', JSON.stringify(response, null, 2).substring(0, 1000));
+                throw new Error('腾讯云混元大模型API返回格式错误：缺少Choices数组或数组为空');
+            }
+            
+            if (!responseData.Choices[0].Message) {
+                console.error('Choices[0]中没有Message字段');
+                console.error('Choices结构:', JSON.stringify(responseData.Choices[0], null, 2));
+                throw new Error('腾讯云混元大模型API返回格式错误：缺少Message字段');
+            }
+            
+            const content = responseData.Choices[0].Message.Content;
+            
+            if (!content) {
+                console.error('Message中没有Content字段');
+                console.error('Message结构:', JSON.stringify(responseData.Choices[0].Message, null, 2));
+                throw new Error('腾讯云混元大模型API返回格式错误：缺少Content字段');
+            }
+            
+            // 尝试从返回内容中提取JSON
+            let jsonContent = content.trim();
+            
+            // 移除markdown代码块标记
+            jsonContent = jsonContent.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+            
+            // 提取JSON对象（匹配第一个{到最后一个}）
+            const jsonMatch = jsonContent.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                jsonContent = jsonMatch[0];
+            }
+            
+            // 替换中文引号为英文引号
+            jsonContent = jsonContent
+                .replace(/"/g, '"')  // 中文左双引号
+                .replace(/"/g, '"')  // 中文右双引号
+                .replace(/'/g, "'")  // 中文左单引号
+                .replace(/'/g, "'"); // 中文右单引号
+            
+            try {
+                return JSON.parse(jsonContent);
+            } catch (parseError) {
+                // 如果解析失败，尝试更激进的清理
+                try {
+                    // 移除所有可能的非标准字符，但保留JSON结构
+                    let cleanedJson = jsonContent
+                        .replace(/[\u2018\u2019]/g, "'")  // 其他单引号变体
+                        .replace(/[\u201C\u201D]/g, '"'); // 其他双引号变体
+                    return JSON.parse(cleanedJson);
+                } catch (secondParseError) {
+                    // 如果还是失败，返回原始内容
+                    console.error('JSON解析失败，返回原始内容:', parseError);
+                    console.error('清理后仍然失败:', secondParseError);
+                    console.error('JSON内容预览:', jsonContent.substring(0, 500));
+                    return {
+                        rawContent: content,
+                        error: '无法解析为JSON格式'
+                    };
+                }
+            }
+        } catch (error) {
+            // 检查是否是权限错误
+            if (error.code === 'AuthFailure.UnauthorizedOperation' || 
+                (error.message && error.message.includes('not authorized'))) {
+                console.error('\n❌ 腾讯云混元大模型权限错误：');
+                console.error('错误代码:', error.code || 'AuthFailure.UnauthorizedOperation');
+                console.error('错误信息:', error.message);
+                console.error('\n📋 解决方案：');
+                console.error('1. 登录腾讯云控制台：https://console.cloud.tencent.com/');
+                console.error('2. 进入「访问管理」→「策略」：https://console.cloud.tencent.com/cam/policy');
+                console.error('3. 搜索并添加「QcloudHunyuanFullAccess」策略（混元大模型全读写访问权限）');
+                console.error('4. 将策略关联到您的 API 密钥或子账号');
+                console.error('5. 确保已开通混元大模型服务：https://console.cloud.tencent.com/hunyuan');
+                console.error('\n⚠️  权限错误不会自动重试，请先解决权限问题后再试。\n');
+                throw error; // 权限错误不重试
+            }
+            
+            // 如果是超时错误或连接错误，且还有重试次数，则重试
+            if ((error.message && (error.message.includes('timeout') || error.message.includes('超时'))) && 
+                attempt < retries) {
+                const waitTime = (attempt + 1) * 1000; // 递增等待时间：1s, 2s, 3s...
+                console.warn(`腾讯云混元大模型API调用超时/连接失败，${waitTime}ms后重试 (${attempt + 1}/${retries})...`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                continue;
+            }
+            
+            // 最后一次尝试失败，记录错误并抛出
+            if (attempt === retries) {
+                console.error(`调用腾讯云混元大模型API失败（已重试${retries}次）:`, error);
+                if (error.code) {
+                    console.error('错误代码:', error.code);
+                }
+                if (error.requestId) {
+                    console.error('请求ID:', error.requestId);
+                }
+            }
+            throw error;
         }
-    } catch (error) {
-        console.error('调用Deepseek API失败:', error);
-        throw error;
     }
 }
 

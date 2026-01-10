@@ -42,6 +42,13 @@
             margin-bottom: 48px;
         }
 
+        .page-title .logo-image {
+            display: block;
+            margin: 0 auto 24px;
+            max-width: 120px;
+            height: auto;
+        }
+
         .page-title h1 {
             font-size: 48px;
             color: #333333;
@@ -297,11 +304,36 @@
             align-items: center;
         }
 
+        .selected-schools-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
         .selected-schools {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            flex: 1;
+        }
+
+        .compare-tip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #999999;
+        }
+
+        .compare-tip .tip-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .compare-tip .tip-text {
+            line-height: 1.5;
         }
 
         .selected-school-tag {
@@ -510,6 +542,15 @@
             .compare-bar-content {
                 flex-direction: column;
                 gap: 16px;
+            }
+
+            .selected-schools-wrapper {
+                width: 100%;
+            }
+
+            .compare-tip {
+                width: 100%;
+                font-size: 13px;
             }
 
             .compare-actions {
@@ -725,6 +766,66 @@
         .info-item-value.empty {
             color: #999999;
             font-style: italic;
+        }
+
+        /* 可选卡片样式 */
+        .info-item.selectable {
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .info-item.selectable:hover {
+            border-color: #F75C62;
+            background: #FFF5F5;
+        }
+
+        .info-item.selectable.selected {
+            border-color: #F75C62;
+            background: #FFF5F5;
+            box-shadow: 0 2px 8px rgba(247, 92, 98, 0.2);
+        }
+
+        .info-item-checkbox {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 4px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .info-item.selectable:hover .info-item-checkbox {
+            border-color: #F75C62;
+        }
+
+        .info-item.selectable.selected .info-item-checkbox {
+            border-color: #F75C62;
+            background: #F75C62;
+        }
+
+        .info-item.selectable.selected .info-item-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* 排除某些不可选的字段 */
+        .info-item.selectable.excluded {
+            cursor: default;
+        }
+
+        .info-item.selectable.excluded:hover {
+            border-color: #E5E7EB;
+            background: #ffffff;
         }
 
         .badge-list {
@@ -1332,6 +1433,132 @@
             cursor: not-allowed;
         }
 
+        /* 重新搜索按钮样式 */
+        .re-search-btn {
+            padding: 12px 32px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #E5E7EB;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .re-search-btn:hover {
+            border-color: #F75C62;
+            color: #F75C62;
+            background: #FFF5F5;
+        }
+
+        .re-search-btn:active {
+            transform: scale(0.98);
+        }
+
+        .re-search-btn:disabled {
+            background: #F9FAFB;
+            border-color: #CCCCCC;
+            color: #999999;
+            cursor: not-allowed;
+        }
+
+        .re-search-btn:disabled:hover {
+            background: #F9FAFB;
+            border-color: #CCCCCC;
+            color: #999999;
+        }
+
+        /* 编辑网址按钮样式 */
+        .edit-website-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            color: #666666;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .edit-website-btn:hover {
+            background: #F75C62;
+            border-color: #F75C62;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .edit-website-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 网址编辑输入框样式 */
+        .website-edit-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #F75C62;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-top: 8px;
+        }
+
+        .website-edit-input:focus {
+            outline: none;
+            border-color: #F75C62;
+            box-shadow: 0 0 0 3px rgba(247, 92, 98, 0.1);
+        }
+
+        .website-edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .website-edit-save-btn {
+            padding: 6px 16px;
+            background: #F75C62;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .website-edit-save-btn:hover {
+            background: #e54a50;
+        }
+
+        .website-edit-cancel-btn {
+            padding: 6px 16px;
+            background: transparent;
+            color: #666666;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .website-edit-cancel-btn:hover {
+            border-color: #999999;
+            color: #333333;
+        }
+
         @media (max-width: 768px) {
             .modal-container {
                 max-width: 100%;
@@ -1388,14 +1615,15 @@
                     <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;"></a>
                 </div>
                 <nav>
-                    <a href="schoolinsight-intro.html" class="login-btn">关于 School Insight</a>
-                    <a href="search-ranking.html" class="ranking-btn">搜索排名</a>
+                    <a href="schoolinsight-intro.html" class="login-btn">关于 <span style="font-weight: bold; color: #F75C62;">Si</span></a>
+                    <a href="SchoolInsight-ranking.html" class="ranking-btn">搜索排名</a>
                     <a href="download.html" class="download-btn">MooApp Family</a>
                 </nav>
             </div>
         </header>
         <main class="schoolinsight-main">
             <div class="page-title">
+                <img src="images/SchoolinsightLogo2.png" alt="School Insight Logo" class="logo-image">
                 <h1>School Insight</h1>
                 <p>AI大模型评价工具，用数据定义卓越</p>
             </div>
@@ -1483,8 +1711,14 @@
         <!-- 对比操作栏 -->
         <div class="compare-bar" id="compareBar">
             <div class="compare-bar-content">
-                <div class="selected-schools" id="selectedSchools">
-                    <!-- 选中的学校标签将在这里显示 -->
+                <div class="selected-schools-wrapper">
+                    <div class="selected-schools" id="selectedSchools">
+                        <!-- 选中的学校标签将在这里显示 -->
+                    </div>
+                    <div class="compare-tip" id="compareTip" style="display: none;">
+                        <span class="tip-icon">💡</span>
+                        <span class="tip-text">请继续搜索学校加入对比...</span>
+                    </div>
                 </div>
                 <div class="compare-actions">
                     <button class="compare-btn" id="compareBtn" disabled>AI评估 (0)</button>

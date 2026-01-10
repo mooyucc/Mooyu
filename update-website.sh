@@ -95,11 +95,30 @@ ssh root@122.51.133.41 "cp /root/Mooyu/server.js /root/Mooyu/server.js.backup.$(
 echo "7. 上传后端服务器代码..."
 scp "$LOCAL_DIR/server.js" root@122.51.133.41:/root/Mooyu/
 
-echo "8. 上传 package.json（如果存在）..."
+echo "7.1. 上传评估体系配置文件..."
+if [ -f "$LOCAL_DIR/evaluation-system.js" ]; then
+    scp "$LOCAL_DIR/evaluation-system.js" root@122.51.133.41:/root/Mooyu/
+    echo "  ✓ 已上传: evaluation-system.js"
+else
+    echo "  ⚠ 警告: evaluation-system.js 不存在，跳过"
+fi
+
+echo "7.2. 上传 PM2 配置文件（如果存在）..."
+if [ -f "$LOCAL_DIR/ecosystem.config.js" ]; then
+    scp "$LOCAL_DIR/ecosystem.config.js" root@122.51.133.41:/root/Mooyu/
+    echo "  ✓ 已上传: ecosystem.config.js"
+else
+    echo "  ⚠ 警告: ecosystem.config.js 不存在，跳过"
+fi
+
+echo "8. 上传 package.json 和 package-lock.json（如果存在）..."
 if [ -f "$LOCAL_DIR/package.json" ]; then
     scp "$LOCAL_DIR/package.json" root@122.51.133.41:/root/Mooyu/
+    if [ -f "$LOCAL_DIR/package-lock.json" ]; then
+        scp "$LOCAL_DIR/package-lock.json" root@122.51.133.41:/root/Mooyu/
+    fi
     echo "9. 安装/更新后端依赖..."
-    ssh root@122.51.133.41 "cd /root/Mooyu && npm install"
+    ssh root@122.51.133.41 "cd /root/Mooyu && npm ci"
 else
     echo "9. 跳过依赖更新（本地无 package.json）..."
 fi

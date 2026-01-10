@@ -213,7 +213,7 @@
             color: #666666 !important;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 900px) {
             #page-mooyulab .mooyulab-main {
                 padding: 0 32px 100px;
             }
@@ -224,12 +224,13 @@
 
             #page-mooyulab .app-family-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             #page-mooyulab .mooyulab-main {
-                padding: 0 24px 100px;
+                padding: 0 16px 100px;
             }
 
             #page-mooyulab .download-title {
@@ -241,7 +242,7 @@
             }
 
             #page-mooyulab .app-family-grid {
-                gap: 28px;
+                gap: 12px;
                 grid-template-columns: 1fr;
             }
 
@@ -500,20 +501,41 @@
                 </div>
                 <div class="app-card center">
                     <div class="app-icon-wrapper">
-                        <a href="schoolinsight.html"><img src="images/Mooyu.png" alt="MooSchool" class="app-icon" id="goto-mooschool-from-mooyulab"></a>
+                        <a href="mooplan.html"><img src="images/iconMooPlan.png" alt="MooPlan" class="app-icon" id="goto-mooplan-from-mooyulab"></a>
                     </div>
                     <div class="app-title-wrapper">
-                        <div class="app-title">MooSchool</div>
+                        <div class="app-title">MooPlan</div>
                     </div>
                     <div class="app-description-wrapper">
                         <div class="app-description">
-                            <div class="app-description-cn">学校查询与对比工具</div>
-                            <div class="app-description-en">School Query and Comparison Tool</div>
+                            <div class="app-description-cn">多项目里程碑管理工具</div>
+                            <div class="app-description-en">Multi-project Milestone Management Tool</div>
                         </div>
                     </div>
                     <div class="button-container">
-                        <a href="schoolinsight.html" class="app-download-btn" id="goto-schoolinsight-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <span>进入 School Insight</span>
+                        <a href="download/MooPlan_free.dmg" class="app-download-btn" id="DownloadWFFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>Download Mac</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                    </div>
+                </div>
+                <div class="app-card center">
+                    <div class="app-icon-wrapper">
+                        <a href="moodata.html"><img src="images/iconMooData.png" alt="MooData" class="app-icon" id="goto-moodata-from-mooyulab"></a>
+                    </div>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooData</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">多项目数据管理工具</div>
+                            <div class="app-description-en">Multi-project Data Management Tool</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="download/MooData_free.dmg" class="app-download-btn" id="DownloadMDFree" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>Download Mac</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
                         </a>
                     </div>
                 </div>

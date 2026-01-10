@@ -33,6 +33,7 @@ const schoolsListView = document.getElementById('schoolsListView');
 const compareView = document.getElementById('compareView');
 const compareBar = document.getElementById('compareBar');
 const selectedSchools = document.getElementById('selectedSchools');
+const compareTip = document.getElementById('compareTip');
 const compareBtn = document.getElementById('compareBtn');
 const basicCompareBtn = document.getElementById('basicCompareBtn');
 const clearBtn = document.getElementById('clearBtn');
@@ -433,6 +434,13 @@ function updateCompareBar() {
         </div>
     `).join('');
     
+    // 显示/隐藏提醒文字：当只有1所学校时显示提醒
+    if (selectedSchoolIds.size === 1 && compareTip) {
+        compareTip.style.display = 'flex';
+    } else if (compareTip) {
+        compareTip.style.display = 'none';
+    }
+    
     // 更新对比按钮
     compareBtn.textContent = `AI评估 (${selectedSchoolIds.size})`;
     compareBtn.disabled = selectedSchoolIds.size < 2;
@@ -544,10 +552,18 @@ function renderCompareTable(schools) {
                 { key: 'sequenceNumber', label: '序号' },
                 { key: 'name', label: '学校名称' },
                 { key: 'website', label: '网址', isLink: true },
-                { key: 'country', label: '国家' },
                 { key: 'city', label: '城市' },
                 { key: 'schoolType', label: '学校类型' },
-                { key: 'coveredStages', label: '涵盖学段' }
+                { key: 'affiliatedGroup', label: '隶属教育集团' }
+            ]
+        },
+        {
+            name: '学段设置',
+            fields: [
+                { key: 'kindergarten', label: '幼儿园' },
+                { key: 'primary', label: '小学' },
+                { key: 'juniorHigh', label: '初中' },
+                { key: 'seniorHigh', label: '高中' }
             ]
         },
         {
@@ -1299,15 +1315,8 @@ function renderModalContent(school) {
                 { label: '学校名称', key: 'name' },
                 { label: '网址', key: 'website', isLink: true, alwaysShow: true },
                 { label: '学校类型', key: 'schoolType' },
-                { label: '涵盖学段', key: 'coveredStages' },
+                { label: '城市', key: 'city' },
                 { label: '隶属教育集团', key: 'affiliatedGroup', alwaysShow: true, isClickable: true }
-            ]
-        },
-        {
-            title: '地理位置',
-            items: [
-                { label: '国家', key: 'country' },
-                { label: '城市', key: 'city' }
             ]
         },
         {
@@ -1343,6 +1352,7 @@ function renderModalContent(school) {
     
     // 生成HTML
     let html = '';
+    let hasShownSummary = false;
     categories.forEach(category => {
         const items = category.items.filter(item => {
             // 如果设置了alwaysShow，即使值为空也显示
@@ -1409,16 +1419,79 @@ function renderModalContent(school) {
                 }
             }
             
+            // 如果是网址字段，添加编辑按钮
+            const editButton = item.key === 'website' 
+                ? `<button class="edit-website-btn" data-school-id="${school._id}" data-current-website="${escapeHtml(value || '')}" title="编辑网址">
+                    <span style="font-size: 14px;">✏️</span>
+                   </button>`
+                : '';
+            
             html += `
-                <div class="info-item">
+                <div class="info-item" ${item.key === 'website' ? 'style="position: relative;"' : ''}>
                     <div class="info-item-label">${escapeHtml(item.label)}</div>
                     <div class="info-item-value ${valueClass}">${displayValue}</div>
+                    ${editButton}
                 </div>
             `;
         });
         
         html += `</div></div>`;
+        
+        // 在基本信息分类之后添加最终总结（只显示一次）
+        if (!hasShownSummary && category.title === '基本信息') {
+            // 解析并显示最终总结
+            if (school['AI评估_最终总结_JSON']) {
+                try {
+                    const summaryData = typeof school['AI评估_最终总结_JSON'] === 'string' 
+                        ? JSON.parse(school['AI评估_最终总结_JSON']) 
+                        : school['AI评估_最终总结_JSON'];
+                    
+                    if (summaryData && (summaryData.strengths || summaryData.characteristics || summaryData.suitableFor)) {
+                        html += `<div class="info-section" style="margin-top: 24px;">`;
+                        html += `<div class="section-title">Ai 总结</div>`;
+                        html += `<div style="background: #FAF8F5; border-radius: 12px; padding: 20px; border: 1px solid #EAE6DF;">`;
+                        
+                        if (summaryData.strengths) {
+                            html += `<div style="margin-bottom: 16px;">`;
+                            html += `<div style="font-weight: 600; color: #333333; margin-bottom: 8px; font-size: 14px;">优势：</div>`;
+                            html += `<div style="color: #666666; line-height: 1.6; font-size: 14px;">${escapeHtml(summaryData.strengths)}</div>`;
+                            html += `</div>`;
+                        }
+                        
+                        if (summaryData.characteristics) {
+                            html += `<div style="margin-bottom: 16px;">`;
+                            html += `<div style="font-weight: 600; color: #333333; margin-bottom: 8px; font-size: 14px;">特点：</div>`;
+                            html += `<div style="color: #666666; line-height: 1.6; font-size: 14px;">${escapeHtml(summaryData.characteristics)}</div>`;
+                            html += `</div>`;
+                        }
+                        
+                        if (summaryData.suitableFor) {
+                            html += `<div>`;
+                            html += `<div style="font-weight: 600; color: #333333; margin-bottom: 8px; font-size: 14px;">适合的家庭类型：</div>`;
+                            html += `<div style="color: #666666; line-height: 1.6; font-size: 14px;">${escapeHtml(summaryData.suitableFor)}</div>`;
+                            html += `</div>`;
+                        }
+                        
+                        html += `</div></div>`;
+                        hasShownSummary = true;
+                    }
+                } catch (error) {
+                    console.error('解析最终总结JSON失败:', error);
+                }
+            }
+        }
     });
+    
+    // 添加重新搜索按钮（不在卡片容器中）
+    html += `
+        <div style="margin-top: 32px; padding-top: 24px; border-top: 2px solid #E5E7EB; text-align: center;">
+            <button class="re-search-btn" id="reSearchBtn" data-school-id="${school._id}" data-school-name="${escapeHtml(school.name || '')}">
+                <span style="font-size: 16px;">🔄</span>
+                <span>重新搜索</span>
+            </button>
+            <p style="margin-top: 12px; font-size: 12px; color: #999999; line-height: 1.5;">系统将调用 AI 按照学校名称重新搜索并更新数据库数据</p>
+        </div>
+    `;
     
     modalBody.innerHTML = html || '<div class="info-section"><p style="text-align:center;color:#999;">暂无详细信息</p></div>';
     
@@ -1434,6 +1507,271 @@ function renderModalContent(school) {
             }
         });
     });
+    
+    // 绑定重新搜索按钮点击事件
+    const reSearchBtn = modalBody.querySelector('#reSearchBtn');
+    if (reSearchBtn) {
+        reSearchBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const schoolId = reSearchBtn.getAttribute('data-school-id');
+            const schoolName = reSearchBtn.getAttribute('data-school-name');
+            
+            if (schoolId && schoolName) {
+                await reSearchSchool(schoolId, schoolName, reSearchBtn);
+            }
+        });
+    }
+    
+    // 绑定编辑网址按钮点击事件
+    const editWebsiteBtns = modalBody.querySelectorAll('.edit-website-btn');
+    editWebsiteBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const schoolId = btn.getAttribute('data-school-id');
+            const currentWebsite = btn.getAttribute('data-current-website');
+            const infoItem = btn.closest('.info-item');
+            const valueDiv = infoItem.querySelector('.info-item-value');
+            
+            // 创建编辑界面
+            const originalContent = valueDiv.innerHTML;
+            const currentValue = currentWebsite || '';
+            
+            // 创建输入框和按钮
+            const editHtml = `
+                <div style="margin-top: 8px;">
+                    <input type="text" class="website-edit-input" value="${escapeHtml(currentValue)}" placeholder="请输入网址" />
+                    <div class="website-edit-actions">
+                        <button class="website-edit-save-btn">保存</button>
+                        <button class="website-edit-cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+            
+            // 隐藏链接，显示编辑界面
+            const linkElement = valueDiv.querySelector('a');
+            if (linkElement) {
+                linkElement.style.display = 'none';
+            } else {
+                valueDiv.style.display = 'none';
+            }
+            
+            valueDiv.insertAdjacentHTML('afterend', editHtml);
+            btn.style.display = 'none';
+            
+            const editContainer = valueDiv.nextElementSibling;
+            const input = editContainer.querySelector('.website-edit-input');
+            const saveBtn = editContainer.querySelector('.website-edit-save-btn');
+            const cancelBtn = editContainer.querySelector('.website-edit-cancel-btn');
+            
+            // 聚焦输入框
+            input.focus();
+            input.select();
+            
+            // 保存按钮事件
+            saveBtn.addEventListener('click', async () => {
+                const newWebsite = input.value.trim();
+                
+                if (!newWebsite) {
+                    alert('网址不能为空');
+                    return;
+                }
+                
+                // 禁用按钮
+                saveBtn.disabled = true;
+                saveBtn.textContent = '保存中...';
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/schools/${schoolId}/website`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ website: newWebsite })
+                    });
+                    
+                    if (!response.ok) {
+                        let errorMessage = '更新失败';
+                        try {
+                            const contentType = response.headers.get('content-type');
+                            if (contentType && contentType.includes('application/json')) {
+                                const errorData = await response.json();
+                                errorMessage = errorData.message || `服务器错误 (${response.status})`;
+                            } else {
+                                const errorText = await response.text();
+                                errorMessage = errorText || `服务器错误 (${response.status})`;
+                            }
+                        } catch (e) {
+                            errorMessage = `服务器错误 (${response.status})`;
+                        }
+                        throw new Error(errorMessage);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // 更新显示
+                    const url = newWebsite.startsWith('http://') || newWebsite.startsWith('https://') 
+                        ? newWebsite 
+                        : `https://${newWebsite}`;
+                    valueDiv.innerHTML = `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color: #F75C62; text-decoration: none; word-break: break-all;">${escapeHtml(newWebsite)}</a>`;
+                    
+                    // 更新按钮的 data 属性
+                    btn.setAttribute('data-current-website', newWebsite);
+                    
+                    // 更新 allSchools 中的数据
+                    const schoolIndex = allSchools.findIndex(s => s._id === schoolId);
+                    if (schoolIndex !== -1) {
+                        allSchools[schoolIndex].website = data.school.website;
+                    }
+                    
+                    // 移除编辑界面
+                    editContainer.remove();
+                    valueDiv.style.display = '';
+                    btn.style.display = '';
+                    
+                    alert('网址更新成功！');
+                } catch (error) {
+                    console.error('更新网址失败:', error);
+                    alert('更新失败: ' + error.message);
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '保存';
+                }
+            });
+            
+            // 取消按钮事件
+            cancelBtn.addEventListener('click', () => {
+                editContainer.remove();
+                if (linkElement) {
+                    linkElement.style.display = '';
+                } else {
+                    valueDiv.style.display = '';
+                }
+                btn.style.display = '';
+            });
+            
+            // 按 Enter 键保存
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveBtn.click();
+                }
+            });
+            
+            // 按 ESC 键取消
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    cancelBtn.click();
+                }
+            });
+        });
+    });
+}
+
+// 重新搜索学校（更新学校数据库数据）
+async function reSearchSchool(schoolId, schoolName, buttonElement) {
+    if (!schoolId || !schoolName) {
+        alert('无法获取学校信息');
+        return;
+    }
+    
+    // 保存按钮原始状态
+    const originalText = buttonElement.innerHTML;
+    const wasDisabled = buttonElement.disabled;
+    
+    // 更新按钮状态为加载中
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = `<span style="font-size: 16px;">⏳</span><span>AI 重新搜索中...</span>`;
+    buttonElement.style.borderColor = '#CCCCCC';
+    buttonElement.style.color = '#999999';
+    buttonElement.style.cursor = 'not-allowed';
+    
+    try {
+        // 调用重新搜索接口，使用 forceRefresh 参数强制重新搜索
+        const response = await fetch(`${API_BASE}/api/schools/create-from-name`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                schoolName: schoolName,
+                schoolId: schoolId,  // 传递学校ID，以便后端获取现有网址
+                forceRefresh: true  // 强制重新搜索，即使学校已存在也调用 AI 搜索并更新数据
+            })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('重新搜索失败:', response.status, errorText);
+            throw new Error(`重新搜索失败: ${response.status} ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('服务器返回非JSON响应:', text.substring(0, 200));
+            throw new Error('服务器返回格式错误');
+        }
+        
+        const data = await response.json();
+        
+        if (data.school) {
+            // 更新 allSchools 中的学校数据
+            const index = allSchools.findIndex(s => s._id === data.school._id);
+            if (index !== -1) {
+                allSchools[index] = data.school;
+            }
+            
+            // 如果选中的学校中有这个学校，也要更新
+            if (selectedSchoolsMap.has(data.school._id)) {
+                selectedSchoolsMap.set(data.school._id, data.school);
+            }
+            
+            // 重新渲染模态框内容
+            renderModalContent(data.school);
+            
+            // 如果学校列表已显示，重新渲染学校列表以显示更新后的数据
+            if (schoolsGrid && schoolsGrid.style.display !== 'none') {
+                renderSchools(allSchools);
+            }
+            
+            // 显示成功提示
+            const successMsg = document.createElement('div');
+            successMsg.textContent = 'AI 重新搜索成功！学校数据已更新。';
+            successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10B981; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; font-size: 14px; font-weight: 500;';
+            document.body.appendChild(successMsg);
+            
+            // 3秒后移除提示
+            setTimeout(() => {
+                if (successMsg.parentNode) {
+                    successMsg.parentNode.removeChild(successMsg);
+                }
+            }, 3000);
+        } else {
+            throw new Error(data.message || '重新搜索失败：未返回学校数据');
+        }
+    } catch (error) {
+        console.error('重新搜索失败:', error);
+        
+        // 显示错误提示
+        const errorMsg = document.createElement('div');
+        errorMsg.textContent = `重新搜索失败: ${error.message}`;
+        errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #F75C62; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; font-size: 14px; font-weight: 500;';
+        document.body.appendChild(errorMsg);
+        
+        // 3秒后移除提示
+        setTimeout(() => {
+            if (errorMsg.parentNode) {
+                errorMsg.parentNode.removeChild(errorMsg);
+            }
+        }, 3000);
+    } finally {
+        // 恢复按钮状态
+        buttonElement.disabled = wasDisabled;
+        buttonElement.innerHTML = originalText;
+        // 移除内联样式，让 CSS 类控制样式
+        buttonElement.style.borderColor = '';
+        buttonElement.style.color = '';
+        buttonElement.style.cursor = '';
+        buttonElement.style.background = '';
+    }
 }
 
 // 根据教育集团加载学校列表
