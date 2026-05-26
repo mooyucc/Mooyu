@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Vocab Ai"用户隐私政策</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .lang-btn.active {
+            background: #007AFF;
+            color: white;
+        }
+        .lang-btn:hover {
+            color: #007AFF;
+        }
+        .lang-btn.active:hover {
+            color: white;
+        }
+        .content-lang {
+            display: none;
+        }
+        .content-lang.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="zh" id="btn-zh">中文</button>
+        <button class="lang-btn" data-lang="en" id="btn-en">English</button>
+    </div>
+    <main class="page page-content" style="max-width:800px;margin:0 auto;padding:48px 24px;line-height:1.8;">
+        <div id="content-zh" class="content-lang active">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"Vocab Ai"用户隐私政策</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2026 年 1 月 18 日</p>
+
+            <section style="margin-bottom:32px;">
+                <p>欢迎使用 Vocab Ai！我们非常重视您的隐私保护和个人信息安全。本隐私政策说明我们如何收集、使用、存储和保护您的个人信息。在使用我们的服务前，请您仔细阅读并充分理解本隐私政策。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">一、基本信息</h2>
+                <ul style="padding-left:20px;">
+                    <li><strong>应用名称：</strong>Vocab Ai</li>
+                    <li><strong>开发者：</strong>Vocab Ai Team</li>
+                    <li><strong>联系方式：</strong>如需联系，请通过应用内反馈功能与我们取得联系。</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">二、我们收集的信息</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.1 您主动提供的信息</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>单词数据：</strong>您手动添加或通过相机识别添加的单词、释义、词性、音标、例句等学习内容</li>
+                    <li><strong>学习记录：</strong>您的学习进度、复习记录、学习设置等</li>
+                    <li><strong>账号信息（如适用）：</strong>如果您使用 iCloud 同步功能，相关信息将关联到您的 Apple ID</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 自动收集的信息</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>设备信息：</strong>设备型号、操作系统版本、应用版本等基础信息</li>
+                    <li><strong>使用数据：</strong>应用功能使用情况、性能数据、错误日志等（用于改善应用体验）</li>
+                    <li><strong>iCloud 数据：</strong>如果您启用了 iCloud 同步功能，您的单词数据将存储在您的 iCloud 账户中</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI 服务相关</h3>
+                <p>当您使用 AI 自动填充、AI 生成例句等功能时，我们会将您输入的单词发送至 Deepseek API 服务，以获取相应的释义和例句。我们不会存储您向 AI 服务发送的具体内容。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">三、信息使用目的</h2>
+                <p>我们收集和使用您的信息用于以下目的：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 提供核心功能：</strong>为您提供单词学习、复习、记忆管理等核心功能</li>
+                    <li><strong>2. 数据同步：</strong>通过 iCloud 在您的多设备间同步学习数据</li>
+                    <li><strong>3. AI 服务：</strong>为您提供 AI 智能填充、例句生成等功能</li>
+                    <li><strong>4. 改善服务：</strong>分析使用情况，优化应用性能和用户体验</li>
+                    <li><strong>5. 技术支持：</strong>解决您在使用过程中遇到的问题</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">四、信息存储和安全</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 数据存储位置</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>本地存储：</strong>您的单词数据主要存储在您的设备本地</li>
+                    <li><strong>iCloud 存储：</strong>如果您启用了 iCloud 同步，数据将存储在您的 iCloud 账户中，由 Apple 负责数据安全</li>
+                    <li><strong>第三方服务：</strong>我们使用 Deepseek API 提供 AI 功能，相关数据处理遵循其隐私政策</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 数据安全措施</h3>
+                <p>我们采用行业标准的安全技术和管理措施保护您的个人信息：</p>
+                <ul style="padding-left:20px;">
+                    <li>使用端到端加密保护数据传输</li>
+                    <li>采用访问控制和权限管理机制</li>
+                    <li>定期进行安全评估和漏洞修复</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 数据保留期限</h3>
+                <ul style="padding-left:20px;">
+                    <li>您的单词数据将保留至您主动删除或卸载应用</li>
+                    <li>如您删除账号，相关数据将被删除（除法律法规要求保留的信息外）</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">五、第三方服务</h2>
+                <p>我们可能使用以下第三方服务：</p>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple 服务</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>iCloud：</strong>用于数据同步和备份</li>
+                    <li><strong>StoreKit：</strong>用于应用内购买和订阅管理</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 AI 服务</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Deepseek API：</strong>用于提供 AI 智能填充和例句生成功能。当您使用这些功能时，相关数据会被发送至 Deepseek 服务进行处理。</li>
+                </ul>
+
+                <p>以上第三方服务有其独立的隐私政策，我们建议您仔细阅读。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">六、您的权利</h2>
+                <p>根据相关法律法规，您对自己的个人信息享有以下权利：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 访问权：</strong>您可以随时查看和管理您存储在应用中的数据</li>
+                    <li><strong>2. 更正权：</strong>您可以随时修改您的单词数据和学习记录</li>
+                    <li><strong>3. 删除权：</strong>您可以随时删除应用中的数据，或通过卸载应用删除所有本地数据</li>
+                    <li><strong>4. 撤回同意权：</strong>您可以随时关闭 iCloud 同步或停止使用相关功能</li>
+                    <li><strong>5. 数据导出（如适用）：</strong>您可以通过应用功能导出您的学习数据</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">七、儿童隐私保护</h2>
+                <p>我们非常重视儿童的个人信息保护。如果您未满 14 周岁，请在您的监护人指导下使用本应用。我们不会故意收集儿童的个人信息。如您发现我们在不知情的情况下收集了儿童信息，请及时联系我们，我们将立即删除相关信息。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">八、信息共享和披露</h2>
+                <p>除以下情况外，我们不会向第三方共享、转让或披露您的个人信息：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 获得您的明确同意</strong></li>
+                    <li><strong>2. 法律法规要求或司法机构依法要求</strong></li>
+                    <li><strong>3. 为履行服务协议或解决争议所必需</strong></li>
+                    <li><strong>4. 紧急情况下，为保护用户或公众的生命、财产安全</strong></li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">九、隐私政策的变更</h2>
+                <p>我们可能会不定期更新本隐私政策。更新后的隐私政策将在本页面发布，并在显著位置标明生效日期。我们建议您定期查看本隐私政策以了解最新变更。如变更涉及重大内容，我们可能会通过应用内通知等方式提醒您。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十、适用范围</h2>
+                <p>本隐私政策适用于 Vocab Ai 应用及其提供的所有功能和服务。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十一、联系我们</h2>
+                <p>如果您对本隐私政策有任何疑问、意见或建议，或需要行使您的权利，请通过以下方式联系我们：</p>
+                <ul style="padding-left:20px;">
+                    <li>应用内反馈功能</li>
+                    <li>或发送邮件至：mooyucc@qq.com</li>
+                </ul>
+                <p>我们将在收到您的请求后的 15 个工作日内回复。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十二、其他</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 适用法律</h3>
+                <p>本隐私政策的解释、执行和争议解决均适用中华人民共和国法律法规。</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 争议解决</h3>
+                <p>如因本隐私政策发生争议，双方应友好协商解决；协商不成的，任何一方均可向开发者所在地有管辖权的人民法院提起诉讼。</p>
+            </section>
+
+            <p style="margin-top:40px;">---</p>
+
+            <p style="margin-top:32px;">再次感谢您使用 Vocab Ai！</p>
+
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*本隐私政策最后更新日期：2026年1月18日*</em></p>
+        </div>
+
+        <div id="content-en" class="content-lang">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"Vocab Ai" User Privacy Policy</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">Last Updated: January 18, 2026</p>
+
+            <section style="margin-bottom:32px;">
+                <p>Welcome to Vocab Ai! We highly value your privacy and personal information security. This privacy policy explains how we collect, use, store, and protect your personal information. Please read and fully understand this privacy policy before using our services.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">I. Basic Information</h2>
+                <ul style="padding-left:20px;">
+                    <li><strong>Application Name:</strong> Vocab Ai</li>
+                    <li><strong>Developer:</strong> Vocab Ai Team</li>
+                    <li><strong>Contact:</strong> If you need to contact us, please reach out through the in-app feedback feature.</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">II. Information We Collect</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.1 Information You Actively Provide</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Vocab Aiulary Data:</strong> Words, definitions, parts of speech, phonetic transcriptions, example sentences, and other learning content that you manually add or add through camera recognition</li>
+                    <li><strong>Learning Records:</strong> Your learning progress, review records, learning settings, etc.</li>
+                    <li><strong>Account Information (if applicable):</strong> If you use iCloud sync functionality, relevant information will be associated with your Apple ID</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 Automatically Collected Information</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Device Information:</strong> Device model, operating system version, application version, and other basic information</li>
+                    <li><strong>Usage Data:</strong> Application feature usage, performance data, error logs, etc. (used to improve application experience)</li>
+                    <li><strong>iCloud Data:</strong> If you enable iCloud sync functionality, your vocabulary data will be stored in your iCloud account</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI Service Related</h3>
+                <p>When you use features such as AI auto-fill or AI-generated example sentences, we will send the words you input to the Deepseek API service to obtain corresponding definitions and example sentences. We do not store the specific content you send to the AI service.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">III. Purpose of Information Use</h2>
+                <p>We collect and use your information for the following purposes:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. Provide Core Functionality:</strong> Provide you with core features such as vocabulary learning, review, and memory management</li>
+                    <li><strong>2. Data Synchronization:</strong> Synchronize learning data across your multiple devices through iCloud</li>
+                    <li><strong>3. AI Services:</strong> Provide you with AI intelligent filling, example sentence generation, and other features</li>
+                    <li><strong>4. Improve Services:</strong> Analyze usage to optimize application performance and user experience</li>
+                    <li><strong>5. Technical Support:</strong> Resolve issues you encounter during use</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IV. Information Storage and Security</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 Data Storage Location</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Local Storage:</strong> Your vocabulary data is primarily stored locally on your device</li>
+                    <li><strong>iCloud Storage:</strong> If you enable iCloud sync, data will be stored in your iCloud account, with Apple responsible for data security</li>
+                    <li><strong>Third-Party Services:</strong> We use Deepseek API to provide AI features, and related data processing follows its privacy policy</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 Data Security Measures</h3>
+                <p>We adopt industry-standard security technologies and management measures to protect your personal information:</p>
+                <ul style="padding-left:20px;">
+                    <li>Use end-to-end encryption to protect data transmission</li>
+                    <li>Adopt access control and permission management mechanisms</li>
+                    <li>Regularly conduct security assessments and vulnerability fixes</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 Data Retention Period</h3>
+                <ul style="padding-left:20px;">
+                    <li>Your vocabulary data will be retained until you actively delete it or uninstall the application</li>
+                    <li>If you delete your account, relevant data will be deleted (except for information required to be retained by laws and regulations)</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">V. Third-Party Services</h2>
+                <p>We may use the following third-party services:</p>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple Services</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>iCloud:</strong> Used for data synchronization and backup</li>
+                    <li><strong>StoreKit:</strong> Used for in-app purchases and subscription management</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 AI Services</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Deepseek API:</strong> Used to provide AI intelligent filling and example sentence generation features. When you use these features, relevant data will be sent to Deepseek services for processing.</li>
+                </ul>
+
+                <p>These third-party services have their own independent privacy policies, and we recommend that you read them carefully.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VI. Your Rights</h2>
+                <p>According to relevant laws and regulations, you have the following rights regarding your personal information:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. Right to Access:</strong> You can view and manage data stored in the application at any time</li>
+                    <li><strong>2. Right to Correction:</strong> You can modify your vocabulary data and learning records at any time</li>
+                    <li><strong>3. Right to Deletion:</strong> You can delete data in the application at any time, or delete all local data by uninstalling the application</li>
+                    <li><strong>4. Right to Withdraw Consent:</strong> You can disable iCloud sync or stop using related features at any time</li>
+                    <li><strong>5. Data Export (if applicable):</strong> You can export your learning data through application features</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VII. Children's Privacy Protection</h2>
+                <p>We highly value the protection of children's personal information. If you are under 14 years old, please use this application under the guidance of your guardian. We do not intentionally collect personal information from children. If you find that we have collected children's information without our knowledge, please contact us promptly, and we will immediately delete the relevant information.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VIII. Information Sharing and Disclosure</h2>
+                <p>Except for the following circumstances, we will not share, transfer, or disclose your personal information to third parties:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. With your explicit consent</strong></li>
+                    <li><strong>2. Required by laws and regulations or judicial authorities</strong></li>
+                    <li><strong>3. Necessary to fulfill service agreements or resolve disputes</strong></li>
+                    <li><strong>4. In emergencies, to protect the life and property safety of users or the public</strong></li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IX. Privacy Policy Changes</h2>
+                <p>We may update this privacy policy from time to time. The updated privacy policy will be published on this page, with the effective date clearly marked in a prominent position. We recommend that you regularly check this privacy policy to understand the latest changes. If changes involve significant content, we may notify you through in-app notifications or other means.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">X. Scope of Application</h2>
+                <p>This privacy policy applies to the Vocab Ai application and all features and services it provides.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">XI. Contact Us</h2>
+                <p>If you have any questions, comments, or suggestions about this privacy policy, or need to exercise your rights, please contact us through the following methods:</p>
+                <ul style="padding-left:20px;">
+                    <li>In-app feedback feature</li>
+                    <li>Or send an email to: mooyucc@qq.com</li>
+                </ul>
+                <p>We will reply within 15 business days after receiving your request.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">XII. Others</h2>
+                
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 Applicable Law</h3>
+                <p>The interpretation, execution, and dispute resolution of this privacy policy are subject to the laws and regulations of the People's Republic of China.</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 Dispute Resolution</h3>
+                <p>If a dispute arises from this privacy policy, both parties shall negotiate in good faith to resolve it. If negotiation fails, either party may file a lawsuit with the people's court with jurisdiction in the developer's location.</p>
+            </section>
+
+            <p style="margin-top:40px;">---</p>
+
+            <p style="margin-top:32px;">Thank you again for using Vocab Ai!</p>
+
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*Last updated: January 18, 2026*</em></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // 语言切换功能
+        (function() {
+            const btnZh = document.getElementById('btn-zh');
+            const btnEn = document.getElementById('btn-en');
+            const contentZh = document.getElementById('content-zh');
+            const contentEn = document.getElementById('content-en');
+            
+            // 从localStorage读取保存的语言偏好
+            const savedLang = localStorage.getItem('vocab-privacy-policy-lang') || 'zh';
+            
+            function switchLanguage(lang) {
+                if (lang === 'zh') {
+                    btnZh.classList.add('active');
+                    btnEn.classList.remove('active');
+                    contentZh.classList.add('active');
+                    contentEn.classList.remove('active');
+                    document.documentElement.lang = 'zh-CN';
+                } else {
+                    btnEn.classList.add('active');
+                    btnZh.classList.remove('active');
+                    contentEn.classList.add('active');
+                    contentZh.classList.remove('active');
+                    document.documentElement.lang = 'en';
+                }
+                // 保存语言偏好
+                localStorage.setItem('vocab-privacy-policy-lang', lang);
+            }
+            
+            // 绑定按钮事件
+            btnZh.addEventListener('click', () => switchLanguage('zh'));
+            btnEn.addEventListener('click', () => switchLanguage('en'));
+            
+            // 初始化语言
+            switchLanguage(savedLang);
+        })();
+    </script>
+</body>
+</html>

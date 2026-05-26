@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Ai简报管理"用户隐私政策</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .lang-btn.active {
+            background: #E8722A;
+            color: white;
+        }
+        .lang-btn:hover {
+            color: #E8722A;
+        }
+        .lang-btn.active:hover {
+            color: white;
+        }
+        .content-lang {
+            display: none;
+        }
+        .content-lang.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="zh" id="btn-zh">中文</button>
+        <button class="lang-btn" data-lang="en" id="btn-en">English</button>
+    </div>
+    <main class="page page-content" style="max-width:800px;margin:0 auto;padding:48px 24px;line-height:1.8;">
+        <div id="content-zh" class="content-lang active">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"Ai简报管理"用户隐私政策</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2026 年 5 月 26 日</p>
+
+            <section style="margin-bottom:32px;">
+                <p>欢迎使用 Ai简报管理！我们非常重视您的隐私保护和个人信息安全。本隐私政策说明我们如何收集、使用、存储和保护您的个人信息。在使用我们的服务前，请您仔细阅读并充分理解本隐私政策。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">一、基本信息</h2>
+                <ul style="padding-left:20px;">
+                    <li><strong>应用名称：</strong>Ai简报管理</li>
+                    <li><strong>开发者：</strong>Ai简报管理 Team</li>
+                    <li><strong>联系方式：</strong>如需联系，请通过应用内反馈功能或发送邮件至 mooyucc@qq.com。</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">二、我们收集的信息</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.1 您主动提供的信息</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>简报素材：</strong>您粘贴的会议记录、聊天内容、工作笔记等文本信息</li>
+                    <li><strong>图片素材：</strong>您上传或拖入的截图、白板照片等图片（用于 OCR 识别）</li>
+                    <li><strong>项目数据：</strong>您在 .mlg 工作区中创建的项目名称、按周归档的简报内容及整理结果</li>
+                    <li><strong>API Key（可选）：</strong>您为启用 AI 功能而配置的大模型服务商 API Key</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 自动收集的信息</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>设备信息：</strong>设备型号、操作系统版本、应用版本等基础信息</li>
+                    <li><strong>使用数据：</strong>应用功能使用情况、性能数据、错误日志等（用于改善应用体验）</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI 服务相关</h3>
+                <p>当您使用 AI 自动整理、AI 助手问答、对比分析等功能时，相关素材内容会被发送至您自行配置的大模型服务商（如 DeepSeek、OpenAI、Google Gemini 等）进行处理。我们不会存储您向 AI 服务发送的具体内容，也不会将您的 API Key 上传至我们的服务器。</p>
+                <p><strong>重要提醒：</strong>调用大模型时内容会离开本机，请勿上传敏感信息。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">三、信息使用目的</h2>
+                <p>我们收集和使用您的信息用于以下目的：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 提供核心功能：</strong>为您提供简报录入、OCR 识别、按周归档、AI 整理与助手等核心功能</li>
+                    <li><strong>2. 本地数据管理：</strong>在您的 .mlg 工作区文件中保存和管理项目素材与简报</li>
+                    <li><strong>3. AI 服务：</strong>在您配置 API Key 后，为您提供 AI 智能整理、总结、对比和修改等功能</li>
+                    <li><strong>4. 改善服务：</strong>分析使用情况，优化应用性能和用户体验</li>
+                    <li><strong>5. 技术支持：</strong>解决您在使用过程中遇到的问题</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">四、信息存储和安全</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 数据存储位置</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>本地工作区：</strong>您的简报素材与整理结果主要保存在您自行指定位置的 .mlg 工作区文件中，由您完全掌控</li>
+                    <li><strong>系统钥匙串：</strong>您配置的 API Key 使用系统钥匙串加密存储在本地设备，不上传至任何第三方</li>
+                    <li><strong>OCR 处理：</strong>图片 OCR 识别在本地设备完成，不依赖网络</li>
+                    <li><strong>第三方 AI 服务：</strong>启用 AI 功能时，相关内容会发送至您选择的大模型服务商，数据处理遵循其隐私政策</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 数据安全措施</h3>
+                <p>我们采用行业标准的安全技术和管理措施保护您的个人信息：</p>
+                <ul style="padding-left:20px;">
+                    <li>API Key 使用系统钥匙串加密存储</li>
+                    <li>工作区数据以本地文件形式保存，访问权限由您和操作系统共同控制</li>
+                    <li>定期进行安全评估和漏洞修复</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 数据保留期限</h3>
+                <ul style="padding-left:20px;">
+                    <li>您的简报数据将保留在 .mlg 工作区文件中，直至您主动删除或移除相关素材</li>
+                    <li>卸载应用不会自动删除您已保存的 .mlg 工作区文件</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">五、第三方服务</h2>
+                <p>我们可能使用或接入以下第三方服务：</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple 服务</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>App Store / StoreKit：</strong>用于应用分发及可能的内购与订阅管理</li>
+                    <li><strong>系统钥匙串：</strong>用于安全存储 API Key</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 AI 服务</h3>
+                <p>本应用支持多种大模型服务商，包括但不限于 DeepSeek、通义千问、智谱 GLM、Kimi、OpenAI、Google Gemini、Ollama 等。当您启用 AI 功能并配置相应 API Key 时，相关数据会被发送至您选择的服务商进行处理。</p>
+                <p>以上第三方服务有其独立的隐私政策，我们建议您仔细阅读。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">六、您的权利</h2>
+                <p>根据相关法律法规，您对自己的个人信息享有以下权利：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 访问权：</strong>您可以随时打开 .mlg 工作区文件查看和管理您的素材与简报</li>
+                    <li><strong>2. 更正权：</strong>您可以随时修改项目素材、简报内容及 AI 整理结果</li>
+                    <li><strong>3. 删除权：</strong>您可以随时删除单条或整批素材，或删除整个 .mlg 工作区文件</li>
+                    <li><strong>4. 撤回同意权：</strong>您可以随时移除 API Key 或停止使用 AI 相关功能</li>
+                    <li><strong>5. 数据导出：</strong>您的 .mlg 工作区文件可在支持的设备间自由复制与迁移</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">七、儿童隐私保护</h2>
+                <p>我们非常重视儿童的个人信息保护。如果您未满 14 周岁，请在您的监护人指导下使用本应用。我们不会故意收集儿童的个人信息。如您发现我们在不知情的情况下收集了儿童信息，请及时联系我们，我们将立即删除相关信息。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">八、信息共享和披露</h2>
+                <p>除以下情况外，我们不会向第三方共享、转让或披露您的个人信息：</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. 获得您的明确同意</strong></li>
+                    <li><strong>2. 您主动配置并使用第三方 AI 服务时，相关内容按该服务商政策处理</strong></li>
+                    <li><strong>3. 法律法规要求或司法机构依法要求</strong></li>
+                    <li><strong>4. 为履行服务协议或解决争议所必需</strong></li>
+                    <li><strong>5. 紧急情况下，为保护用户或公众的生命、财产安全</strong></li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">九、隐私政策的变更</h2>
+                <p>我们可能会不定期更新本隐私政策。更新后的隐私政策将在本页面发布，并在显著位置标明生效日期。我们建议您定期查看本隐私政策以了解最新变更。如变更涉及重大内容，我们可能会通过应用内通知等方式提醒您。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十、适用范围</h2>
+                <p>本隐私政策适用于 Ai简报管理 应用及其提供的所有功能和服务。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十一、联系我们</h2>
+                <p>如果您对本隐私政策有任何疑问、意见或建议，或需要行使您的权利，请通过以下方式联系我们：</p>
+                <ul style="padding-left:20px;">
+                    <li>应用内反馈功能</li>
+                    <li>或发送邮件至：mooyucc@qq.com</li>
+                </ul>
+                <p>我们将在收到您的请求后的 15 个工作日内回复。</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">十二、其他</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 适用法律</h3>
+                <p>本隐私政策的解释、执行和争议解决均适用中华人民共和国法律法规。</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 争议解决</h3>
+                <p>如因本隐私政策发生争议，双方应友好协商解决；协商不成的，任何一方均可向开发者所在地有管辖权的人民法院提起诉讼。</p>
+            </section>
+
+            <p style="margin-top:40px;">---</p>
+
+            <p style="margin-top:32px;">再次感谢您使用 Ai简报管理！</p>
+
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*本隐私政策最后更新日期：2026年5月26日*</em></p>
+        </div>
+
+        <div id="content-en" class="content-lang">
+            <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"Ai简报管理" User Privacy Policy</h1>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">Last Updated: May 26, 2026</p>
+
+            <section style="margin-bottom:32px;">
+                <p>Welcome to Ai简报管理! We highly value your privacy and personal information security. This privacy policy explains how we collect, use, store, and protect your personal information. Please read and fully understand this privacy policy before using our services.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">I. Basic Information</h2>
+                <ul style="padding-left:20px;">
+                    <li><strong>Application Name:</strong> Ai简报管理</li>
+                    <li><strong>Developer:</strong> Ai简报管理 Team</li>
+                    <li><strong>Contact:</strong> Please reach out through the in-app feedback feature or email mooyucc@qq.com.</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">II. Information We Collect</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.1 Information You Actively Provide</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Briefing Materials:</strong> Meeting notes, chat logs, work notes, and other text you paste into the app</li>
+                    <li><strong>Image Materials:</strong> Screenshots, whiteboard photos, and other images you upload or drag in (for OCR)</li>
+                    <li><strong>Project Data:</strong> Project names, weekly archived briefing content, and organized results in your .mlg workspace</li>
+                    <li><strong>API Keys (Optional):</strong> LLM provider API keys you configure to enable AI features</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 Automatically Collected Information</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Device Information:</strong> Device model, operating system version, application version, and other basic information</li>
+                    <li><strong>Usage Data:</strong> Application feature usage, performance data, error logs, etc. (used to improve application experience)</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI Service Related</h3>
+                <p>When you use AI auto-organization, AI assistant Q&amp;A, comparison analysis, and similar features, relevant material content will be sent to the LLM provider you configure (such as DeepSeek, OpenAI, Google Gemini, etc.) for processing. We do not store the specific content you send to AI services, and we do not upload your API keys to our servers.</p>
+                <p><strong>Important Notice:</strong> When calling large language models, content leaves your device. Please do not upload sensitive information.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">III. Purpose of Information Use</h2>
+                <p>We collect and use your information for the following purposes:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. Provide Core Functionality:</strong> Briefing entry, OCR recognition, weekly archiving, AI organization, and assistant features</li>
+                    <li><strong>2. Local Data Management:</strong> Save and manage project materials and briefings in your .mlg workspace files</li>
+                    <li><strong>3. AI Services:</strong> Provide AI organization, summarization, comparison, and editing after you configure API keys</li>
+                    <li><strong>4. Improve Services:</strong> Analyze usage to optimize application performance and user experience</li>
+                    <li><strong>5. Technical Support:</strong> Resolve issues you encounter during use</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IV. Information Storage and Security</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 Data Storage Location</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>Local Workspace:</strong> Your briefing materials and organized results are primarily stored in .mlg workspace files at locations you specify, under your full control</li>
+                    <li><strong>System Keychain:</strong> API keys you configure are encrypted and stored locally in the system keychain, not uploaded to any third party</li>
+                    <li><strong>OCR Processing:</strong> Image OCR is performed locally on your device without network dependency</li>
+                    <li><strong>Third-Party AI Services:</strong> When AI features are enabled, relevant content is sent to your chosen LLM provider, and data processing follows its privacy policy</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 Data Security Measures</h3>
+                <p>We adopt industry-standard security technologies and management measures to protect your personal information:</p>
+                <ul style="padding-left:20px;">
+                    <li>API keys are encrypted and stored in the system keychain</li>
+                    <li>Workspace data is saved as local files, with access controlled by you and the operating system</li>
+                    <li>Regular security assessments and vulnerability fixes</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 Data Retention Period</h3>
+                <ul style="padding-left:20px;">
+                    <li>Your briefing data is retained in .mlg workspace files until you actively delete or remove relevant materials</li>
+                    <li>Uninstalling the app does not automatically delete your saved .mlg workspace files</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">V. Third-Party Services</h2>
+                <p>We may use or integrate the following third-party services:</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple Services</h3>
+                <ul style="padding-left:20px;">
+                    <li><strong>App Store / StoreKit:</strong> Used for app distribution and possible in-app purchases and subscriptions</li>
+                    <li><strong>System Keychain:</strong> Used to securely store API keys</li>
+                </ul>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 AI Services</h3>
+                <p>Ai简报管理 supports multiple LLM providers, including but not limited to DeepSeek, Qwen, GLM, Kimi, OpenAI, Google Gemini, Ollama, and others. When you enable AI features and configure the corresponding API key, relevant data will be sent to your chosen provider for processing.</p>
+                <p>These third-party services have their own independent privacy policies, and we recommend that you read them carefully.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VI. Your Rights</h2>
+                <p>According to relevant laws and regulations, you have the following rights regarding your personal information:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. Right to Access:</strong> You can open .mlg workspace files at any time to view and manage your materials and briefings</li>
+                    <li><strong>2. Right to Correction:</strong> You can modify project materials, briefing content, and AI-organized results at any time</li>
+                    <li><strong>3. Right to Deletion:</strong> You can delete individual or batch materials, or delete entire .mlg workspace files at any time</li>
+                    <li><strong>4. Right to Withdraw Consent:</strong> You can remove API keys or stop using AI-related features at any time</li>
+                    <li><strong>5. Data Export:</strong> Your .mlg workspace files can be freely copied and migrated across supported devices</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VII. Children's Privacy Protection</h2>
+                <p>We highly value the protection of children's personal information. If you are under 14 years old, please use this application under the guidance of your guardian. We do not intentionally collect personal information from children. If you find that we have collected children's information without our knowledge, please contact us promptly, and we will immediately delete the relevant information.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">VIII. Information Sharing and Disclosure</h2>
+                <p>Except for the following circumstances, we will not share, transfer, or disclose your personal information to third parties:</p>
+                <ul style="padding-left:20px;">
+                    <li><strong>1. With your explicit consent</strong></li>
+                    <li><strong>2. When you configure and use third-party AI services, relevant content is processed according to that provider's policy</strong></li>
+                    <li><strong>3. Required by laws and regulations or judicial authorities</strong></li>
+                    <li><strong>4. Necessary to fulfill service agreements or resolve disputes</strong></li>
+                    <li><strong>5. In emergencies, to protect the life and property safety of users or the public</strong></li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IX. Privacy Policy Changes</h2>
+                <p>We may update this privacy policy from time to time. The updated privacy policy will be published on this page, with the effective date clearly marked in a prominent position. We recommend that you regularly check this privacy policy to understand the latest changes. If changes involve significant content, we may notify you through in-app notifications or other means.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">X. Scope of Application</h2>
+                <p>This privacy policy applies to the Ai简报管理 application and all features and services it provides.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">XI. Contact Us</h2>
+                <p>If you have any questions, comments, or suggestions about this privacy policy, or need to exercise your rights, please contact us through the following methods:</p>
+                <ul style="padding-left:20px;">
+                    <li>In-app feedback feature</li>
+                    <li>Or send an email to: mooyucc@qq.com</li>
+                </ul>
+                <p>We will reply within 15 business days after receiving your request.</p>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">XII. Others</h2>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 Applicable Law</h3>
+                <p>The interpretation, execution, and dispute resolution of this privacy policy are subject to the laws and regulations of the People's Republic of China.</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 Dispute Resolution</h3>
+                <p>If a dispute arises from this privacy policy, both parties shall negotiate in good faith to resolve it. If negotiation fails, either party may file a lawsuit with the people's court with jurisdiction in the developer's location.</p>
+            </section>
+
+            <p style="margin-top:40px;">---</p>
+
+            <p style="margin-top:32px;">Thank you again for using Ai简报管理!</p>
+
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*Last updated: May 26, 2026*</em></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                    <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        (function() {
+            const btnZh = document.getElementById('btn-zh');
+            const btnEn = document.getElementById('btn-en');
+            const contentZh = document.getElementById('content-zh');
+            const contentEn = document.getElementById('content-en');
+            const savedLang = localStorage.getItem('moolog-privacy-policy-lang') || 'zh';
+
+            function switchLanguage(lang) {
+                if (lang === 'zh') {
+                    btnZh.classList.add('active');
+                    btnEn.classList.remove('active');
+                    contentZh.classList.add('active');
+                    contentEn.classList.remove('active');
+                    document.documentElement.lang = 'zh-CN';
+                } else {
+                    btnEn.classList.add('active');
+                    btnZh.classList.remove('active');
+                    contentEn.classList.add('active');
+                    contentZh.classList.remove('active');
+                    document.documentElement.lang = 'en';
+                }
+                localStorage.setItem('moolog-privacy-policy-lang', lang);
+            }
+
+            btnZh.addEventListener('click', () => switchLanguage('zh'));
+            btnEn.addEventListener('click', () => switchLanguage('en'));
+            switchLanguage(savedLang);
+        })();
+    </script>
+</body>
+</html>

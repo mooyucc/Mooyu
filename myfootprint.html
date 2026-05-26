@@ -33,51 +33,305 @@
         }
 
         #page-myfootprint .myfootprint-main {
-            max-width: 1200px;
+            max-width: 2400px;
             margin: 0 auto;
             padding: 0 20px 120px;
+            display: flex;
+            flex-direction: column;
         }
 
         #page-myfootprint .hero-section {
-            /* 浅米色卡片背景 */
-            background: #FAF8F5;
-            border-radius: 28px;
+            background: url('images/mooFoot背景图片.jpg') center center / cover no-repeat;
+            border-radius: 0;
             padding: 140px 80px 120px;
             text-align: left;
-            /* 浅米色边框 */
-            border: 1px solid #EAE6DF;
-            /* 大卡片阴影 */
+            border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
             position: relative;
             overflow: hidden;
+            max-width: none;
+            width: 100%;
+        }
+
+        /* 添加半透明遮罩层，确保文字可读性 */
+        #page-myfootprint .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 0;
+        }
+
+        #page-myfootprint .hero-section > * {
+            position: relative;
+            z-index: 1;
         }
 
         #page-myfootprint .hero-section::after {
-            content: "";
-            position: absolute;
-            top: -160px;
-            right: -120px;
-            width: 420px;
-            height: 420px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.6), rgba(247, 239, 226, 0.1));
-            filter: blur(0.6px);
-            transform: rotate(8deg);
+            display: none;
         }
 
         #page-myfootprint .hero-section h1 {
-            /* 主要文字颜色 */
-            color: #333333;
+            /* 主要文字颜色 - 白色 */
+            color: #ffffff;
             font-size: 56px;
             line-height: 1.15;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #page-myfootprint .hero-section h1 .logo-img {
+            height: 1em;
+            width: auto;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         #page-myfootprint .hero-section h2 {
-            /* 次要文字颜色 */
-            color: #666666;
-            font-size: 24px;
+            /* 次要文字颜色 - 浅灰色 */
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
             max-width: 520px;
             margin-bottom: 40px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #page-myfootprint .video-section {
+            margin-top: 20px;
+            /* 深色卡片背景 */
+            background: #111;
+            border-radius: 0;
+            padding: 20px;
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        #page-myfootprint .video-section h2 {
+            /* 隐藏标题 */
+            display: none;
+        }
+
+        #page-myfootprint .video-section .section-subtitle {
+            /* 隐藏副标题 */
+            display: none;
+        }
+
+        #page-myfootprint .video-container {
+            position: relative;
+            width: auto;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            /* 黑色背景 */
+            background: #000;
+            /* 设置固定高度，宽度根据视频比例自动调整 */
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 确保容器不会超出父容器 */
+            box-sizing: border-box;
+        }
+
+        #page-myfootprint .video-container video {
+            width: auto;
+            height: 100%;
+            max-width: 100%;
+            display: block;
+            background: #000;
+            /* 保持视频原始长宽比 */
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            #page-myfootprint .video-container {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            #page-myfootprint .video-container {
+                height: 300px;
+            }
+        }
+
+        /* 图片轮播卡片容器样式 */
+        #page-myfootprint .carousel-section {
+            margin-top: 20px;
+            /* 白卡片背景 */
+            background: #ffffff;
+            border-radius: 0;
+            padding: 40px 0;
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        #page-myfootprint .image-carousel-container {
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            padding: 0;
+            width: 100%;
+        }
+
+        #page-myfootprint .image-carousel-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        #page-myfootprint .image-carousel-slides {
+            flex: 1;
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+            padding: 0;
+            height: 720px;
+            align-items: center;
+            margin: 0;
+        }
+
+        #page-myfootprint .image-carousel-slides::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        #page-myfootprint .carousel-image {
+            flex-shrink: 0;
+            height: 720px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 20px;
+            background: #FAF8F5;
+            border: 1px solid #EAE6DF;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: block;
+        }
+
+        #page-myfootprint .carousel-image:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #page-myfootprint .carousel-nav-btn {
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+            z-index: 10;
+        }
+
+        #page-myfootprint .carousel-nav-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+        }
+
+        #page-myfootprint .carousel-nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        #page-myfootprint .carousel-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 1024px) {
+            #page-myfootprint .carousel-section {
+                padding: 30px 0;
+            }
+
+            #page-myfootprint .image-carousel-slides {
+                height: 600px;
+            }
+
+            #page-myfootprint .carousel-image {
+                height: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-myfootprint .carousel-section {
+                padding: 30px 0;
+            }
+
+            #page-myfootprint .image-carousel-wrapper {
+                gap: 8px;
+                padding: 0 12px;
+            }
+
+            #page-myfootprint .image-carousel-slides {
+                gap: 16px;
+                height: 500px;
+                padding: 0;
+            }
+
+            #page-myfootprint .carousel-image {
+                height: 500px;
+            }
+
+            #page-myfootprint .carousel-nav-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            #page-myfootprint .carousel-nav-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            #page-myfootprint .carousel-section {
+                padding: 20px 0;
+            }
+
+            #page-myfootprint .image-carousel-slides {
+                height: 400px;
+            }
+
+            #page-myfootprint .carousel-image {
+                height: 400px;
+            }
+
+            #page-myfootprint .carousel-nav-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            #page-myfootprint .carousel-nav-btn svg {
+                width: 18px;
+                height: 18px;
+            }
         }
 
         #page-myfootprint .hero-cta {
@@ -164,10 +418,10 @@
         }
 
         #page-myfootprint .testflight-btn {
-            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%) !important;
+            background: #111 !important;
             color: #fff !important;
             border: 1px solid #fff !important;
-            box-shadow: 0 20px 35px rgba(0, 122, 255, 0.25);
+            box-shadow: 0 20px 35px rgba(17, 17, 17, 0.25);
             backdrop-filter: none !important;
             padding: 12px 24px !important;
             border-radius: 16px !important;
@@ -184,24 +438,54 @@
         }
 
         #page-myfootprint .testflight-btn:hover {
-            background: linear-gradient(135deg, #0051D5 0%, #003d9e 100%) !important;
-            box-shadow: 0 24px 46px rgba(0, 122, 255, 0.35);
+            background: #000 !important;
+            box-shadow: 0 24px 46px rgba(17, 17, 17, 0.28);
             transform: translateY(-2px);
         }
 
         #page-myfootprint .value-section {
             /* 白卡片背景 */
             background: #ffffff;
-            border-radius: 28px;
-            margin-top: 80px;
+            border-radius: 0;
+            margin-top: 20px;
             padding: 80px 60px;
             /* 大卡片阴影 */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
+        #page-myfootprint .value-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        @media (min-width: 1800px) {
+            #page-myfootprint .value-cards {
+                gap: 60px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            #page-myfootprint .value-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            #page-myfootprint .value-cards {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
         #page-myfootprint .value-section h2 {
             /* 主要文字颜色 */
             color: #333333;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
         }
 
         #page-myfootprint .pain-points {
@@ -302,10 +586,10 @@
         }
 
         #page-myfootprint .screenshots-section {
-            margin-top: 80px;
+            margin-top: 20px;
             /* 白卡片背景 */
             background: #ffffff;
-            border-radius: 28px;
+            border-radius: 0;
             padding: 80px 60px;
             /* 大卡片阴影 */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
@@ -316,6 +600,8 @@
             color: #333333;
             text-align: center;
             margin-bottom: 16px;
+            font-size: 32px;
+            font-weight: 700;
         }
 
         #page-myfootprint .screenshots-section .section-subtitle {
@@ -331,9 +617,21 @@
 
         #page-myfootprint .screenshots-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 40px;
             margin-top: 60px;
+        }
+
+        @media (min-width: 1800px) {
+            #page-myfootprint .screenshots-grid {
+                gap: 60px;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            #page-myfootprint .screenshots-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         #page-myfootprint .screenshot-item {
@@ -374,11 +672,81 @@
             max-width: 400px;
         }
 
+        #page-myfootprint .design-highlights-section {
+            margin-top: 20px;
+            /* 白卡片背景 */
+            background: #ffffff;
+            border-radius: 0;
+            padding: 80px 60px;
+            /* 大卡片阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        #page-myfootprint .design-highlights-section h2 {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        #page-myfootprint .design-highlights-section .section-subtitle {
+            /* 次要文字颜色 */
+            color: #666666;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #page-myfootprint .design-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        #page-myfootprint .design-feature-item {
+            text-align: center;
+        }
+
+        #page-myfootprint .design-feature-item h3 {
+            /* 主要文字颜色 */
+            color: #333333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        #page-myfootprint .design-feature-item p {
+            /* 次要文字颜色 */
+            color: #666666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1400px) {
+            #page-myfootprint .design-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-myfootprint .design-features {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
         #page-myfootprint .fusion-section {
-            margin-top: 80px;
+            margin-top: 20px;
             /* 浅米色卡片背景 */
             background: #FAF8F5;
-            border-radius: 28px;
+            border-radius: 0;
             padding: 80px 60px;
             /* 浅米色边框 */
             border: 1px solid #EAE6DF;
@@ -389,6 +757,9 @@
         #page-myfootprint .fusion-section h2 {
             /* 主要文字颜色 */
             color: #333333;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
         }
 
         #page-myfootprint .fusion-section p {
@@ -396,15 +767,55 @@
             color: #666666;
         }
 
+        #page-myfootprint .additional-features {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            text-align: left;
+        }
+
+        @media (min-width: 1800px) {
+            #page-myfootprint .additional-features {
+                gap: 60px;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            #page-myfootprint .additional-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-myfootprint .additional-features {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
         #page-myfootprint .final-cta-section {
-            margin-top: 80px;
-            border-radius: 28px;
+            margin-top: 20px;
+            border-radius: 0;
             background: #111;
             box-shadow: 0 28px 70px rgba(17, 17, 17, 0.45);
         }
 
+        /* 页面主卡片顺序调整 */
+        #page-myfootprint .hero-section { order: 1; }
+        #page-myfootprint .fusion-section { order: 2; }
+        #page-myfootprint .video-section { order: 3; }
+        #page-myfootprint .design-highlights-section { order: 4; }
+        #page-myfootprint .carousel-section { order: 5; }
+        #page-myfootprint .screenshots-section { order: 6; }
+        #page-myfootprint .value-section { order: 7; }
+        #page-myfootprint .final-cta-section { order: 8; }
+
         #page-myfootprint .final-cta-section h2 {
             color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
         }
 
         #page-myfootprint .final-cta-section p {
@@ -445,17 +856,28 @@
             }
 
             #page-myfootprint .hero-section h2 {
-                font-size: 20px;
+                font-size: 16px;
             }
 
             #page-myfootprint .value-section,
+            #page-myfootprint .video-section,
+            #page-myfootprint .carousel-section,
             #page-myfootprint .screenshots-section,
-            #page-myfootprint .fusion-section {
-                padding: 60px 28px;
+            #page-myfootprint .fusion-section,
+            #page-myfootprint .design-highlights-section {
+                padding: 20px;
+            }
+
+            #page-myfootprint .value-section h2,
+            #page-myfootprint .video-section h2,
+            #page-myfootprint .screenshots-section h2,
+            #page-myfootprint .fusion-section h2,
+            #page-myfootprint .design-highlights-section h2 {
+                font-size: 28px;
             }
 
             #page-myfootprint .screenshots-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 48px;
             }
 
@@ -504,13 +926,25 @@
             }
 
             #page-myfootprint .hero-section h2 {
-                font-size: 18px;
+                font-size: 14px;
             }
 
             #page-myfootprint .value-section,
+            #page-myfootprint .video-section,
+            #page-myfootprint .carousel-section,
             #page-myfootprint .screenshots-section,
-            #page-myfootprint .fusion-section {
-                padding: 48px 24px;
+            #page-myfootprint .fusion-section,
+            #page-myfootprint .design-highlights-section {
+                padding: 16px;
+            }
+
+            #page-myfootprint .value-section h2,
+            #page-myfootprint .video-section h2,
+            #page-myfootprint .screenshots-section h2,
+            #page-myfootprint .fusion-section h2,
+            #page-myfootprint .design-highlights-section h2,
+            #page-myfootprint .final-cta-section h2 {
+                font-size: 24px;
             }
 
             #page-myfootprint .screenshots-section .section-subtitle {
@@ -519,6 +953,7 @@
             }
 
             #page-myfootprint .screenshots-grid {
+                grid-template-columns: 1fr;
                 gap: 40px;
                 margin-top: 40px;
             }
@@ -571,12 +1006,8 @@
         </header>
         <main class="myfootprint-main page-content">
             <section class="hero-section">
-                <h1>墨鱼足迹：沉浸式旅行与生活记录</h1>
-                <h2>通过沉浸式地图体验点亮每一次出发的记忆，围绕「记录、管理、回忆、分享」打造完整足迹闭环。</h2>
-                <div class="hero-cta">
-                    <a href="myfootprintprivacy.html" class="secondary-cta-btn">用户隐私政策</a>
-                    <a href="moofootprintlicense.html" class="secondary-cta-btn">软件许可及服务协议</a>
-                </div>
+                <h1><img src="images/myfootprintLogo2.png" alt="墨鱼足迹" class="logo-img">墨鱼足迹：沉浸式旅行与生活记录</h1>
+                <h2>墨鱼足迹，一款专为旅行与生活印记而生的 iOS 应用，以沉浸式地图体验，助您点亮每一次出发的光彩。全新搭载 AI 智能笔记，依您的语言环境，贴心生成个性化旅行记录，支持中、英、日、韩、法、西等多种语言，让每一次书写都蕴藏智慧、携满温度。在这里，我们为您打造一座专属的数字旅行博物馆，让每个足迹，皆化为永恒的回忆。</h2>
                 <div class="hero-download-buttons">
                     <a href="https://apps.apple.com/cn/app/id6754274652" target="_blank" class="app-store-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
@@ -590,6 +1021,67 @@
                         </svg>
                         <span>TestFlight 测试版</span>
                     </a>
+                </div>
+            </section>
+
+            <section class="video-section">
+                <div class="video-container">
+                    <video controls preload="auto">
+                        <source src="images/MooyuFootprintVideo.mov" type="video/quicktime">
+                        您的浏览器不支持视频播放。
+                    </video>
+                </div>
+            </section>
+
+            <section class="design-highlights-section">
+                <h2>🌟 设计亮点</h2>
+                <p class="section-subtitle">作为首批采用 iOS 26 Liquid Glass 设计语言的应用之一，墨鱼足迹带来前所未有的沉浸式视觉体验</p>
+                <div class="design-features">
+                    <div class="design-feature-item">
+                        <h3>✨ 玻璃效果设计</h3>
+                        <p>地图浮动控件、旅程抽屉等核心场景采用玻璃效果，营造深度感和流畅感</p>
+                    </div>
+                    <div class="design-feature-item">
+                        <h3>🌓 完整深色模式</h3>
+                        <p>深色/浅色/跟随系统主题，让应用在各种环境下都能完美呈现</p>
+                    </div>
+                    <div class="design-feature-item">
+                        <h3>📱 精美分享图片</h3>
+                        <p>精心设计的分享模板，让每一次旅程分享都成为视觉盛宴，让美好瞬间传播更远</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 图片轮播卡片容器 -->
+            <section class="carousel-section">
+                <div class="image-carousel-container">
+                    <div class="image-carousel-wrapper">
+                        <button class="carousel-nav-btn carousel-prev-btn" aria-label="向左滚动">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="image-carousel-slides">
+                            <img src="images/MooFoot轮播 1.png" alt="轮播图片 1" class="carousel-image">
+                            <img src="images/MooFoot轮播 2.png" alt="轮播图片 2" class="carousel-image">
+                            <img src="images/MooFoot轮播 3.png" alt="轮播图片 3" class="carousel-image">
+                            <img src="images/MooFoot轮播 4.png" alt="轮播图片 4" class="carousel-image">
+                            <img src="images/MooFoot轮播 5.png" alt="轮播图片 5" class="carousel-image">
+                            <img src="images/MooFoot轮播 6.png" alt="轮播图片 6" class="carousel-image">
+                            <img src="images/MooFoot轮播 7.png" alt="轮播图片 7" class="carousel-image">
+                            <img src="images/MooFoot轮播 8.png" alt="轮播图片 8" class="carousel-image">
+                            <img src="images/MooFoot轮播 9.png" alt="轮播图片 9" class="carousel-image">
+                            <img src="images/MooFoot轮播 10.png" alt="轮播图片 10" class="carousel-image">
+                            <img src="images/MooFoot轮播 11.png" alt="轮播图片 11" class="carousel-image">
+                            <img src="images/MooFoot轮播 12.png" alt="轮播图片 12" class="carousel-image">
+                            <img src="images/MooFoot轮播 13.png" alt="轮播图片 13" class="carousel-image">
+                        </div>
+                        <button class="carousel-nav-btn carousel-next-btn" aria-label="向右滚动">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -731,25 +1223,25 @@
                 
                 <div class="screenshots-grid">
                     <div class="screenshot-item">
-                        <img src="images/App1 打卡记录.PNG" alt="打卡记录" class="screenshot-image">
+                        <img src="images/App1 打卡记录.png" alt="打卡记录" class="screenshot-image">
                         <h3 class="screenshot-title">📝 一键打卡记录</h3>
                         <p class="screenshot-description">在地图上轻松标记你的位置，自动记录时间和天气信息。无论是偶遇的美景还是惊艳的美食，都能快速定格当下的感动。</p>
                     </div>
                     
                     <div class="screenshot-item">
-                        <img src="images/App2 旅程卡片.PNG" alt="旅程卡片" class="screenshot-image">
+                        <img src="images/App2 旅程卡片.png" alt="旅程卡片" class="screenshot-image">
                         <h3 class="screenshot-title">🌐 旅程规划与分享</h3>
                         <p class="screenshot-description">可视化你的旅行路线，查看总距离和停留地点。精心整理的旅程卡片，让每一次分享都充满故事感，与朋友分享你的探索足迹。</p>
                     </div>
                     
                     <div class="screenshot-item">
-                        <img src="images/App3 旅行徽章.PNG" alt="旅行徽章" class="screenshot-image">
+                        <img src="images/App3 旅行徽章.png" alt="旅行徽章" class="screenshot-image">
                         <h3 class="screenshot-title">🏆 旅行徽章收集</h3>
                         <p class="screenshot-description">点亮你去过的每一个国家和省份，用精美的徽章记录你的旅行成就。每一枚徽章都是你探索世界的见证，让旅行充满仪式感。</p>
                     </div>
                     
                     <div class="screenshot-item">
-                        <img src="images/App4 足迹统计.PNG" alt="足迹统计" class="screenshot-image">
+                        <img src="images/App4 足迹统计.png" alt="足迹统计" class="screenshot-image">
                         <h3 class="screenshot-title">💖 我的足迹时光</h3>
                         <p class="screenshot-description">收藏你最爱的目的地，按年份回顾你的旅行足迹。让每一次回忆都成为平凡日子里的温暖慰藉，重温那些美好的旅行时光。</p>
                     </div>
@@ -759,6 +1251,41 @@
             <section class="fusion-section">
                 <h2>墨鱼足迹APP · 让每一段旅程都成为值得珍藏的温暖回忆</h2>
                 <p>记录、分享、回忆——三大核心模块构建完整闭环，从灵感记录到旅程归档，从即时分享到时光回溯，每一步都自成故事，每一刻都值得珍藏。</p>
+                
+                <div class="additional-features">
+                    <div>
+                        <h3 style="color: #333333; font-size: 20px; font-weight: 600; margin-bottom: 16px;">🗺️ 地图体验</h3>
+                        <ul style="color: #666666; font-size: 15px; line-height: 1.8; list-style: none; padding: 0;">
+                            <li>• 标准/卫星视角切换，流畅的地图交互</li>
+                            <li>• 聚合与节流优化，海量足迹流畅渲染</li>
+                            <li>• POI 识别与反向地理编码，智能定位</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #333333; font-size: 20px; font-weight: 600; margin-bottom: 16px;">🔍 智能搜索</h3>
+                        <ul style="color: #666666; font-size: 15px; line-height: 1.8; list-style: none; padding: 0;">
+                            <li>• 智能分类搜索算法（国内/国外）</li>
+                            <li>• 相比传统搜索，准确率提升 60% 以上</li>
+                            <li>• 提供搜索建议与结果预览的即时反馈</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #333333; font-size: 20px; font-weight: 600; margin-bottom: 16px;">🤖 AI 智能笔记</h3>
+                        <ul style="color: #666666; font-size: 15px; line-height: 1.8; list-style: none; padding: 0;">
+                            <li>• 根据用户语言环境智能适配提示语</li>
+                            <li>• 支持中英日韩法西等多语言 AI 笔记生成</li>
+                            <li>• 集成用户属性生成个性化回复</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #333333; font-size: 20px; font-weight: 600; margin-bottom: 16px;">🌍 国际化与无障碍</h3>
+                        <ul style="color: #666666; font-size: 15px; line-height: 1.8; list-style: none; padding: 0;">
+                            <li>• 支持 7 种语言：简体中文、繁体中文、英文、日文、法文、西班牙文、韩文</li>
+                            <li>• 完整的多语言本地化，动态语言切换</li>
+                            <li>• 动态字体、VoiceOver、触觉反馈全覆盖</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
             <section class="final-cta-section">
@@ -777,6 +1304,8 @@
                         </svg>
                         <span>TestFlight 测试版</span>
                     </a>
+                    <a href="myfootprintprivacy.html" class="secondary-cta-btn">用户隐私政策</a>
+                    <a href="moofootprintlicense.html" class="secondary-cta-btn">软件许可及服务协议</a>
                 </div>
             </section>
         </main>
@@ -793,6 +1322,264 @@
         </footer>
     </div>
     <script src="js/main.js"></script>
+    <script>
+        // 捕获视频第一帧作为封面，并根据视频比例调整容器宽度
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('#page-myfootprint .video-container video');
+            const container = document.querySelector('#page-myfootprint .video-container');
+            if (video && container) {
+                let posterCaptured = false;
+                
+                // 根据视频比例调整容器宽度
+                function adjustContainerWidth() {
+                    if (video.videoWidth > 0 && video.videoHeight > 0) {
+                        const containerHeight = container.offsetHeight || 500;
+                        const aspectRatio = video.videoWidth / video.videoHeight;
+                        const calculatedWidth = containerHeight * aspectRatio;
+                        // 获取父容器的最大宽度
+                        const parentMaxWidth = container.parentElement ? container.parentElement.offsetWidth : window.innerWidth;
+                        // 确保不超过父容器宽度
+                        const finalWidth = Math.min(calculatedWidth, parentMaxWidth);
+                        container.style.width = finalWidth + 'px';
+                    }
+                }
+                
+                // 当视频元数据加载完成后，调整容器宽度并捕获第一帧
+                video.addEventListener('loadedmetadata', function() {
+                    adjustContainerWidth();
+                    if (!posterCaptured && video.videoWidth > 0 && video.videoHeight > 0) {
+                        // 跳转到第一帧
+                        video.currentTime = 0.01;
+                    }
+                });
+                
+                video.addEventListener('seeked', function() {
+                    if (!posterCaptured && video.videoWidth > 0 && video.videoHeight > 0) {
+                        try {
+                            // 创建 canvas 来捕获第一帧
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            
+                            // 将 canvas 转换为图片并设置为 poster
+                            const posterUrl = canvas.toDataURL('image/jpeg', 0.9);
+                            video.poster = posterUrl;
+                            posterCaptured = true;
+                        } catch (e) {
+                            console.error('捕获视频第一帧失败:', e);
+                        }
+                    }
+                });
+                
+                // 窗口大小改变时重新调整容器宽度
+                window.addEventListener('resize', function() {
+                    adjustContainerWidth();
+                });
+                
+                // 如果视频已经加载，直接尝试捕获和调整
+                if (video.readyState >= 2) {
+                    adjustContainerWidth();
+                    video.currentTime = 0.01;
+                }
+            }
+        });
+
+        // 图片横向滚动功能（带自动循环轮播）
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselContainer = document.querySelector('#page-myfootprint .image-carousel-container');
+            if (!carouselContainer) return;
+
+            const slidesContainer = carouselContainer.querySelector('.image-carousel-slides');
+            const prevBtn = carouselContainer.querySelector('.carousel-prev-btn');
+            const nextBtn = carouselContainer.querySelector('.carousel-next-btn');
+            const wrapper = carouselContainer.querySelector('.image-carousel-wrapper');
+            
+            if (!slidesContainer) return;
+
+            let autoScrollInterval = null;
+            let isUserInteracting = false;
+            let isScrolling = false;
+            const scrollSpeed = 2; // 每次滚动的像素数（增加速度）
+            const scrollInterval = 16; // 滚动间隔（毫秒，约60fps）
+
+            // 滚动函数
+            function scrollCarousel(direction) {
+                const scrollAmount = slidesContainer.clientWidth * 0.8; // 每次滚动80%的容器宽度
+                
+                if (direction === 'next') {
+                    slidesContainer.scrollBy({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    slidesContainer.scrollBy({
+                        left: -scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+
+            // 自动滚动函数（连续滚动）
+            function autoScroll() {
+                if (isScrolling || isUserInteracting) return; // 防止重复调用
+                
+                const maxScroll = slidesContainer.scrollWidth - slidesContainer.clientWidth;
+                const currentScroll = slidesContainer.scrollLeft;
+
+                // 如果到达末尾，快速回到开头
+                if (currentScroll >= maxScroll - 10) {
+                    isScrolling = true;
+                    // 临时禁用平滑滚动，快速回到开头
+                    slidesContainer.style.scrollBehavior = 'auto';
+                    slidesContainer.scrollLeft = 0;
+                    // 恢复平滑滚动
+                    setTimeout(() => {
+                        slidesContainer.style.scrollBehavior = '';
+                        isScrolling = false;
+                    }, 50);
+                } else {
+                    // 继续向右滚动（直接设置scrollLeft，不使用smooth）
+                    // 临时禁用smooth以确保直接滚动生效
+                    if (slidesContainer.style.scrollBehavior !== 'auto') {
+                        slidesContainer.style.scrollBehavior = 'auto';
+                    }
+                    slidesContainer.scrollLeft += scrollSpeed;
+                }
+            }
+
+            // 开始自动滚动
+            function startAutoScroll() {
+                stopAutoScroll(); // 先停止旧的定时器
+                
+                // 确保在自动滚动时使用auto行为
+                slidesContainer.style.scrollBehavior = 'auto';
+                
+                autoScrollInterval = setInterval(() => {
+                    if (!isUserInteracting && !isScrolling) {
+                        autoScroll();
+                    }
+                }, scrollInterval);
+            }
+
+            // 停止自动滚动
+            function stopAutoScroll() {
+                if (autoScrollInterval) {
+                    clearInterval(autoScrollInterval);
+                    autoScrollInterval = null;
+                }
+            }
+
+            // 更新按钮状态
+            function updateButtonStates() {
+                const isAtStart = slidesContainer.scrollLeft <= 0;
+                const isAtEnd = slidesContainer.scrollLeft >= slidesContainer.scrollWidth - slidesContainer.clientWidth - 10;
+                
+                if (prevBtn) {
+                    prevBtn.disabled = isAtStart;
+                }
+                if (nextBtn) {
+                    nextBtn.disabled = isAtEnd;
+                }
+            }
+
+            // 按钮事件
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    isUserInteracting = true;
+                    stopAutoScroll();
+                    // 恢复smooth行为用于用户操作
+                    slidesContainer.style.scrollBehavior = 'smooth';
+                    scrollCarousel('prev');
+                    setTimeout(() => {
+                        isUserInteracting = false;
+                        startAutoScroll();
+                    }, 1500);
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    isUserInteracting = true;
+                    stopAutoScroll();
+                    // 恢复smooth行为用于用户操作
+                    slidesContainer.style.scrollBehavior = 'smooth';
+                    scrollCarousel('next');
+                    setTimeout(() => {
+                        isUserInteracting = false;
+                        startAutoScroll();
+                    }, 1500);
+                });
+            }
+
+            // 鼠标悬停时暂停自动滚动
+            if (wrapper) {
+                wrapper.addEventListener('mouseenter', () => {
+                    stopAutoScroll();
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    if (!isUserInteracting) {
+                        startAutoScroll();
+                    }
+                });
+            }
+
+            // 触摸事件时暂停自动滚动
+            let touchTimeout = null;
+            slidesContainer.addEventListener('touchstart', () => {
+                isUserInteracting = true;
+                stopAutoScroll();
+                clearTimeout(touchTimeout);
+            }, { passive: true });
+
+            slidesContainer.addEventListener('touchend', () => {
+                touchTimeout = setTimeout(() => {
+                    isUserInteracting = false;
+                    startAutoScroll();
+                }, 2000);
+            }, { passive: true });
+
+            // 监听滚动事件，更新按钮状态
+            slidesContainer.addEventListener('scroll', updateButtonStates);
+
+            // 初始化按钮状态
+            updateButtonStates();
+
+            // 窗口大小改变时更新按钮状态
+            window.addEventListener('resize', () => {
+                updateButtonStates();
+                // 重新启动自动滚动
+                stopAutoScroll();
+                startAutoScroll();
+            });
+
+            // 页面可见性改变时控制自动滚动
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopAutoScroll();
+                } else {
+                    startAutoScroll();
+                }
+            });
+
+            // 延迟启动自动滚动，确保DOM完全加载
+            setTimeout(() => {
+                // 检查容器是否可见且有内容
+                if (slidesContainer.scrollWidth > slidesContainer.clientWidth) {
+                    startAutoScroll();
+                } else {
+                    // 如果内容还未加载，等待一下再试
+                    setTimeout(() => {
+                        if (slidesContainer.scrollWidth > slidesContainer.clientWidth) {
+                            startAutoScroll();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        });
+    </script>
 </body>
 </html>
 
