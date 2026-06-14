@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooNotes聚合：智能收藏 | MooYu</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#FF6B35">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #page-moonotes {
+            --orange-50: #FFF7F3;
+            --orange-100: #FFEDE4;
+            --orange-200: #FFD4BE;
+            --orange-400: #FF8A5C;
+            --orange-500: #FF6B35;
+            --orange-600: #E85A28;
+            --orange-700: #C4491F;
+            --orange-800: #9A3818;
+            --orange-900: #702812;
+            --text-primary: #2A1F18;
+            --text-secondary: #5C4A40;
+            --text-muted: #7A6A60;
+            --surface: #FFFFFF;
+            --surface-soft: #FFFAF7;
+            --surface-muted: #FFF3EC;
+            --star-gold: #F59E0B;
+            --font-heading: 'Outfit', system-ui, sans-serif;
+            --font-body: 'Work Sans', system-ui, sans-serif;
+            font-family: var(--font-body);
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+            background: linear-gradient(160deg,
+                var(--orange-50) 0%,
+                #FFFCFA 35%,
+                var(--orange-100) 70%,
+                #FFF0E8 100%);
+            min-height: 100vh;
+        }
+
+        #page-moonotes h1,
+        #page-moonotes h2,
+        #page-moonotes h3 {
+            font-family: var(--font-heading);
+        }
+
+        #page-moonotes .header {
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            width: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 107, 53, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 24px rgba(255, 107, 53, 0.08);
+        }
+
+        #page-moonotes .header-content {
+            max-width: 1200px;
+        }
+
+        #page-moonotes .moonotes-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 88px 20px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #page-moonotes .section-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            border-radius: 14px;
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 80px;
+            z-index: 50;
+            order: 2;
+        }
+
+        #page-moonotes .section-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: color 0.2s ease, background 0.2s ease;
+            cursor: pointer;
+        }
+
+        #page-moonotes .section-nav a:hover {
+            color: var(--orange-700);
+            background: var(--orange-50);
+        }
+
+        #page-moonotes .section-nav a:focus-visible {
+            outline: 2px solid var(--orange-500);
+            outline-offset: 2px;
+        }
+
+        #page-moonotes .hero-section {
+            background: linear-gradient(145deg,
+                var(--orange-500) 0%,
+                #FF7A45 42%,
+                var(--orange-600) 100%);
+            padding: 60px 48px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            order: 1;
+        }
+
+        #page-moonotes .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.18) 0%, transparent 42%),
+                radial-gradient(circle at 10% 90%, rgba(255, 255, 255, 0.1) 0%, transparent 38%);
+            pointer-events: none;
+        }
+
+        #page-moonotes .hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        #page-moonotes .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #page-moonotes .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        #page-moonotes .hero-badge svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        #page-moonotes .hero-section h1 {
+            color: #FFFFFF;
+            font-size: 48px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 16px rgba(112, 40, 18, 0.15);
+        }
+
+        #page-moonotes .hero-section h1 .logo-img {
+            height: 2em;
+            width: auto;
+            vertical-align: middle;
+            flex-shrink: 0;
+            border-radius: 18%;
+            filter: drop-shadow(0 4px 12px rgba(112, 40, 18, 0.2));
+        }
+
+        #page-moonotes .hero-slogan {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        #page-moonotes .hero-section .hero-desc {
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 17px;
+            max-width: 520px;
+            margin-bottom: 32px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        #page-moonotes .hero-download-buttons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        #page-moonotes .app-store-btn {
+            background: #FFFFFF !important;
+            color: var(--orange-700) !important;
+            border: 1px solid rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 16px 32px rgba(112, 40, 18, 0.2);
+            padding: 12px 24px !important;
+            border-radius: 16px !important;
+            text-decoration: none !important;
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            cursor: pointer;
+        }
+
+        #page-moonotes .app-store-btn:hover {
+            background: var(--orange-50) !important;
+            box-shadow: 0 20px 40px rgba(112, 40, 18, 0.25);
+            transform: translateY(-2px);
+        }
+
+        #page-moonotes .app-store-btn:focus-visible {
+            outline: 2px solid #FFFFFF;
+            outline-offset: 3px;
+        }
+
+        #page-moonotes .secondary-cta-btn {
+            border: 2px solid rgba(255, 255, 255, 0.72) !important;
+            color: #FFFFFF !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            padding: 12px 24px !important;
+            border-radius: 16px !important;
+            text-decoration: none !important;
+            transition: background 0.2s ease, border-color 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            cursor: pointer;
+        }
+
+        #page-moonotes .secondary-cta-btn:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: #FFFFFF !important;
+        }
+
+        #page-moonotes .secondary-cta-btn:focus-visible {
+            outline: 2px solid #FFFFFF;
+            outline-offset: 3px;
+        }
+
+        #page-moonotes .hero-visual {
+            max-width: 260px;
+            margin: 0 auto;
+            justify-self: center;
+        }
+
+        #page-moonotes .device-frame {
+            background: linear-gradient(145deg, #2A1F18 0%, #1A1210 100%);
+            border-radius: 22px;
+            padding: 8px;
+            box-shadow:
+                0 24px 48px rgba(42, 31, 24, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        }
+
+        #page-moonotes .hero-preview {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            display: block;
+        }
+
+        #page-moonotes .content-section {
+            background: var(--surface);
+            padding: 72px 56px;
+            box-shadow: 0 4px 24px rgba(255, 107, 53, 0.08);
+            border: 1px solid rgba(255, 107, 53, 0.08);
+            border-radius: 20px;
+        }
+
+        #page-moonotes .fusion-section {
+            background: var(--surface-muted);
+            padding: 72px 56px;
+            box-shadow: 0 2px 16px rgba(255, 107, 53, 0.06);
+            border: 1px solid var(--orange-200);
+            border-radius: 20px;
+        }
+
+        #page-moonotes .content-section h2,
+        #page-moonotes .fusion-section h2 {
+            color: var(--text-primary);
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        #page-moonotes .section-subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 56px;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        #page-moonotes .pain-points-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            margin-bottom: 56px;
+        }
+
+        #page-moonotes .pain-point-card {
+            background: var(--surface-soft);
+            border-radius: 16px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 2px 12px rgba(255, 107, 53, 0.06);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        #page-moonotes .pain-point-card:hover {
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.14);
+            border-color: rgba(255, 107, 53, 0.22);
+        }
+
+        #page-moonotes .pain-point-card .card-text {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        #page-moonotes .pain-point-card .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        #page-moonotes .pain-point-card .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange-500), var(--orange-600), var(--orange-700));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+        }
+
+        #page-moonotes .pain-point-card .card-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #ffffff;
+        }
+
+        #page-moonotes .pain-point-card .card-user-name {
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        #page-moonotes .pain-point-card .card-user-role {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        #page-moonotes .pain-points-philosophy {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 107, 53, 0.12);
+            text-align: center;
+        }
+
+        #page-moonotes .pain-points-philosophy .philosophy-title {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        #page-moonotes .pain-points-philosophy p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        #page-moonotes .additional-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            text-align: left;
+        }
+
+        #page-moonotes .feature-block {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 28px 24px;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            box-shadow: 0 2px 10px rgba(255, 107, 53, 0.05);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        #page-moonotes .feature-block:hover {
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.1);
+            border-color: rgba(255, 107, 53, 0.18);
+        }
+
+        #page-moonotes .feature-block h3 {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #page-moonotes .feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+        }
+
+        #page-moonotes .feature-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: #ffffff;
+        }
+
+        #page-moonotes .feature-block ul {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #page-moonotes .feature-block li {
+            position: relative;
+            padding-left: 16px;
+            margin-bottom: 8px;
+        }
+
+        #page-moonotes .feature-block li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--orange-400);
+        }
+
+        #page-moonotes .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        #page-moonotes .workflow-step {
+            text-align: center;
+            padding: 28px 16px;
+            background: var(--surface-soft);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(255, 107, 53, 0.06);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            transition: box-shadow 0.2s ease;
+        }
+
+        #page-moonotes .workflow-step:hover {
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.12);
+        }
+
+        #page-moonotes .workflow-step .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.35);
+        }
+
+        #page-moonotes .workflow-step h3 {
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        #page-moonotes .workflow-step p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #page-moonotes .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        #page-moonotes .audience-item {
+            padding: 22px 24px;
+            background: var(--surface-soft);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            border-left: 4px solid var(--orange-500);
+            transition: box-shadow 0.2s ease;
+        }
+
+        #page-moonotes .audience-item:hover {
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.1);
+        }
+
+        #page-moonotes .audience-item strong {
+            color: var(--text-primary);
+            font-size: 16px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        #page-moonotes .audience-item span {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        #page-moonotes .testimonial-section {
+            padding: 56px 64px;
+            background: linear-gradient(135deg, var(--orange-500) 0%, var(--orange-600) 100%);
+            border: none;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(255, 107, 53, 0.25);
+            border-radius: 20px;
+        }
+
+        #page-moonotes .testimonial-stars {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        #page-moonotes .testimonial-stars svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--star-gold);
+        }
+
+        #page-moonotes .testimonial-section blockquote {
+            max-width: 760px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 18px;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        #page-moonotes .testimonial-section cite {
+            display: block;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
+            font-style: normal;
+        }
+
+        #page-moonotes .showcase-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            max-width: 880px;
+            margin: 0 auto;
+        }
+
+        #page-moonotes .showcase-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            align-items: start;
+        }
+
+        #page-moonotes .showcase-row-single {
+            display: flex;
+            justify-content: center;
+        }
+
+        #page-moonotes .showcase-row-single .showcase-item {
+            width: 100%;
+            max-width: 220px;
+        }
+
+        #page-moonotes .showcase-item {
+            text-align: center;
+        }
+
+        #page-moonotes .showcase-frame {
+            background: linear-gradient(145deg, #2A1F18 0%, #1A1210 100%);
+            border-radius: 16px;
+            padding: 6px;
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.12);
+            max-width: 220px;
+            margin: 0 auto;
+        }
+
+        #page-moonotes .showcase-image {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            transition: opacity 0.2s ease;
+        }
+
+        #page-moonotes .showcase-item:hover .showcase-image {
+            opacity: 0.95;
+        }
+
+        #page-moonotes .showcase-title {
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 6px;
+        }
+
+        #page-moonotes .showcase-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.65;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        #page-moonotes .final-cta-section {
+            background: linear-gradient(145deg, var(--orange-800) 0%, var(--orange-900) 100%);
+            box-shadow: 0 24px 60px rgba(112, 40, 18, 0.35);
+            padding: 72px 56px;
+            text-align: center;
+            border-radius: 20px;
+        }
+
+        #page-moonotes .final-cta-section h2 {
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        #page-moonotes .final-cta-section p {
+            color: rgba(255, 255, 255, 0.88);
+            margin-bottom: 16px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        #page-moonotes .final-cta-section p:last-of-type {
+            margin-bottom: 32px;
+        }
+
+        #page-moonotes .final-cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        #page-moonotes .final-cta-buttons .app-store-btn {
+            background: #FFFFFF !important;
+            color: var(--orange-800) !important;
+        }
+
+        #page-moonotes .final-cta-buttons .secondary-cta-btn {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.45) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        #page-moonotes .final-cta-buttons .secondary-cta-btn:hover {
+            background: rgba(255, 255, 255, 0.18) !important;
+            border-color: rgba(255, 255, 255, 0.75) !important;
+        }
+
+        #page-moonotes .footer-content span,
+        #page-moonotes .footer-content a {
+            color: var(--text-muted) !important;
+        }
+
+        #page-moonotes .footer-content a {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #page-moonotes .footer-content a:hover {
+            color: var(--orange-600) !important;
+        }
+
+        #page-moonotes .footer-content a:focus-visible {
+            outline: 2px solid var(--orange-500);
+            outline-offset: 2px;
+        }
+
+        #page-moonotes .logo a,
+        #page-moonotes .download-btn {
+            cursor: pointer;
+        }
+
+        #page-moonotes .download-btn:focus-visible {
+            outline: 2px solid var(--orange-500);
+            outline-offset: 2px;
+        }
+
+        #page-moonotes .pain-points-section { order: 3; }
+        #page-moonotes .screenshots-section { order: 4; }
+        #page-moonotes .fusion-section { order: 5; }
+        #page-moonotes .workflow-section { order: 6; }
+        #page-moonotes .audience-section { order: 7; }
+        #page-moonotes .testimonial-section { order: 8; }
+        #page-moonotes .final-cta-section { order: 9; }
+
+        @media (prefers-reduced-motion: reduce) {
+            #page-moonotes {
+                scroll-behavior: auto;
+            }
+
+            #page-moonotes *,
+            #page-moonotes *::before,
+            #page-moonotes *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            #page-moonotes .app-store-btn:hover,
+            #page-moonotes .pain-point-card:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            #page-moonotes .pain-points-cards,
+            #page-moonotes .additional-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #page-moonotes .workflow-steps {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            #page-moonotes .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 36px;
+            }
+
+            #page-moonotes .hero-visual {
+                order: -1;
+                max-width: 220px;
+                margin: 0 auto;
+            }
+
+            #page-moonotes .hero-section .hero-desc {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #page-moonotes .header {
+                top: 8px;
+                left: 8px;
+                right: 8px;
+                border-radius: 12px;
+            }
+
+            #page-moonotes .moonotes-main {
+                padding: 72px 16px 100px;
+            }
+
+            #page-moonotes .section-nav {
+                top: 64px;
+                gap: 4px;
+                padding: 10px 12px;
+            }
+
+            #page-moonotes .section-nav a {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            #page-moonotes .hero-section {
+                padding: 40px 24px;
+                border-radius: 16px;
+            }
+
+            #page-moonotes .hero-section h1 {
+                font-size: 32px;
+                flex-wrap: wrap;
+            }
+
+            #page-moonotes .hero-slogan {
+                font-size: 17px;
+            }
+
+            #page-moonotes .content-section,
+            #page-moonotes .fusion-section,
+            #page-moonotes .testimonial-section,
+            #page-moonotes .final-cta-section {
+                padding: 40px 20px;
+                border-radius: 16px;
+            }
+
+            #page-moonotes .showcase-list {
+                gap: 32px;
+            }
+
+            #page-moonotes .showcase-row {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            #page-moonotes .showcase-frame {
+                max-width: 240px;
+            }
+
+            #page-moonotes .showcase-row-single .showcase-item {
+                max-width: 240px;
+            }
+
+            #page-moonotes .pain-points-cards,
+            #page-moonotes .additional-features,
+            #page-moonotes .audience-grid,
+            #page-moonotes .workflow-steps {
+                grid-template-columns: 1fr;
+            }
+
+            #page-moonotes .hero-download-buttons,
+            #page-moonotes .final-cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #page-moonotes .app-store-btn,
+            #page-moonotes .secondary-cta-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="page-moonotes" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo clickable">
+                    <a href="index.html"><img src="images/Mooyu.png" alt="Mooyu" style="height: 48px;width:auto;vertical-align:middle;"></a>
+                </div>
+                <nav>
+                    <a href="download.html" class="download-btn">MooApp Family</a>
+                </nav>
+            </div>
+        </header>
+        <main class="moonotes-main page-content">
+            <section class="hero-section" id="hero">
+                <div class="hero-inner">
+                    <div class="hero-content">
+                        <div class="hero-badges">
+                            <span class="hero-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                                iOS / macOS
+                            </span>
+                            <span class="hero-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z"></path></svg>
+                                AI 智能整理
+                            </span>
+                            <span class="hero-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                跨平台收藏
+                            </span>
+                        </div>
+                        <h1><img src="images/MooNotesLogo.jpg" alt="MooNotes" class="logo-img">MooNotes聚合</h1>
+                        <p class="hero-slogan">先收藏、后遗忘 → 随时找得到、说得清</p>
+                        <p class="hero-desc">面向 iOS / macOS 的智能聚合收藏 App。把散落在微信、小红书、知乎、B 站等平台的文章、视频与链接集中保存，并用 AI 自动整理、检索与对话，让收藏真正变成可用的知识库。</p>
+                        <div class="hero-download-buttons">
+                            <a href="download.html" class="app-store-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;" aria-hidden="true">
+                                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                                </svg>
+                                <span>前往下载</span>
+                            </a>
+                            <a href="download.html" class="secondary-cta-btn">返回 MooApp Family</a>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="device-frame">
+                            <img src="images/MooNotes-1.png" alt="MooNotes 收藏界面预览" class="hero-preview" width="390" height="844">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <nav class="section-nav" aria-label="页面章节导航">
+                <a href="#pain-points">痛点</a>
+                <a href="#screenshots">体验</a>
+                <a href="#features">亮点</a>
+                <a href="#workflow">流程</a>
+                <a href="#audience">场景</a>
+                <a href="#download">下载</a>
+            </nav>
+
+            <section class="content-section pain-points-section" id="pain-points">
+                <h2>你是否有这些烦恼？</h2>
+                <p class="section-subtitle">MooNotes聚合 为你量身解决</p>
+                <div class="pain-points-cards">
+                    <div class="pain-point-card">
+                        <div class="card-text">
+                            刷到好文章来不及细读，收藏夹里堆满打不开的链接，回头再也找不到？
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="card-user">
+                                <div class="card-user-name">内容消费者</div>
+                                <div class="card-user-role">收藏越积越多</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pain-point-card">
+                        <div class="card-text">
+                            微信、小红书、B 站、知乎……各平台收藏分散，来源不同、格式各异，复盘时要翻好几个 App？
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            <div class="card-user">
+                                <div class="card-user-name">跨平台用户</div>
+                                <div class="card-user-role">收藏散落各处</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pain-point-card">
+                        <div class="card-text">
+                            只记得「当时觉得有用」，却忘了为什么收藏、内容讲了什么，想回顾某类知识无从下手？
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </div>
+                            <div class="card-user">
+                                <div class="card-user-name">知识工作者</div>
+                                <div class="card-user-role">找不到、说不清</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pain-points-philosophy">
+                    <p class="philosophy-title"><strong>MooNotes聚合：智能收藏，AI 赋能，跨平台一站搞定。</strong></p>
+                    <p>把散落各平台的内容收进一处，用 AI 帮你整理、搜索与总结。让每一次收藏都有迹可循、随时可用。</p>
+                </div>
+            </section>
+
+            <section class="content-section screenshots-section" id="screenshots">
+                <h2>MooNotes聚合 · 真实体验</h2>
+                <p class="section-subtitle">从集中保存到 AI 对话，完整覆盖智能收藏工作流</p>
+                <div class="showcase-list">
+                    <div class="showcase-row">
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-1.png" alt="集中保存文章、视频与链接" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">集中保存文章、视频与链接</h3>
+                            <p class="showcase-description">把散落在各平台的软文、视频、网页链接收进一处。瀑布流卡片带缩略图预览，顶部可按「全部 / 星标 / 未归类 / 主题」快速筛选，告别收藏夹里一堆打不开的链接。</p>
+                        </div>
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-2.png" alt="跨平台内容展示" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">跨平台内容展示</h3>
+                            <p class="showcase-description">微信文章、小红书笔记、知乎回答、B 站视频……来源不同，展示统一。自动识别平台与内容类型，每条收藏带上主题标签，一眼看清这条内容属于哪块知识。</p>
+                        </div>
+                    </div>
+                    <div class="showcase-row">
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-3.png" alt="收藏与阅读更便捷" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">收藏与阅读更便捷</h3>
+                            <p class="showcase-description">按学习、健康、娱乐、生活等主题图标切换浏览，轻点卡片即可 App 内打开原文阅读。收藏、AI、设置三 Tab 布局，从存到读路径清晰。</p>
+                        </div>
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-4.png" alt="智能搜索与整理" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">智能搜索与整理</h3>
+                            <p class="showcase-description">切换到 AI Tab，和你的全部收藏对话。智能推荐提问示例，输入自然语言即可搜索、总结，需要深入时 AI 会自动抓取原文作答。</p>
+                        </div>
+                    </div>
+                    <div class="showcase-row">
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-5.png" alt="自定义主题分类" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">自定义主题分类</h3>
+                            <p class="showcase-description">工作、学习、产品、生活、健康、娱乐……勾选启用、添加自定义主题、长按重命名或删除。可为每个主题填写补充说明，帮助 AI 更准确分类。</p>
+                        </div>
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-6.png" alt="自定义外观" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">自定义外观</h3>
+                            <p class="showcase-description">「现代」采用 iOS 26 Liquid Glass 磨砂玻璃，「复古 Mac」还原 Mac OS X Aqua 拉丝金属与 pinstripe 条纹。壁纸可独立选择，模版与壁纸任意组合，立即生效。</p>
+                        </div>
+                    </div>
+                    <div class="showcase-row showcase-row-single">
+                        <div class="showcase-item">
+                            <div class="showcase-frame">
+                                <img src="images/MooNotes-7.png" alt="数据备份" class="showcase-image" loading="lazy" width="390" height="844">
+                            </div>
+                            <h3 class="showcase-title">数据备份</h3>
+                            <p class="showcase-description">导出 JSON 备份，包含收藏、主题、个性化设置及已缓存的文章正文。可保存到「文件」、iCloud 或其它设备，换机、重装甚至删除 App 后也能恢复。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="fusion-section" id="features">
+                <h2>MooNotes聚合 · 核心亮点</h2>
+                <p class="section-subtitle">智能收藏 + AI 对话 + 跨平台统一，三位一体</p>
+                <div class="additional-features">
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </span>
+                            多种添加方式
+                        </h3>
+                        <ul>
+                            <li>系统分享：在任意 App 中「分享 → MooNotes聚合」，返回主 App 后自动入库</li>
+                            <li>剪贴板检测：复制链接后打开 App，弹出提示一键添加</li>
+                            <li>手动添加：填写标题、链接、备注等信息</li>
+                            <li>自动识别微信、小红书、抖音、B 站、微博、知乎、X、YouTube 等平台</li>
+                        </ul>
+                    </div>
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            </span>
+                            丰富元数据
+                        </h3>
+                        <ul>
+                            <li>主题分类、来源、内容类型、阅读状态（未读 / 已整理 / 可复用）</li>
+                            <li>「一句话价值」：记录当时觉得有用的原因</li>
+                            <li>「关联项目」：标记这条收藏服务于哪个具体项目</li>
+                            <li>星标收藏、补充备注，瀑布流卡片布局（单列 / 双列混排）</li>
+                        </ul>
+                    </div>
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                            </span>
+                            AI 能力（DeepSeek）
+                        </h3>
+                        <ul>
+                            <li>添加后自动整理：生成「一句话价值」、匹配主题、推断关联项目</li>
+                            <li>收藏对话：基于全部收藏快速回答概览、查找、总结类问题</li>
+                            <li>深入某篇时自动抓取原文（最多 1～3 篇），支持对比阅读</li>
+                            <li>语音输入提问、朗读回复，金币不足时自动降级为本地关键词搜索</li>
+                        </ul>
+                    </div>
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="10.5" r="2.5"></circle><circle cx="8.5" cy="7.5" r="2.5"></circle><circle cx="6.5" cy="12.5" r="2.5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"></path></svg>
+                            </span>
+                            外观定制
+                        </h3>
+                        <ul>
+                            <li>现代：iOS 26 Liquid Glass 磨砂玻璃、圆角卡片与青色强调色</li>
+                            <li>复古 Mac：Mac OS X Aqua 风格——拉丝金属、pinstripe 条纹、橙色凝胶按钮</li>
+                            <li>壁纸：相册自定义、复古 Mac 预设、纯色与渐变多组内置预设</li>
+                            <li>切换后自动调整文字与卡片对比度，保证可读性</li>
+                        </ul>
+                    </div>
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                            </span>
+                            文章主题管理
+                        </h3>
+                        <ul>
+                            <li>首次打开引导选择关注方向，可填写补充说明</li>
+                            <li>设置 → 文章主题：勾选启用、添加自定义主题、重命名或删除</li>
+                            <li>返回后自动同步到收藏页筛选与 AI 自动分类可选主题</li>
+                            <li>参考你对主题的纠正记录，逐步提升分类准确度</li>
+                        </ul>
+                    </div>
+                    <div class="feature-block">
+                        <h3>
+                            <span class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            </span>
+                            数据备份
+                        </h3>
+                        <ul>
+                            <li>设置 → 数据备份：导出 / 导入 JSON 备份</li>
+                            <li>备份包含收藏、主题、个性化设置及已缓存的文章正文</li>
+                            <li>导入支持合并（相同链接不重复）或替换全部</li>
+                            <li>可保存到「文件」、iCloud 或其它设备，App 删除后也能恢复</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section workflow-section" id="workflow">
+                <h2>典型使用流程</h2>
+                <p class="section-subtitle">从收藏到回顾，五步搞定知识管理</p>
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-num">1</div>
+                        <h3>分享或复制链接</h3>
+                        <p>在任意 App 中分享至 MooNotes，或复制链接后打开 App 一键添加</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-num">2</div>
+                        <h3>自动识别与整理</h3>
+                        <p>自动识别平台与内容类型，AI 生成主题标签与「一句话价值」</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-num">3</div>
+                        <h3>按主题浏览筛选</h3>
+                        <p>顶部筛选栏按全部、星标、未归类或各主题快速定位</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-num">4</div>
+                        <h3>AI 对话搜索总结</h3>
+                        <p>切换到 AI Tab，用自然语言提问，基于全部收藏对话与总结</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-num">5</div>
+                        <h3>JSON 备份保障</h3>
+                        <p>定期导出备份，换机重装也能完整恢复收藏与主题</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section audience-section" id="audience">
+                <h2>适用场景</h2>
+                <p class="section-subtitle">无论你是内容消费者还是知识工作者，MooNotes 都能帮你</p>
+                <div class="audience-grid">
+                    <div class="audience-item">
+                        <strong>刷到好文章，来不及细读</strong>
+                        <span>一键分享或复制链接，稍后统一阅读</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>收藏越积越多，找不到</strong>
+                        <span>按主题、星标、未归类筛选；AI 帮你搜索与总结</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>跨平台内容（微信 / 小红书 / B 站等）</strong>
+                        <span>自动识别来源与内容类型，统一展示</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>想快速回顾某类知识</strong>
+                        <span>在 AI 页提问，基于全部收藏对话</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>需要深入某篇内容</strong>
+                        <span>问「这篇讲了什么」，AI 会自动抓取并阅读原文</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>项目制学习或工作</strong>
+                        <span>用「关联项目」字段把收藏与具体事项挂钩</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>换机或重装 App</strong>
+                        <span>JSON 备份导出 / 导入，收藏与主题不丢失</span>
+                    </div>
+                    <div class="audience-item">
+                        <strong>想换界面风格或背景</strong>
+                        <span>设置中切换「现代 / 复古 Mac」模版，搭配相册或预设壁纸</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="testimonial-section" id="reviews">
+                <div class="testimonial-stars" aria-label="5 星评价">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <blockquote>
+                    "以前微信、小红书、B 站的收藏分散在各处，找一篇旧文章要翻好几个 App。现在全部收进 MooNotes，AI 还能帮我总结「最近收藏的产品设计文章」，真正变成了可用的知识库。"
+                </blockquote>
+                <cite>—— 某独立开发者</cite>
+            </section>
+
+            <section class="final-cta-section" id="download">
+                <h2>立即体验 MooNotes聚合</h2>
+                <p>MooNotes聚合 已上架 iOS / macOS。下载后无需 API Key 也可使用基础收藏与浏览，配置 Key 后即可解锁完整的 AI 整理与对话功能。</p>
+                <p><strong>让 MooNotes聚合 帮你把「先收藏、后遗忘」变成「随时找得到、说得清」。</strong></p>
+                <div class="final-cta-buttons">
+                    <a href="download.html" class="app-store-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;" aria-hidden="true">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                        </svg>
+                        <span>前往下载</span>
+                    </a>
+                    <a href="moonotesprivacy.html" class="secondary-cta-btn">用户隐私政策</a>
+                    <a href="moonoteslicense.html" class="secondary-cta-btn">软件许可及服务协议</a>
+                    <a href="download.html" class="secondary-cta-btn">返回 MooApp Family</a>
+                </div>
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">©MooApp, part of Mooyu Net 2025</span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;">Contact us: <a href="mailto:mooyucc@qq.com" style="color:#6c757d;text-decoration:none;">mooyucc@qq.com</a></span>
+                        <span style="font-size:12px;color:#6c757d;line-height:1.3;"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" style="color:#6c757d;text-decoration:none;">沪公网安备31011502404381号｜沪ICP备2025134738号-1</a></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>

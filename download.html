@@ -66,13 +66,14 @@
         #page-download .app-family-grid {
             margin-top: 48px;
             gap: 40px;
+            align-items: start;
         }
 
         #page-download .app-card {
             /* 浅米色卡片背景 */
             background: #FAF8F5;
             border-radius: 28px;
-            padding: 40px 32px;
+            padding: 32px 28px 28px;
             /* 浅米色边框 */
             border: 1px solid #EAE6DF;
             /* 小卡片阴影 */
@@ -81,6 +82,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            min-height: auto;
         }
 
         #page-download .app-card:hover {
@@ -90,13 +93,13 @@
         }
 
         #page-download .app-card.center {
-            gap: 0;
+            gap: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* 图标区域 - 固定高度 */
+        /* 图标区域 */
         #page-download .app-icon {
             width: 64px;
             height: 64px;
@@ -107,20 +110,20 @@
         }
 
         #page-download .app-icon-wrapper {
-            height: 84px;
+            min-height: 72px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0;
+            margin-bottom: 4px;
         }
 
-        /* 标题区域 - 固定高度 */
+        /* 标题区域 */
         #page-download .app-title {
             /* 主要文字颜色 */
             color: #333333;
             font-weight: 600;
             margin-bottom: 0;
-            height: 56px;
+            min-height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -130,18 +133,18 @@
         }
 
         #page-download .app-title-wrapper {
-            height: 68px;
+            min-height: 56px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0;
+            margin-bottom: 4px;
             width: 100%;
         }
 
-        /* 描述区域 - 固定高度 */
+        /* 描述区域 */
         #page-download .app-description {
             margin-bottom: 0;
-            height: 60px;
+            min-height: 48px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -150,7 +153,7 @@
         }
 
         #page-download .app-description-wrapper {
-            height: 76px;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -164,16 +167,14 @@
             color: #666666;
         }
 
-        /* 按钮区域 - 固定高度 */
+        /* 按钮区域 */
         #page-download .app-card .button-container {
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 12px;
             align-items: center;
-            margin-top: 0;
-            min-height: 120px;
-            justify-content: flex-start;
+            margin-top: 20px;
         }
 
         #page-download .app-download-btn {
@@ -253,11 +254,11 @@
             }
 
             #page-download .app-card {
-                padding: 32px 24px;
+                padding: 28px 22px 24px;
             }
 
             #page-download .app-icon-wrapper {
-                height: 72px;
+                min-height: 64px;
             }
 
             #page-download .app-icon {
@@ -266,23 +267,23 @@
             }
 
             #page-download .app-title-wrapper {
-                height: 52px;
+                min-height: 48px;
             }
 
             #page-download .app-title {
-                height: 44px;
+                min-height: 40px;
             }
 
             #page-download .app-description-wrapper {
-                height: 56px;
+                min-height: 52px;
             }
 
             #page-download .app-description {
-                height: 48px;
+                min-height: 44px;
             }
 
             #page-download .app-card .button-container {
-                min-height: 120px;
+                margin-top: 16px;
             }
         }
 
@@ -296,11 +297,11 @@
             }
 
             #page-download .app-card {
-                padding: 28px 20px;
+                padding: 24px 18px 20px;
             }
 
             #page-download .app-icon-wrapper {
-                height: 64px;
+                min-height: 56px;
             }
 
             #page-download .app-icon {
@@ -309,20 +310,20 @@
             }
 
             #page-download .app-title-wrapper {
-                height: 44px;
+                min-height: 40px;
             }
 
             #page-download .app-title {
-                height: 36px;
+                min-height: 36px;
                 font-size: 18px;
             }
 
             #page-download .app-description-wrapper {
-                height: 48px;
+                min-height: 44px;
             }
 
             #page-download .app-description {
-                height: 40px;
+                min-height: 38px;
             }
 
             #page-download .app-description-cn {
@@ -334,7 +335,7 @@
             }
 
             #page-download .app-card .button-container {
-                min-height: 120px;
+                margin-top: 14px;
             }
         }
     </style>
@@ -458,8 +459,31 @@
                         </div>
                     </div>
                     <div class="button-container">
-                        <a href="moolog.html" class="app-download-btn" id="goto-moolog-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <span>进入 MooLog</span>
+                        <a href="https://apps.apple.com/cn/app/id6773013685?mt=12" target="_blank" class="app-download-btn" id="goto-moolog-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
+                            </svg>
+                            <span>App Store 下载</span>
+                            <img src="images/free.png" alt="Free Version" style="height: 25px;">
+                        </a>
+                    </div>
+                </div>
+                <div class="app-card center">
+                    <div class="app-icon-wrapper">
+                        <a href="moonotes.html"><img src="images/MooNotesLogo.jpg" alt="MooNotes" class="app-icon" id="goto-moonotes-from-download"></a>
+                    </div>
+                    <div class="app-title-wrapper">
+                        <div class="app-title">MooNotes聚合<br>智能收藏</div>
+                    </div>
+                    <div class="app-description-wrapper">
+                        <div class="app-description">
+                            <div class="app-description-cn">跨平台文章、视频与链接 AI 聚合收藏</div>
+                            <div class="app-description-en">Smart AI Aggregation for Links &amp; Content</div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <a href="moonotes.html" class="app-download-btn" id="goto-moonotes-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>进入 MooNotes聚合</span>
                             <img src="images/free.png" alt="Free Version" style="height: 25px;">
                         </a>
                     </div>
