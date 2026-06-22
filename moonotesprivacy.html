@@ -72,7 +72,7 @@
     <main class="page page-content" style="max-width:800px;margin:0 auto;padding:48px 24px;line-height:1.8;">
         <div id="content-zh" class="content-lang active">
             <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"MooNotes聚合"用户隐私政策</h1>
-            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2026 年 6 月 7 日</p>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">更新日期：2026 年 6 月 22 日</p>
 
             <section style="margin-bottom:32px;">
                 <p>欢迎使用 MooNotes聚合！我们非常重视您的隐私保护和个人信息安全。本隐私政策说明我们如何收集、使用、存储和保护您的个人信息。在使用我们的服务前，请您仔细阅读并充分理解本隐私政策。</p>
@@ -95,30 +95,54 @@
                     <li><strong>收藏内容：</strong>您通过分享、剪贴板检测或手动添加的文章、视频、网页链接及其标题、备注等信息</li>
                     <li><strong>元数据与标签：</strong>主题分类、星标状态、阅读状态、「一句话价值」、「关联项目」等您填写或确认的信息</li>
                     <li><strong>主题与设置：</strong>您自定义的文章主题、主题说明、外观模版、壁纸等个性化设置</li>
-                    <li><strong>API Key（可选）：</strong>您为启用 AI 功能而配置的 DeepSeek 等大模型服务商 API Key</li>
                 </ul>
 
                 <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 自动收集与处理的信息</h3>
                 <ul style="padding-left:20px;">
                     <li><strong>链接元数据：</strong>添加收藏时，应用会根据链接自动拉取标题、缩略图、来源平台、内容类型等公开元数据</li>
                     <li><strong>缓存正文：</strong>在 AI 整理或深度阅读时，应用可能在本地缓存已抓取的文章正文，并包含在 JSON 备份中</li>
-                    <li><strong>设备信息：</strong>设备型号、操作系统版本、应用版本等基础信息</li>
-                    <li><strong>使用数据：</strong>应用功能使用情况、性能数据、错误日志等（用于改善应用体验）</li>
+                    <li><strong>设备信息：</strong>设备型号、操作系统版本、应用版本等基础信息（仅用于改善应用体验，不会发送至第三方 AI 服务）</li>
+                    <li><strong>使用数据：</strong>应用功能使用情况、性能数据、错误日志等（仅用于改善应用体验，不会发送至第三方 AI 服务）</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI 服务相关</h3>
-                <p>当您使用 AI 自动整理、收藏对话、深度阅读、语音输入与朗读回复等功能时，相关收藏标题、一句话价值及必要时抓取的文章原文会被发送至您自行配置的大模型服务商（如 DeepSeek）进行处理。我们不会存储您向 AI 服务发送的具体内容，也不会将您的 API Key 上传至我们的服务器。</p>
-                <p>当 AI 金币不足时，应用会自动降级为本地关键词搜索，此过程不消耗金币，也不向第三方 AI 服务发送数据。</p>
-                <p><strong>重要提醒：</strong>调用大模型时内容会离开本机，请勿上传敏感信息。</p>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 我们不会收集的信息</h3>
+                <p>本应用无需注册或登录。我们不会收集或向第三方 AI 服务发送以下信息：电子邮箱、电话号码、精确地理位置、通讯录、照片库、设备标识符或广告标识符。</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.4 AI 数据处理与传输</h3>
+                <p><strong>处理方式：</strong></p>
+                <ul style="padding-left:20px;">
+                    <li><strong>Apple Intelligence（端侧）：</strong>在设备可用时，简单 AI 请求通过 Apple 端侧 Foundation Models 在本地处理，数据不向第三方传输</li>
+                    <li><strong>DeepSeek（第三方云端）：</strong>复杂 AI 请求及端侧 AI 不可用时的回退方案，通过 DeepSeek API（api.deepseek.com，模型 deepseek-chat）处理</li>
+                    <li><strong>本地降级：</strong>AI 金币不足时，AI 标签页与保存收藏时的自动整理均降级为本地关键词搜索，不向任何 AI 服务发送数据</li>
+                </ul>
+                <p><strong>发送至 DeepSeek 的数据范围（仅限响应您的请求所需）：</strong></p>
+                <ul style="padding-left:20px;">
+                    <li><strong>AI 对话：</strong>您的消息；最近对话记录（最多 8 条）；相关收藏元数据（标题、备注、主题、URL、文章摘要），来自筛选后的子集（最多约 40 条，非全部收藏）；深度阅读时可能包含 1–3 篇完整正文（经截断处理）</li>
+                    <li><strong>自动整理：</strong>收藏标题、URL、用户备注、文章摘要及已有主题名称</li>
+                </ul>
+                <p><strong>语音输入：</strong>语音音频由 Apple 系统语音 API 在设备上处理；仅转写后的文字可能被发送至 AI 服务，原始音频不会发送。</p>
+                <p>我们不在自己的服务器上存储您向 AI 服务发送的内容。向 DeepSeek 传输时，内容会离开您的设备，请勿输入机密或敏感信息。</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">三、信息使用目的</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">三、AI 功能同意</h2>
+                <p>在您首次进入 AI 标签页、发送任何 AI 消息或建议之前，应用会显示明确的同意对话框：</p>
+                <ul style="padding-left:20px;">
+                    <li>说明 DeepSeek 第三方处理与 Apple 端侧 Intelligence，并链接至本隐私政策</li>
+                    <li>须选择「同意并继续」或「暂不」；不可通过滑动等方式绕过</li>
+                    <li>未同意前，无法发送任何 AI 消息或建议，AI 自动整理亦不可用</li>
+                    <li>选择「暂不」后，您仍可管理收藏并使用免费的本地关键词搜索（不涉及 AI 数据传输）</li>
+                    <li>您可随时在应用内撤回 AI 同意</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">四、信息使用目的</h2>
                 <p>我们收集和使用您的信息用于以下目的：</p>
                 <ul style="padding-left:20px;">
                     <li><strong>1. 提供核心功能：</strong>为您提供链接收藏、跨平台识别、主题分类、瀑布流浏览、App 内阅读等核心功能</li>
                     <li><strong>2. 本地数据管理：</strong>在您的设备本地保存和管理收藏、主题、个性化设置及缓存正文</li>
-                    <li><strong>3. AI 服务：</strong>在您配置 API Key 后，为您提供自动整理、智能搜索、收藏对话与深度阅读等功能</li>
+                    <li><strong>3. AI 服务：</strong>在您同意 AI 功能后，为您提供自动整理、智能搜索、收藏对话与深度阅读等功能</li>
                     <li><strong>4. 数据备份：</strong>支持您导出 / 导入 JSON 备份，便于换机或跨设备恢复</li>
                     <li><strong>5. 改善服务：</strong>分析使用情况，优化应用性能和用户体验</li>
                     <li><strong>6. 技术支持：</strong>解决您在使用过程中遇到的问题</li>
@@ -126,25 +150,23 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">四、信息存储和安全</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">五、信息存储和安全</h2>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 数据存储位置</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 数据存储位置</h3>
                 <ul style="padding-left:20px;">
-                    <li><strong>本地存储：</strong>您的收藏、主题、个性化设置及已缓存的文章正文主要保存在您的设备本地，由您完全掌控</li>
-                    <li><strong>系统钥匙串：</strong>您配置的 API Key 使用系统钥匙串加密存储在本地设备，不上传至任何第三方</li>
+                    <li><strong>本地存储：</strong>您的收藏、主题、个性化设置及已缓存的文章正文通过 SwiftData 保存在设备本地，由您完全掌控</li>
                     <li><strong>用户备份：</strong>您导出的 JSON 备份文件由您自行保存至「文件」、iCloud 或其它设备，我们不对备份文件的存放位置负责</li>
-                    <li><strong>第三方 AI 服务：</strong>启用 AI 功能时，相关内容会发送至您选择的大模型服务商，数据处理遵循其隐私政策</li>
+                    <li><strong>第三方 AI 服务：</strong>在您同意并使用 AI 功能时，相关内容会发送至 DeepSeek 进行处理，数据处理遵循 DeepSeek 的隐私政策</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 数据安全措施</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 数据安全措施</h3>
                 <p>我们采用行业标准的安全技术和管理措施保护您的个人信息：</p>
                 <ul style="padding-left:20px;">
-                    <li>API Key 使用系统钥匙串加密存储</li>
                     <li>收藏数据以本地形式保存，访问权限由您和操作系统共同控制</li>
                     <li>定期进行安全评估和漏洞修复</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 数据保留期限</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.3 数据保留期限</h3>
                 <ul style="padding-left:20px;">
                     <li>您的收藏数据将保留在本地设备中，直至您主动删除相关收藏或卸载应用</li>
                     <li>卸载应用后，本地数据可能被清除；如您已导出 JSON 备份，可通过导入功能恢复</li>
@@ -152,46 +174,48 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">五、第三方服务</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">六、第三方服务</h2>
                 <p>我们可能使用或接入以下第三方服务：</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple 服务</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.1 Apple 服务</h3>
                 <ul style="padding-left:20px;">
                     <li><strong>App Store / StoreKit：</strong>用于应用分发及可能的内购与订阅管理</li>
-                    <li><strong>系统分享与钥匙串：</strong>用于接收分享链接及安全存储 API Key</li>
+                    <li><strong>系统分享：</strong>用于接收分享链接</li>
+                    <li><strong>Apple Intelligence：</strong>在设备可用时，通过端侧 Foundation Models 处理简单 AI 请求，数据不向第三方传输</li>
+                    <li><strong>系统语音 API：</strong>用于语音输入的本地识别与转写</li>
                     <li><strong>iCloud / 文件：</strong>用于您自行选择的数据备份存储（由您主动操作触发）</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 内容来源平台</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.2 内容来源平台</h3>
                 <p>本应用支持识别和展示来自微信、小红书、知乎、哔哩哔哩、抖音、微博、X / Twitter、YouTube 等平台的内容链接。添加收藏时，应用会访问相应链接以获取公开元数据或正文，具体数据处理遵循各平台的服务条款与隐私政策。</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.3 AI 服务</h3>
-                <p>本应用 AI 功能主要基于 DeepSeek 等大模型服务商。当您启用 AI 功能并配置相应 API Key 时，相关数据会被发送至您选择的服务商进行处理。以上第三方服务有其独立的隐私政策，我们建议您仔细阅读。</p>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.3 AI 服务（DeepSeek）</h3>
+                <p>本应用 AI 功能使用 DeepSeek（api.deepseek.com，模型 deepseek-chat）处理复杂请求及端侧 AI 不可用时的回退方案。在您同意 AI 功能后，相关内容会发送至 DeepSeek 进行处理。DeepSeek 有其独立的隐私政策，我们建议您仔细阅读。</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">六、您的权利</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">七、您的权利</h2>
                 <p>根据相关法律法规，您对自己的个人信息享有以下权利：</p>
                 <ul style="padding-left:20px;">
                     <li><strong>1. 访问权：</strong>您可以随时在应用内查看和管理您的全部收藏、主题与设置</li>
                     <li><strong>2. 更正权：</strong>您可以随时编辑收藏详情、主题分类、星标、备注及 AI 整理结果</li>
                     <li><strong>3. 删除权：</strong>您可以随时删除单条或批量收藏，或通过「替换全部」导入方式清空数据</li>
-                    <li><strong>4. 撤回同意权：</strong>您可以随时移除 API Key 或停止使用 AI 相关功能</li>
+                    <li><strong>4. 撤回同意权：</strong>您可随时在应用内撤回 AI 功能同意，或停止使用 AI 相关功能</li>
                     <li><strong>5. 数据导出：</strong>您可通过 JSON 备份导出全部收藏、主题与设置，并在其它设备导入恢复</li>
                 </ul>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">七、儿童隐私保护</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">八、儿童隐私保护</h2>
                 <p>我们非常重视儿童的个人信息保护。如果您未满 14 周岁，请在您的监护人指导下使用本应用。我们不会故意收集儿童的个人信息。如您发现我们在不知情的情况下收集了儿童信息，请及时联系我们，我们将立即删除相关信息。</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">八、信息共享和披露</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">九、信息共享和披露</h2>
                 <p>除以下情况外，我们不会向第三方共享、转让或披露您的个人信息：</p>
                 <ul style="padding-left:20px;">
-                    <li><strong>1. 获得您的明确同意</strong></li>
-                    <li><strong>2. 您主动配置并使用第三方 AI 服务时，相关内容按该服务商政策处理</strong></li>
+                    <li><strong>1. 获得您的明确同意（包括 AI 功能同意对话框中的同意）</strong></li>
+                    <li><strong>2. 在您同意并使用 AI 功能时，相关内容按 DeepSeek 等服务商的政策处理</strong></li>
                     <li><strong>3. 为获取链接元数据或正文而访问相应内容来源（仅处理您主动添加的链接）</strong></li>
                     <li><strong>4. 法律法规要求或司法机构依法要求</strong></li>
                     <li><strong>5. 为履行服务协议或解决争议所必需</strong></li>
@@ -200,17 +224,17 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">九、隐私政策的变更</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">十、隐私政策的变更</h2>
                 <p>我们可能会不定期更新本隐私政策。更新后的隐私政策将在本页面发布，并在显著位置标明生效日期。我们建议您定期查看本隐私政策以了解最新变更。如变更涉及重大内容，我们可能会通过应用内通知等方式提醒您。</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">十、适用范围</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">十一、适用范围</h2>
                 <p>本隐私政策适用于 MooNotes聚合 应用及其提供的所有功能和服务。</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">十一、联系我们</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">十二、联系我们</h2>
                 <p>如果您对本隐私政策有任何疑问、意见或建议，或需要行使您的权利，请通过以下方式联系我们：</p>
                 <ul style="padding-left:20px;">
                     <li>应用内反馈功能</li>
@@ -220,12 +244,12 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">十二、其他</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">十三、其他</h2>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 适用法律</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">13.1 适用法律</h3>
                 <p>本隐私政策的解释、执行和争议解决均适用中华人民共和国法律法规。</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 争议解决</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">13.2 争议解决</h3>
                 <p>如因本隐私政策发生争议，双方应友好协商解决；协商不成的，任何一方均可向开发者所在地有管辖权的人民法院提起诉讼。</p>
             </section>
 
@@ -233,12 +257,12 @@
 
             <p style="margin-top:32px;">再次感谢您使用 MooNotes聚合！</p>
 
-            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*本隐私政策最后更新日期：2026年6月7日*</em></p>
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*本隐私政策最后更新日期：2026年6月22日*</em></p>
         </div>
 
         <div id="content-en" class="content-lang">
             <h1 style="font-size:32px;margin-bottom:16px;text-align:center;">"MooNotes Aggregation" User Privacy Policy</h1>
-            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">Last Updated: June 7, 2026</p>
+            <p style="text-align:center;color:#6c757d;margin-bottom:40px;">Last Updated: June 22, 2026</p>
 
             <section style="margin-bottom:32px;">
                 <p>Welcome to MooNotes Aggregation! We highly value your privacy and personal information security. This privacy policy explains how we collect, use, store, and protect your personal information. Please read and fully understand this privacy policy before using our services.</p>
@@ -261,30 +285,54 @@
                     <li><strong>Collections:</strong> Articles, videos, web links, and related titles and notes you add via sharing, clipboard detection, or manual entry</li>
                     <li><strong>Metadata and Tags:</strong> Theme categories, starred status, reading status, one-line value summaries, associated projects, and other information you provide or confirm</li>
                     <li><strong>Themes and Settings:</strong> Custom article themes, theme descriptions, appearance templates, wallpapers, and other personalization settings</li>
-                    <li><strong>API Keys (Optional):</strong> LLM provider API keys (such as DeepSeek) you configure to enable AI features</li>
                 </ul>
 
                 <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.2 Automatically Collected and Processed Information</h3>
                 <ul style="padding-left:20px;">
                     <li><strong>Link Metadata:</strong> When adding a collection, the app may fetch public metadata such as title, thumbnail, source platform, and content type from the link</li>
                     <li><strong>Cached Content:</strong> During AI organization or deep reading, the app may cache fetched article text locally and include it in JSON backups</li>
-                    <li><strong>Device Information:</strong> Device model, operating system version, application version, and other basic information</li>
-                    <li><strong>Usage Data:</strong> Application feature usage, performance data, error logs, etc. (used to improve application experience)</li>
+                    <li><strong>Device Information:</strong> Device model, operating system version, application version, and other basic information (used only to improve the app experience; not sent to third-party AI services)</li>
+                    <li><strong>Usage Data:</strong> Application feature usage, performance data, error logs, etc. (used only to improve the app experience; not sent to third-party AI services)</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 AI Service Related</h3>
-                <p>When you use AI auto-organization, collection chat, deep reading, voice input, and text-to-speech features, relevant collection titles, one-line value summaries, and article text when necessary will be sent to the LLM provider you configure (such as DeepSeek) for processing. We do not store the specific content you send to AI services, and we do not upload your API keys to our servers.</p>
-                <p>When AI credits are insufficient, the app automatically falls back to local keyword search, which does not consume credits or send data to third-party AI services.</p>
-                <p><strong>Important Notice:</strong> When calling large language models, content leaves your device. Please do not upload sensitive information.</p>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.3 Information We Do Not Collect</h3>
+                <p>The app requires no registration or login. We do not collect or send the following to third-party AI services: email addresses, phone numbers, precise location, contacts, photo library, device identifiers, or advertising identifiers.</p>
+
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">2.4 AI Data Processing and Transmission</h3>
+                <p><strong>Processing methods:</strong></p>
+                <ul style="padding-left:20px;">
+                    <li><strong>Apple Intelligence (on-device):</strong> When available, simple AI requests are processed locally via Apple on-device Foundation Models; data is not sent to third parties</li>
+                    <li><strong>DeepSeek (third-party cloud):</strong> Complex AI requests and fallback when on-device AI is unavailable are processed via the DeepSeek API (api.deepseek.com, model: deepseek-chat)</li>
+                    <li><strong>Local fallback:</strong> When AI credits are exhausted, the AI tab and auto-organization when saving bookmarks fall back to local keyword search only; no data is sent to any AI service</li>
+                </ul>
+                <p><strong>Data sent to DeepSeek (limited to what is needed to fulfill your request):</strong></p>
+                <ul style="padding-left:20px;">
+                    <li><strong>AI Chat:</strong> Your messages; recent chat history (up to 8 messages); relevant bookmark metadata (title, notes, topic, URL, article excerpts) from a filtered subset (up to ~40 items, not your full library); full article text only when deep reading is required (1–3 articles, truncated)</li>
+                    <li><strong>Auto-organization:</strong> Bookmark title, URL, user note, article excerpt, and existing topic names</li>
+                </ul>
+                <p><strong>Voice input:</strong> Voice audio is processed on-device by Apple's system speech APIs; only transcribed text may be sent to AI services. Raw audio is never sent.</p>
+                <p>We do not store the content you send to AI services on our own servers. When transmitted to DeepSeek, content leaves your device. Please do not enter confidential or sensitive information.</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">III. Purpose of Information Use</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">III. AI Feature Consent</h2>
+                <p>Before your first visit to the AI tab and before any AI message or suggestion can be sent, the app displays an explicit consent dialog:</p>
+                <ul style="padding-left:20px;">
+                    <li>Explains DeepSeek third-party processing and on-device Apple Intelligence, with a link to this Privacy Policy</li>
+                    <li>Requires "Agree and Continue" or "Not Now"; cannot be dismissed by swiping</li>
+                    <li>Until consent is granted, no AI messages or suggestions can be sent, and AI auto-organization is blocked</li>
+                    <li>Users who choose "Not Now" can still manage bookmarks and use free local keyword search (no AI data transmission)</li>
+                    <li>You may withdraw AI consent at any time in the app</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom:32px;">
+                <h2 style="font-size:20px;margin-bottom:12px;">IV. Purpose of Information Use</h2>
                 <p>We collect and use your information for the following purposes:</p>
                 <ul style="padding-left:20px;">
                     <li><strong>1. Provide Core Functionality:</strong> Link collection, cross-platform recognition, theme classification, waterfall browsing, and in-app reading</li>
                     <li><strong>2. Local Data Management:</strong> Save and manage collections, themes, personalization settings, and cached content on your device</li>
-                    <li><strong>3. AI Services:</strong> Provide auto-organization, smart search, collection chat, and deep reading after you configure API keys</li>
+                    <li><strong>3. AI Services:</strong> After you consent to AI features, provide auto-organization, smart search, collection chat, and deep reading</li>
                     <li><strong>4. Data Backup:</strong> Support JSON export/import for device migration and recovery</li>
                     <li><strong>5. Improve Services:</strong> Analyze usage to optimize application performance and user experience</li>
                     <li><strong>6. Technical Support:</strong> Resolve issues you encounter during use</li>
@@ -292,25 +340,23 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">IV. Information Storage and Security</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">V. Information Storage and Security</h2>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.1 Data Storage Location</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Data Storage Location</h3>
                 <ul style="padding-left:20px;">
-                    <li><strong>Local Storage:</strong> Your collections, themes, personalization settings, and cached article text are primarily stored locally on your device, under your full control</li>
-                    <li><strong>System Keychain:</strong> API keys you configure are encrypted and stored locally in the system keychain, not uploaded to any third party</li>
+                    <li><strong>Local Storage:</strong> Your collections, themes, personalization settings, and cached article text are stored locally on your device via SwiftData, under your full control</li>
                     <li><strong>User Backups:</strong> JSON backup files you export are saved by you to Files, iCloud, or other devices; we are not responsible for where backup files are stored</li>
-                    <li><strong>Third-Party AI Services:</strong> When AI features are enabled, relevant content is sent to your chosen LLM provider, and data processing follows its privacy policy</li>
+                    <li><strong>Third-Party AI Services:</strong> When you consent to and use AI features, relevant content is sent to DeepSeek for processing, subject to DeepSeek's privacy policy</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.2 Data Security Measures</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 Data Security Measures</h3>
                 <p>We adopt industry-standard security technologies and management measures to protect your personal information:</p>
                 <ul style="padding-left:20px;">
-                    <li>API keys are encrypted and stored in the system keychain</li>
                     <li>Collection data is saved locally, with access controlled by you and the operating system</li>
                     <li>Regular security assessments and vulnerability fixes</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">4.3 Data Retention Period</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.3 Data Retention Period</h3>
                 <ul style="padding-left:20px;">
                     <li>Your collection data is retained on your local device until you actively delete collections or uninstall the app</li>
                     <li>Local data may be cleared after uninstalling the app; if you have exported a JSON backup, you can restore via import</li>
@@ -318,46 +364,48 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">V. Third-Party Services</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">VI. Third-Party Services</h2>
                 <p>We may use or integrate the following third-party services:</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.1 Apple Services</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.1 Apple Services</h3>
                 <ul style="padding-left:20px;">
                     <li><strong>App Store / StoreKit:</strong> Used for app distribution and possible in-app purchases and subscriptions</li>
-                    <li><strong>Share Sheet and Keychain:</strong> Used to receive shared links and securely store API keys</li>
+                    <li><strong>Share Sheet:</strong> Used to receive shared links</li>
+                    <li><strong>Apple Intelligence:</strong> When available, simple AI requests are processed on-device via Foundation Models; data is not sent to third parties</li>
+                    <li><strong>System Speech APIs:</strong> Used for on-device voice recognition and transcription</li>
                     <li><strong>iCloud / Files:</strong> Used for data backup storage at your initiative</li>
                 </ul>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.2 Content Source Platforms</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.2 Content Source Platforms</h3>
                 <p>The app supports recognizing and displaying content links from platforms such as WeChat, Xiaohongshu, Zhihu, Bilibili, Douyin, Weibo, X / Twitter, and YouTube. When adding collections, the app may access corresponding links to fetch public metadata or article text, subject to each platform's terms and privacy policy.</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">5.3 AI Services</h3>
-                <p>AI features are primarily powered by providers such as DeepSeek. When you enable AI features and configure the corresponding API key, relevant data will be sent to your chosen provider for processing. These third-party services have their own independent privacy policies, and we recommend that you read them carefully.</p>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">6.3 AI Services (DeepSeek)</h3>
+                <p>AI features use DeepSeek (api.deepseek.com, model: deepseek-chat) for complex requests and as a fallback when on-device AI is unavailable. After you consent to AI features, relevant content is sent to DeepSeek for processing. DeepSeek has its own independent privacy policy, and we recommend that you read it carefully.</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">VI. Your Rights</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">VII. Your Rights</h2>
                 <p>According to relevant laws and regulations, you have the following rights regarding your personal information:</p>
                 <ul style="padding-left:20px;">
                     <li><strong>1. Right to Access:</strong> You can view and manage all your collections, themes, and settings in the app at any time</li>
                     <li><strong>2. Right to Correction:</strong> You can edit collection details, theme categories, starred status, notes, and AI-organized results at any time</li>
                     <li><strong>3. Right to Deletion:</strong> You can delete individual or batch collections at any time, or clear all data via a "replace all" import</li>
-                    <li><strong>4. Right to Withdraw Consent:</strong> You can remove API keys or stop using AI-related features at any time</li>
+                    <li><strong>4. Right to Withdraw Consent:</strong> You may withdraw AI consent in the app at any time, or stop using AI-related features</li>
                     <li><strong>5. Data Export:</strong> You can export all collections, themes, and settings via JSON backup and restore on other devices</li>
                 </ul>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">VII. Children's Privacy Protection</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">VIII. Children's Privacy Protection</h2>
                 <p>We highly value the protection of children's personal information. If you are under 14 years old, please use this application under the guidance of your guardian. We do not intentionally collect personal information from children. If you find that we have collected children's information without our knowledge, please contact us promptly, and we will immediately delete the relevant information.</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">VIII. Information Sharing and Disclosure</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">IX. Information Sharing and Disclosure</h2>
                 <p>Except for the following circumstances, we will not share, transfer, or disclose your personal information to third parties:</p>
                 <ul style="padding-left:20px;">
-                    <li><strong>1. With your explicit consent</strong></li>
-                    <li><strong>2. When you configure and use third-party AI services, relevant content is processed according to that provider's policy</strong></li>
+                    <li><strong>1. With your explicit consent (including consent in the AI feature consent dialog)</strong></li>
+                    <li><strong>2. When you consent to and use AI features, relevant content is processed according to DeepSeek and other providers' policies</strong></li>
                     <li><strong>3. When accessing content sources to fetch metadata or text for links you actively add</strong></li>
                     <li><strong>4. Required by laws and regulations or judicial authorities</strong></li>
                     <li><strong>5. Necessary to fulfill service agreements or resolve disputes</strong></li>
@@ -366,17 +414,17 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">IX. Privacy Policy Changes</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">X. Privacy Policy Changes</h2>
                 <p>We may update this privacy policy from time to time. The updated privacy policy will be published on this page, with the effective date clearly marked in a prominent position. We recommend that you regularly check this privacy policy to understand the latest changes. If changes involve significant content, we may notify you through in-app notifications or other means.</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">X. Scope of Application</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">XI. Scope of Application</h2>
                 <p>This privacy policy applies to the MooNotes Aggregation application and all features and services it provides.</p>
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">XI. Contact Us</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">XII. Contact Us</h2>
                 <p>If you have any questions, comments, or suggestions about this privacy policy, or need to exercise your rights, please contact us through the following methods:</p>
                 <ul style="padding-left:20px;">
                     <li>In-app feedback feature</li>
@@ -386,12 +434,12 @@
             </section>
 
             <section style="margin-bottom:32px;">
-                <h2 style="font-size:20px;margin-bottom:12px;">XII. Others</h2>
+                <h2 style="font-size:20px;margin-bottom:12px;">XIII. Others</h2>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.1 Applicable Law</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">13.1 Applicable Law</h3>
                 <p>The interpretation, execution, and dispute resolution of this privacy policy are subject to the laws and regulations of the People's Republic of China.</p>
 
-                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">12.2 Dispute Resolution</h3>
+                <h3 style="font-size:18px;margin-top:16px;margin-bottom:8px;">13.2 Dispute Resolution</h3>
                 <p>If a dispute arises from this privacy policy, both parties shall negotiate in good faith to resolve it. If negotiation fails, either party may file a lawsuit with the people's court with jurisdiction in the developer's location.</p>
             </section>
 
@@ -399,7 +447,7 @@
 
             <p style="margin-top:32px;">Thank you again for using MooNotes Aggregation!</p>
 
-            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*Last updated: June 7, 2026*</em></p>
+            <p style="margin-top:16px;color:#6c757d;font-size:14px;"><em>*Last updated: June 22, 2026*</em></p>
         </div>
     </main>
 
